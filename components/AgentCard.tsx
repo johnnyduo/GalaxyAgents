@@ -45,7 +45,7 @@ const AgentCard: React.FC<AgentCardProps> = ({ agent, isActive, onToggle, onClic
   const getStatusColor = () => {
     if (!isActive) return 'bg-gray-500';
     switch (currentStatus) {
-      case 'streaming': return 'bg-purple-500 animate-pulse';
+      case 'streaming': return 'bg-neon-green animate-pulse';
       case 'negotiating': return 'bg-yellow-500 animate-pulse';
       case 'offline': return 'bg-red-500';
       default: return 'bg-neon-green animate-pulse';

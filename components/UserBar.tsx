@@ -23,8 +23,8 @@ const UserBar: React.FC<UserBarProps> = ({ onLogoClick, onLogout }) => {
           onClick={onLogoClick}
           className="flex items-center gap-3 hover:opacity-80 transition-opacity"
         >
-          <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center">
-            <span className="text-white font-bold text-lg">GA</span>
+          <div className="w-10 h-10 bg-neon-green rounded-full flex items-center justify-center">
+            <span className="text-black font-bold text-lg">GA</span>
           </div>
           <div>
             <h1 className="text-white font-bold text-xl">Galaxy Agents</h1>
@@ -36,7 +36,7 @@ const UserBar: React.FC<UserBarProps> = ({ onLogoClick, onLogout }) => {
         {user && (
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded border border-white/10">
-              <User size={16} className="text-purple-400" />
+              <User size={16} className="text-neon-green" />
               <span className="text-white font-medium text-sm">{user.username}</span>
               {user.isGuest && (
                 <span className="text-xs bg-yellow-500/20 text-yellow-400 px-2 py-0.5 rounded">

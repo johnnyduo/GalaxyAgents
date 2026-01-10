@@ -364,7 +364,7 @@ const App: React.FC = () => {
 
   // Main app UI
   const mainApp = (
-    <div className="h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-black flex flex-col overflow-hidden">
+    <div className="h-screen bg-black flex flex-col overflow-hidden">
       {/* Top Bar */}
       <UserBar onLogoClick={handleBackToLanding} onLogout={handleLogout} />
 

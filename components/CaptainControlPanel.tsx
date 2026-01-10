@@ -135,9 +135,9 @@ export const CaptainControlPanel: React.FC<CaptainControlPanelProps> = ({
               disabled={!isCaptainRegistered}
               className="
                 flex items-center justify-center gap-1.5 px-3 py-2 rounded
-                bg-purple-500/10 hover:bg-purple-500/20 
-                border border-purple-500/30 hover:border-purple-500/50
-                text-purple-400 font-mono text-xs font-bold
+                bg-neon-green/10 hover:bg-neon-green/20 
+                border border-neon-green/30 hover:border-neon-green/50
+                text-neon-green font-mono text-xs font-bold
                 transition-all
                 disabled:opacity-50 disabled:cursor-not-allowed
               "

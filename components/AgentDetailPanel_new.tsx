@@ -98,7 +98,7 @@ const AgentDetailPanel: React.FC<AgentDetailPanelProps> = ({
                   <>
                     <button
                       onClick={() => onExecuteTask?.(agent.id)}
-                      className="w-full bg-neon-green hover:bg-white text-black font-semibold py-3 px-4 rounded transition-all flex items-center justify-center gap-2"
+                      className="w-full bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white font-semibold py-3 px-4 rounded transition-all flex items-center justify-center gap-2"
                     >
                       <Play size={16} />
                       Execute Task
