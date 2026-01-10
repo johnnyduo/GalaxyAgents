@@ -95,7 +95,7 @@ const AgentNode = React.memo(({ data }: NodeProps) => {
   );
 });
 
-// Define outside component
+// Define outside component and memoize
 const nodeTypes = { agentNode: AgentNode };
 const edgeTypes = {};
 const proOptions = { hideAttribution: true };
@@ -103,12 +103,15 @@ const proOptions = { hideAttribution: true };
 interface FlowCanvasProps {
   agents: AgentMetadata[];
   activeAgents: string[];
+  selectedAgentId?: string | null;
+  onAgentSelect?: (agentId: string) => void;
   streamingEdges: string[];
   onNodePositionsChange?: (positions: Record<string, { x: number; y: number }>) => void;
   activeDialogue?: { agentId: string; dialogue: string } | null;
   onCloseDialogue?: () => void;
   persistentEdges?: Array<{source: string, target: string}>;
   onEdgesChange?: (edges: Array<{source: string, target: string}>) => void;
+  agentStatuses?: Record<string, 'idle' | 'negotiating' | 'streaming' | 'offline'>;
 }
 
 const FlowCanvas: React.FC<FlowCanvasProps> = ({ 

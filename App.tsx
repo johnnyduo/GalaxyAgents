@@ -431,6 +431,13 @@ const App: React.FC = () => {
                     isActive={isActive}
                     status={status}
                     onClick={() => setSelectedAgentId(agent.id)}
+                    onToggle={() => {
+                      if (isActive) {
+                        handleDeactivateAgent(agent.id);
+                      } else {
+                        handleActivateAgent(agent.id);
+                      }
+                    }}
                   />
                   {progress?.isActive && (
                     <AgentProgressBar
