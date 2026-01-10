@@ -2,10 +2,10 @@
 
 A modern web application featuring autonomous AI agents that can analyze crypto markets, process news, and coordinate intelligent tasks. Built with React, TypeScript, and cutting-edge AI technology.
 
-![Galaxy Agents](https://img.shields.io/badge/Galaxy-Agents-purple)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?logo=typescript)
-![React](https://img.shields.io/badge/React-19.2-61DAFB?logo=react)
-![Vite](https://img.shields.io/badge/Vite-6.2-646CFF?logo=vite)
+[![Galaxy Agents](https://img.shields.io/badge/Galaxy-Agents-purple)](https://github.com/johnnyduo/GalaxyAgents)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?logo=typescript)](https://www.typescriptlang.org/)
+[![React](https://img.shields.io/badge/React-19.2-61DAFB?logo=react)](https://react.dev/)
+[![Vite](https://img.shields.io/badge/Vite-6.2-646CFF?logo=vite)](https://vitejs.dev/)
 
 ---
 
@@ -45,8 +45,8 @@ A modern web application featuring autonomous AI agents that can analyze crypto 
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
-   cd GalaxyAgent
+   git clone https://github.com/johnnyduo/GalaxyAgents.git
+   cd GalaxyAgents
    ```
 
 2. **Install dependencies**
