@@ -11,8 +11,7 @@ import { AgentResultsPage } from './components/AgentResultsPage';
 import { AgentProgressBar } from './components/AgentProgressBar';
 import { CaptainControlPanel } from './components/CaptainControlPanel';
 import LandingPage from './components/LandingPage';
-import { LoginPage } from './components/LoginPage';
-import { Wallet, BarChart3 } from 'lucide-react';
+import { BarChart3 } from 'lucide-react';
 import { orchestrator, cryptoService, newsService, agentStatusManager, geminiService } from './services/api';
 import { testAPIs } from './testAPIs';
 import { authService } from './services/auth';
@@ -34,8 +33,13 @@ if (typeof window !== 'undefined') {
 }
 
 const App: React.FC = () => {
-  // --- Authentication State ---
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => authService.isAuthenticated());
+  // Auto-create guest session on first load
+  useEffect(() => {
+    if (!authService.isAuthenticated()) {
+      authService.loginAsGuest();
+    }
+  }, []);
+  
   const [showLanding, setShowLanding] = useState<boolean>(true);
   
   // --- State ---
@@ -117,8 +121,6 @@ const App: React.FC = () => {
 
   // --- Initialization: Check API Status ---
   useEffect(() => {
-    if (!isAuthenticated) return;
-    
     const checkAPIs = async () => {
       addLog('SYSTEM', '🚀 Galaxy Agents Network Initializing...');
       addLog('SYSTEM', '💡 TIP: Run testAPIs() in browser console to verify all API connections');
@@ -132,7 +134,7 @@ const App: React.FC = () => {
     };
     
     checkAPIs();
-  }, [isAuthenticated]);
+  }, []);
 
   // Persist active agents
   useEffect(() => {
@@ -341,20 +343,12 @@ const App: React.FC = () => {
     }
   }, [operationMode, activeAgents, executeAgentTask, addLog]);
 
-  // Handle login success
-  const handleLoginSuccess = useCallback(() => {
-    setIsAuthenticated(true);
-    const user = authService.getCurrentUser();
-    if (user) {
-      toast.success(`Welcome, ${user.username}!`);
-    }
-  }, []);
-
-  // Handle logout
+  // Handle logout - create new guest session
   const handleLogout = useCallback(() => {
-    setIsAuthenticated(false);
+    authService.logout();
+    authService.loginAsGuest();
     setShowLanding(true);
-    toast.info('Logged out successfully');
+    toast.info('Logged out - new guest session created');
   }, []);
 
   const handleLaunchApp = useCallback(() => {
@@ -367,11 +361,6 @@ const App: React.FC = () => {
 
   // Get selected agent
   const selectedAgent = selectedAgentId ? AGENTS.find(a => a.id === selectedAgentId) || null : null;
-
-  // Show login page if not authenticated
-  if (!isAuthenticated) {
-    return <LoginPage onLoginSuccess={handleLoginSuccess} />;
-  }
 
   // Main app UI
   const mainApp = (

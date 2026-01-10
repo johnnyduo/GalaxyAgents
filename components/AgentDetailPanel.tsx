@@ -1,6 +1,6 @@
 import React from 'react';
 import { AgentMetadata } from '../types';
-import { X, Copy, Terminal, Zap, Play, Square } from 'lucide-react';
+import { X, Play, Square, Zap } from 'lucide-react';
 import { AGENT_ABILITIES } from '../constants';
 import LottieAvatar from './LottieAvatar';
 
@@ -27,10 +27,7 @@ const AgentDetailPanel: React.FC<AgentDetailPanelProps> = ({
   return (
     <div className="absolute right-0 top-10 bottom-0 w-96 bg-black/95 border-l border-neon-green/30 backdrop-blur-xl shadow-2xl z-[60] transform transition-transform duration-300 flex flex-col">
       <div className="p-4 border-b border-white/10 flex items-center justify-between bg-neon-green/5">
-        <h2 className="text-neon-green font-bold font-mono flex items-center gap-2">
-          <span className="text-xs bg-neon-green text-black px-1 rounded">EIP-8004</span>
-          AGENT DETAILS
-        </h2>
+        <h2 className="text-neon-green font-bold font-mono">AGENT DETAILS</h2>
         <button onClick={onClose} className="text-gray-400 hover:text-white transition-colors">
           <X size={18} />
         </button>
@@ -82,6 +79,19 @@ const AgentDetailPanel: React.FC<AgentDetailPanelProps> = ({
                 </div>
             </div>
 
+            {/* Agent Status */}
+            <div className="space-y-2">
+                <label className="text-xs text-gray-500 font-mono uppercase">Agent Status</label>
+                <div className="bg-black p-3 rounded border border-white/10">
+                  <div className="flex items-center gap-2">
+                    <div className={`w-2 h-2 rounded-full ${isActive ? 'bg-green-500 animate-pulse' : 'bg-gray-500'}`}></div>
+                    <span className="text-sm font-mono text-gray-300">
+                      {isActive ? 'Online & Ready' : 'Offline'}
+                    </span>
+                  </div>
+                </div>
+            </div>
+
             {/* Action Buttons */}
             <div className="space-y-2">
                 {isActive ? (
@@ -118,51 +128,32 @@ const AgentDetailPanel: React.FC<AgentDetailPanelProps> = ({
                     {agent.capabilities.map(cap => (
                         <span key={cap} className="px-2 py-1 bg-white/5 border border-white/20 rounded text-xs text-gray-300 hover:border-neon-green/50 transition-colors cursor-help">
                             {cap}
-                        </span>Agent Status</label>
-                <div className="bg-black p-3 rounded border border-white/10">
-                  <div className="flex items-center gap-2">
-                    <div className={`w-2 h-2 rounded-full ${isActive ? 'bg-green-500 animate-pulse' : 'bg-gray-500'}`}></div>
-                    <span className="text-sm font-mono text-gray-300">
-                      {isActive ? 'Online & Ready' : 'Offline'}
-                    </span>
-                  </div>
-                </div>  const storedAddresses = localStorage.getItem('agentAddresses');
-                    const addresses = storedAddresses ? JSON.parse(storedAddresses) : {};
-                    const agentAddress = addresses[agent.id] || `0x650665fdf08EeE72e84953D5a99AbC8196C56E77-${onChainTokenId || agent.tokenId}`;
-                    navigator.clipboard.writeText(agentAddress);
-                  }}
-                  title="Click to copy agent identity address"
-                >
-                    <div className="flex-1">
-                      <div className="text-gray-500 text-[10px] mb-0.5">Agent Address</div>
-                      <div className="text-neon-green">
-                        {(() => {
-                          const storedAddresses = localStorage.getItem('agentAddresses');
-                          const addresses = storedAddresses ? JSON.parse(storedAddresses) : {};
-                          const agentAddress = addresses[agent.id] || `0x650665fdf08EeE72e84953D5a99AbC8196C56E77-${onChainTokenId || agent.tokenId}`;
-                          return agentAddress.length > 30 
-                            ? `${agentAddress.slice(0, 10)}...${agentAddress.slice(-8)}`
-                            : agentAddress;
-                        })()}
-                      </div>
-                      <div className="text-gray-400 mt-0.5 text-[10px]">Token #{onChainTokenId || agent.tokenId}</div>
-                    </div>
-                    <Copy size={12} className="ml-auto text-neon-green opacity-50 group-hover:opacity-100 transition-opacity" />
+                        </span>
+                    ))}
                 </div>
-                {address && (
-                  <div className="text-[10px] text-gray-500 font-mono mt-1 px-2">
-                    Owner: {address.slice(0, 6)}...{address.slice(-4)}
-                  </div>
-                )}
             </div>
 
+            {/* API Integrations */}
+            {AGENT_ABILITIES[agent.id as keyof typeof AGENT_ABILITIES]?.apis && AGENT_ABILITIES[agent.id as keyof typeof AGENT_ABILITIES].apis.length > 0 && (
+              <div className="space-y-2">
+                <label className="text-xs text-gray-500 font-mono uppercase flex items-center gap-2">
+                  <Zap size={12} className="text-neon-green" />
+                  API Integrations
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {AGENT_ABILITIES[agent.id as keyof typeof AGENT_ABILITIES].apis.map((api: string) => (
+                    <span 
+                      key={api} 
+                      className="px-2 py-1 bg-neon-green/10 border border-neon-green/30 rounded text-xs text-neon-green font-mono hover:bg-neon-green/20 transition-colors cursor-help"
+                      title={AGENT_ABILITIES[agent.id as keyof typeof AGENT_ABILITIES].apiEndpoints?.[api] || api}
+                    >
+                      ⚡ {api}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
         </div>
-      </div>
-
-      <div className="p-4 border-t border-white/10 bg-black/50 backdrop-blur">
-          <button className="w-full py-3 bg-neon-green text-black font-bold font-mono rounded hover:bg-white hover:shadow-[0_0_20px_#43FF4D] transition-all">
-              INITIATE DIRECT COMM
-          </button>
       </div>
     </div>
   );
