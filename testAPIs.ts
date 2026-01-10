@@ -1,17 +1,17 @@
-// API Testing Utility for ASLAN AGENTS
+// API Testing Utility for Galaxy Agents Fraud Defense
 // Use this to verify your API keys are working correctly
 
-import { geminiService, cryptoService, newsService, hederaService, orchestrator } from './services/api';
+import { geminiService, coingeckoService, newsService } from './services/api';
 
 export const testAPIs = async () => {
-  console.log('🧪 ASLAN AGENTS API Testing Suite\n');
+  console.log('🧪 Galaxy Agents Fraud Defense - API Testing Suite\n');
   console.log('═══════════════════════════════════════\n');
 
   // Test Gemini AI
   console.log('1️⃣ Testing Gemini AI API...');
   try {
     const geminiResult = await geminiService.chat({
-      prompt: 'Say "Hello from ASLAN AGENTS!" in one sentence.',
+      prompt: 'Say "Hello from Galaxy Agents!" in one sentence.',
       temperature: 0.7
     });
     console.log('✅ Gemini AI:', geminiResult.text);
@@ -21,25 +21,23 @@ export const testAPIs = async () => {
 
   console.log('\n');
 
-  // Test TwelveData
-  console.log('2️⃣ Testing TwelveData Crypto Prices...');
+  // Test CoinGecko (for crypto fraud detection)
+  console.log('2️⃣ Testing CoinGecko API (Fraud Detection)...');
   try {
-    const ethPrice = await cryptoService.getPrice('ETH/USD');
-    console.log('✅ ETH Price:', `$${ethPrice.price.toFixed(2)}`);
-    
-    const btcPrice = await cryptoService.getPrice('BTC/USD');
-    console.log('✅ BTC Price:', `$${btcPrice.price.toFixed(2)}`);
+    const prices = await coingeckoService.getMultiplePrices(['bitcoin', 'ethereum']);
+    console.log('✅ Crypto Data Available:', Object.keys(prices).length, 'coins');
+    console.log('   Bitcoin:', `$${prices.bitcoin?.usd?.toFixed(2) || 'N/A'}`);
   } catch (error) {
-    console.error('❌ TwelveData failed:', error);
+    console.error('❌ CoinGecko failed:', error);
   }
 
   console.log('\n');
 
   // Test News API
-  console.log('3️⃣ Testing News API Sentiment...');
+  console.log('3️⃣ Testing News API (Fraud Intelligence)...');
   try {
-    const sentiment = await newsService.getCryptoNews('ethereum');
-    console.log('✅ News Sentiment:', sentiment.overallSentiment.toUpperCase());
+    const sentiment = await newsService.getCryptoNews('fraud scam');
+    console.log('✅ Fraud News Available');
     console.log(`   Articles Found: ${sentiment.articles.length}`);
     if (sentiment.articles.length > 0) {
       console.log(`   Latest: "${sentiment.articles[0].title.substring(0, 60)}..."`);

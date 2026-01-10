@@ -1,8 +1,8 @@
 // Dynamic Dialogue Generator for Agent-to-Agent Communication
-// Integrates real-time price data from Pyth Network for contextual dialogues
+// Enhanced with Gemini AI for dynamic, contextual responses
 
 import { AgentMetadata } from '../types';
-import { coingeckoService, CryptoPriceData } from './api';
+import { coingeckoService, CryptoPriceData, geminiService } from './api';
 
 export interface DialogueContext {
   agentId: string;
@@ -37,6 +37,32 @@ export class DialogueGenerator {
     const isCaptain = agent.id === 'a0';
     const dialogues = agent.personality?.dialogues || [];
 
+    // Try Gemini-powered dynamic dialogue first
+    if (dialogueContext && dialogueContext !== 'error') {
+      try {
+        const contextStr = this.buildContextString(agent, {
+          dialogueContext,
+          hasTeam,
+          connectedAgents,
+          priceData,
+          connectedToCaptain
+        });
+        
+        const aiDialogue = await geminiService.generateAgentDialogue(
+          agent.name,
+          agent.role,
+          contextStr
+        );
+        
+        if (aiDialogue && aiDialogue.length > 0) {
+          return aiDialogue;
+        }
+      } catch (error) {
+        console.warn(`AI dialogue failed for ${agent.name}, using fallback:`, error);
+      }
+    }
+
+    // Fallback to rule-based dialogues
     // Captain-specific dynamic dialogues
     if (isCaptain) {
       return this.generateCaptainDialogue(agent, {
@@ -55,6 +81,35 @@ export class DialogueGenerator {
       priceData,
       dialogues
     });
+  }
+
+  private buildContextString(
+    agent: AgentMetadata,
+    options: {
+      dialogueContext?: string;
+      hasTeam: boolean;
+      connectedAgents: AgentMetadata[];
+      priceData?: CryptoPriceData;
+      connectedToCaptain: boolean;
+    }
+  ): string {
+    const { dialogueContext, hasTeam, connectedAgents, priceData, connectedToCaptain } = options;
+    
+    const parts: string[] = [];
+    
+    if (dialogueContext === 'greeting') parts.push('just activated');
+    else if (dialogueContext === 'analyzing') parts.push('analyzing fraud patterns');
+    else if (dialogueContext === 'success') parts.push('completed task successfully');
+    else if (dialogueContext === 'idle') parts.push('on standby monitoring');
+    
+    if (hasTeam) parts.push(`coordinating with ${connectedAgents.length} agents`);
+    if (connectedToCaptain) parts.push('connected to command');
+    
+    if (priceData) {
+      parts.push(`market conditions: ${priceData.price_change_percentage_24h > 0 ? 'rising' : 'falling'}`);
+    }
+    
+    return parts.join(', ') || 'normal operations';
   }
 
   private async fetchLatestPrice(symbol: string = 'ethereum'): Promise<CryptoPriceData | null> {
@@ -93,7 +148,7 @@ export class DialogueGenerator {
         "⚔️ Commander ready. Connect me to specialists for coordinated operations.",
         "🎯 Standing by. I require tactical support—activate and connect agents to begin.",
         "📡 Systems online. Build my network to unlock full command capabilities.",
-        "🌟 Commander Aslan reporting. I coordinate better with a connected squad—let's assemble the team.",
+        "🌟 Big Boss reporting. I coordinate better with a connected squad—let's assemble the team.",
         "👑 The kingdom awaits our wisdom. Summon the specialists to begin operations."
       ];
       return recruitmentMessages[Math.floor(Math.random() * recruitmentMessages.length)];
@@ -185,29 +240,29 @@ export class DialogueGenerator {
     // Greeting - connection incentive
     if (dialogueContext === 'greeting' && !connectedToCaptain) {
       const introMessages: Record<string, string> = {
-        a1: "🦅 Eagle eyes ready. Connect me to Commander Aslan for tactical reconnaissance.",
-        a2: "📚 Archives indexed. Link me to Commander for strategic intelligence support.",
-        a3: "💰 Market sensors calibrated. Awaiting Commander's trading directives.",
-        a4: "🛡️ Security protocols active. Connect to Command for perimeter coordination.",
-        a5: "🔮 Predictive models online. I serve best under Commander Aslan's strategy.",
-        a6: "📨 Communication arrays ready. Link me to Command for intel relay."
+        a1: "🦅 Eagle eyes ready. Connect me to Big Boss for tactical reconnaissance.",
+        a2: "📚 Archives indexed. Link me to Big Boss for strategic intelligence support.",
+        a3: "💰 Fraud sensors calibrated. Awaiting Big Boss's defense directives.",
+        a4: "🛡️ Security protocols active. Connect to Big Boss for perimeter coordination.",
+        a5: "🔮 Predictive models online. I serve best under Big Boss's strategy.",
+        a6: "📨 Communication arrays ready. Link me to Big Boss for intel relay."
       };
       return introMessages[agent.id] || dialogues[0];
     }
 
-    // Connected to Captain - collaborative dialogues
+    // Connected to Big Boss - collaborative dialogues
     if (connectedToCaptain && dialogueContext === 'success') {
       const teamSuccessMessages = [
-        `✅ Mission complete, Commander. ${agent.role} data transmitted.`,
+        `✅ Mission complete, Big Boss. ${agent.role} data transmitted.`,
         `🎯 Objective achieved. ${agent.name.split(' ')[0]} standing by for next orders.`,
-        `⚡ Task successful. Awaiting Commander's assessment.`,
-        `📡 Intelligence delivered to Command. Ready for next assignment.`
+        `⚡ Task successful. Awaiting Big Boss's assessment.`,
+        `📡 Intelligence delivered to Big Boss. Ready for next assignment.`
       ];
       return teamSuccessMessages[Math.floor(Math.random() * teamSuccessMessages.length)];
     }
 
     if (connectedToCaptain && dialogueContext === 'analyzing') {
-      return `🔍 ${agent.role} analysis in progress. Will report findings to Commander Aslan shortly.`;
+      return `🔍 ${agent.role} analysis in progress. Will report findings to Big Boss shortly.`;
     }
 
     // Context-based standard dialogues

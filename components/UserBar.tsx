@@ -28,7 +28,7 @@ const UserBar: React.FC<UserBarProps> = ({ onLogoClick, onLogout }) => {
           </div>
           <div>
             <h1 className="text-white font-bold text-xl">Galaxy Agents</h1>
-            <p className="text-gray-400 text-xs">AI Intelligence Network</p>
+            <p className="text-gray-400 text-xs">AI Fraud Defense Network</p>
           </div>
         </button>
 

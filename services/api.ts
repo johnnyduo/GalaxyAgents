@@ -1,16 +1,16 @@
-// API Service Layer for ASLAN AGENTS
-// Integrates: Gemini AI, TwelveData, News API, and Hedera Mirror Node
+// API Service Layer for Galaxy Agents Fraud Defense
+// Integrates: Gemini AI, CoinGecko, and News API for fraud detection
 
 import { GoogleGenAI } from "@google/genai";
 
-const GEMINI_API_KEY = (import.meta as any).env?.GEMINI_API_KEY || '';
-const TWELVEDATA_API_KEY = (import.meta as any).env?.TWELVEDATA_API_KEY || '';
-const NEWS_API_KEY = (import.meta as any).env?.NEWS_API_KEY || '';
-const HEDERA_MIRROR_NODE_URL = (import.meta as any).env?.HEDERA_MIRROR_NODE_URL || 'https://testnet.mirrornode.hedera.com/api/v1';
+const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY || '';
+const TWELVEDATA_API_KEY = import.meta.env.VITE_TWELVEDATA_API_KEY || '';
+const NEWS_API_KEY = import.meta.env.VITE_NEWS_API_KEY || '';
+const HEDERA_MIRROR_NODE_URL = import.meta.env.VITE_HEDERA_MIRROR_NODE_URL || 'https://testnet.mirrornode.hedera.com/api/v1';
 const PYTH_HERMES_URL = 'https://hermes.pyth.network';
 
 // Initialize Gemini AI
-const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
+const ai = GEMINI_API_KEY ? new GoogleGenAI({ apiKey: GEMINI_API_KEY }) : null;
 
 // ===========================
 // SMART CACHING LAYER
@@ -23,7 +23,7 @@ interface CacheEntry<T> {
 }
 
 class SmartCache {
-  private prefix = 'aslan_cache_';
+  private prefix = 'galaxy_cache_';
 
   set<T>(key: string, data: T, ttlSeconds: number = 300): void {
     try {
@@ -351,6 +351,111 @@ Provide response in this exact JSON format:
         stopLoss: currentPrice * 0.95,
         reasoning: 'Error in analysis'
       };
+    }
+  },
+
+  // Generate dynamic agent dialogue based on context
+  async generateAgentDialogue(agentName: string, agentRole: string, context: string = ''): Promise<string> {
+    if (!ai || !GEMINI_API_KEY) {
+      // Fallback to rule-based responses
+      const ruleBased = {
+        'Big Boss': [
+          'All units report status. Defense network operational.',
+          'Analyzing threat patterns across all sectors.',
+          'Coordinating team response. Stay vigilant.',
+          'Strategic position secure. Maintaining watch.'
+        ],
+        'Hawk Eye': [
+          'Scanning for new fraud patterns... Systems online.',
+          'Threat radar active. Monitoring suspicious activity.',
+          'Pattern analysis in progress. No major threats detected.',
+          'Eyes on the horizon. Defense perimeter secure.'
+        ],
+        'Memory Bank': [
+          'Cross-referencing scam database... Match probability: calculating.',
+          'Historical pattern analysis complete. Similarities found.',
+          'Knowledge vault updated with new threat signatures.',
+          'Archived cases reviewed. Intelligence ready.'
+        ],
+        'Guardian Angel': [
+          'Personal protection active. How can I help you today?',
+          'Standing by to assist. Your safety is my priority.',
+          'Monitoring for suspicious messages and calls.',
+          'Ready to answer your fraud prevention questions.'
+        ],
+        'Scam Trainer': [
+          'Training simulation ready. Lets learn fraud tactics together.',
+          'Creating new awareness content for current threats.',
+          'Interactive defense drills available. Stay sharp!',
+          'Education modules updated with latest scam types.'
+        ],
+        'Money Guard': [
+          'Business transaction monitoring active.',
+          'Invoice verification systems running smoothly.',
+          'BEC defense protocols engaged. Your finances are protected.',
+          'SME shield operational. Zero tolerance for fraud.'
+        ],
+        'Lightning Alert': [
+          'Alert system armed. Ready for rapid deployment.',
+          'Multi-channel broadcast systems tested and ready.',
+          'Emergency notification network: OPERATIONAL',
+          'Standing by for urgent threat warnings.'
+        ]
+      };
+
+      const dialogues = ruleBased[agentName as keyof typeof ruleBased] || ['Agent ready and operational.'];
+      return dialogues[Math.floor(Math.random() * dialogues.length)];
+    }
+
+    // AI-powered dynamic dialogue
+    const cacheKey = `dialogue_${agentName}_${context.substring(0, 20)}`;
+    const cached = cache.get<string>(cacheKey);
+    if (cached) return cached;
+
+    if (!rateLimiter.canMakeCall('gemini')) {
+      // Return rule-based fallback when rate limited
+      const ruleBased = {
+        'Big Boss': 'Command center monitoring. All systems nominal.',
+        'Hawk Eye': 'Threat detection active. Scanning continues.',
+        'Memory Bank': 'Database analysis ongoing. Patterns logged.',
+        'Guardian Angel': 'Protection mode engaged. Standing by.',
+        'Scam Trainer': 'Training systems ready. Education continues.',
+        'Money Guard': 'Transaction watch active. Funds secured.',
+        'Lightning Alert': 'Alert systems primed. Ready to broadcast.'
+      };
+      return ruleBased[agentName as keyof typeof ruleBased] || 'Agent operational.';
+    }
+
+    const roleContext = {
+      'Big Boss': 'strategic commander coordinating fraud defense',
+      'Hawk Eye': 'vigilant scanner detecting fraud patterns',
+      'Memory Bank': 'knowledge keeper of scam intelligence',
+      'Guardian Angel': 'friendly protector of citizens',
+      'Scam Trainer': 'educational expert on fraud awareness',
+      'Money Guard': 'business transaction guardian',
+      'Lightning Alert': 'rapid alert broadcaster'
+    };
+
+    const prompt = `You are ${agentName}, a ${roleContext[agentName as keyof typeof roleContext] || agentRole} AI agent in a fraud defense network.
+
+Context: ${context || 'normal operations'}
+
+Generate a brief, professional status update or commentary (1-2 sentences max) that fits your role. Be concise, authoritative, and focused on fraud defense. Use present tense.`;
+
+    try {
+      rateLimiter.recordCall('gemini');
+      const response = await this.chat({ prompt, temperature: 0.7 });
+      
+      if (response.text && !response.error) {
+        cache.set(cacheKey, response.text, 180); // 3 minutes
+        return response.text;
+      }
+      
+      // Fallback
+      return `${agentName}: Systems operational. Defense protocols active.`;
+    } catch (error) {
+      console.warn('Dialogue generation error:', error);
+      return `${agentName}: Ready and monitoring.`;
     }
   }
 };
@@ -1053,10 +1158,10 @@ export const apiUtils = {
 
   // Get cache stats
   getCacheStats() {
-    const keys = Object.keys(localStorage).filter(k => k.startsWith('aslan_cache_'));
+    const keys = Object.keys(localStorage).filter(k => k.startsWith('galaxy_cache_'));
     return {
       totalEntries: keys.length,
-      keys: keys.map(k => k.replace('aslan_cache_', ''))
+      keys: keys.map(k => k.replace('galaxy_cache_', ''))
     };
   },
 
@@ -1407,7 +1512,7 @@ if (typeof window !== 'undefined') {
   (window as any).hederaSwapTracker = hederaSwapTracker;
   
   // Helpful console commands
-  console.log('%c🦁 ASLAN AGENTS API UTILITIES', 'color: #39ff14; font-weight: bold; font-size: 14px;');
+  console.log('%c🛡️ GALAXY AGENTS FRAUD DEFENSE', 'color: #39ff14; font-weight: bold; font-size: 14px;');
   console.log('%cUse these commands in console:', 'color: #39ff14;');
   console.log('  apiUtils.getRateLimitStatus() - Check API rate limits');
   console.log('  apiUtils.getCacheStats() - View cache statistics');

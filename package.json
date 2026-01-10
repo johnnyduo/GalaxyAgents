@@ -2,7 +2,7 @@
   "name": "galaxy-agents",
   "private": true,
   "version": "1.0.0",
-  "description": "Autonomous AI Agent Intelligence Network",
+  "description": "Galaxy Agents - AI-powered fraud defense multi-agent system",
   "type": "module",
   "scripts": {
     "dev": "vite",

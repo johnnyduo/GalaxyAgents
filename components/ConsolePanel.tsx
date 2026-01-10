@@ -24,11 +24,15 @@ const ConsolePanel: React.FC<ConsolePanelProps> = ({ logs }) => {
 
   return (
     <div className="flex flex-col h-full w-full bg-[#080808] border-t border-white/10 font-mono text-xs">
-      <div className="flex items-center px-4 py-2 bg-white/5 border-b border-white/5">
-        <span className="text-neon-green font-bold mr-2">ASLAN://KERNEL_LOGS</span>
+      <div className="flex items-center px-4 py-2 bg-black/50 border-b border-white/10">
+        <Terminal size={14} className="text-neon-green mr-2" />
+        <span className="text-neon-green font-bold font-mono">SYSTEM LOGS</span>
         <div className="flex-1"></div>
         <div className="flex gap-2">
-           <span className="flex items-center gap-1 text-gray-500"><div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"/> LIVE</span>
+           <span className="flex items-center gap-1.5 text-gray-500 text-xs">
+             <div className="w-1.5 h-1.5 bg-neon-green rounded-full animate-pulse"/> 
+             LIVE
+           </span>
         </div>
       </div>
       

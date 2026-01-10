@@ -1,6 +1,6 @@
 import React from 'react';
 import { AgentMetadata } from '../types';
-import { X, Play, Square, Zap } from 'lucide-react';
+import { X, Play, Square, Zap, Trash2, RefreshCw } from 'lucide-react';
 import { AGENT_ABILITIES } from '../constants';
 import LottieAvatar from './LottieAvatar';
 
@@ -10,6 +10,7 @@ interface AgentDetailPanelProps {
   onActivate?: (agentId: string) => void;
   onDeactivate?: (agentId: string) => void;
   onExecuteTask?: (agentId: string, task?: string) => void;
+  onDeleteAgent?: (agentId: string) => void;
   isActive?: boolean;
 }
 
@@ -19,10 +20,18 @@ const AgentDetailPanel: React.FC<AgentDetailPanelProps> = ({
   onActivate,
   onDeactivate,
   onExecuteTask,
+  onDeleteAgent,
   isActive = false
 }) => {
   
   if (!agent) return null;
+
+  const handleDeleteAgent = () => {
+    if (window.confirm(`Are you sure you want to delete ${agent.name}? This action cannot be undone.`)) {
+      onDeleteAgent?.(agent.id);
+      onClose();
+    }
+  };
 
   return (
     <div className="absolute right-0 top-10 bottom-0 w-96 bg-black/95 border-l border-neon-green/30 backdrop-blur-xl shadow-2xl z-[60] transform transition-transform duration-300 flex flex-col">
@@ -120,6 +129,16 @@ const AgentDetailPanel: React.FC<AgentDetailPanelProps> = ({
                     Activate Agent
                   </button>
                 )}
+                
+                {/* Delete/Renewal Button */}
+                <button
+                  onClick={handleDeleteAgent}
+                  className="w-full bg-red-900/20 hover:bg-red-900/40 border border-red-500/50 text-red-400 hover:text-red-300 font-semibold py-2 px-4 rounded transition-all flex items-center justify-center gap-2 mt-2"
+                  title="Remove this agent from your team"
+                >
+                  <Trash2 size={14} />
+                  Delete Agent
+                </button>
             </div>
 
             <div className="space-y-2">

@@ -22,7 +22,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLaunchApp }) => {
         <header className="h-12 bg-black/80 backdrop-blur-md border-b border-white/10 flex items-center px-6 justify-between sticky top-0 z-50">
           <div className="flex items-center gap-4">
             <h1 className="text-neon-green font-bold font-mono tracking-wider flex items-center gap-2">
-              <Layers size={18} /> ASLAN AGENTS <span className="text-white/40 text-xs font-normal">v1.0.4-beta</span>
+              <Layers size={18} /> GALAXY AGENTS <span className="text-white/40 text-xs font-normal">v2.0</span>
             </h1>
           </div>
           <button
@@ -39,22 +39,22 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLaunchApp }) => {
           <div className="flex-1 space-y-6">
             <div className="inline-block px-3 py-1.5 bg-neon-green/10 rounded border border-neon-green/30 backdrop-blur-sm">
               <span className="text-xs font-mono uppercase tracking-wider text-neon-green">
-                ⚡ Autonomous Agent Intelligence Grid
+                ⚡ Digital Fraud Protection Network
               </span>
             </div>
 
             <h2 className="text-4xl lg:text-6xl font-bold leading-tight font-mono">
-              <span className="text-neon-green">ASLAN</span>
+              <span className="text-neon-green">GALAXY</span>
               <br />
-              <span className="text-white/90">AI Agent</span>
+              <span className="text-white/90">AGENTS</span>
               <br />
               <span className="text-white/60">Network</span>
             </h2>
 
             <p className="text-base text-gray-400 max-w-2xl leading-relaxed font-mono">
-              Deploy autonomous AI agents powered by <span className="text-neon-green font-bold">x402 streaming payments</span> that 
-              collaborate, trade, and execute smart contracts in real-time. 
-              Built with EIP-8004 on Hedera Hashgraph for enterprise-grade performance.
+              Deploy intelligent AI agents that <span className="text-neon-green font-bold">detect and prevent digital fraud</span> in real-time. 
+              Protect Thai citizens and businesses from scams with pattern recognition, threat intelligence, and emergency alerts.
+              Built for Samsung × KBTG Hackathon.
             </p>
 
             <div className="flex flex-wrap gap-4">
@@ -65,7 +65,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLaunchApp }) => {
                 <Zap size={16} /> Launch App
               </button>
               <a
-                href="https://github.com/johnnyduo/AslanAgents"
+                href="https://github.com/johnnyduo/GalaxyAgents"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-6 py-3 bg-white/5 hover:bg-white/10 rounded font-bold text-sm font-mono uppercase tracking-wider backdrop-blur-sm border border-white/10 hover:border-neon-green/50 transition-all duration-300"
@@ -111,17 +111,17 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLaunchApp }) => {
           <FeatureCard
             icon={<Network className="text-neon-green" size={24} />}
             title="Multi-Agent System"
-            description="7 specialized agents working in harmony"
+            description="7 specialized agents detecting fraud patterns"
           />
           <FeatureCard
             icon={<Shield className="text-neon-green" size={24} />}
-            title="EIP-8004 Compatible"
-            description="Tokenized agents with on-chain verification"
+            title="Threat Intelligence"
+            description="Real-time scam pattern detection & analysis"
           />
           <FeatureCard
             icon={<Zap className="text-neon-green" size={24} />}
-            title="Real-Time Trading"
-            description="Autonomous market analysis and execution"
+            title="Emergency Alerts"
+            description="Multi-channel instant fraud notifications"
           />
           <FeatureCard
             icon={<Cpu className="text-neon-green" size={24} />}
@@ -132,52 +132,52 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLaunchApp }) => {
 
         {/* Agent Showcase */}
         <div className="text-center mb-8 px-6 max-w-7xl mx-auto">
-          <h3 className="text-2xl font-bold mb-2 font-mono text-neon-green uppercase tracking-wider">Agent Deck</h3>
-          <p className="text-gray-500 text-sm font-mono uppercase tracking-wider">7 Specialized AI Agents</p>
+          <h3 className="text-2xl font-bold mb-2 font-mono text-neon-green uppercase tracking-wider">Defense Team</h3>
+          <p className="text-gray-500 text-sm font-mono uppercase tracking-wider">7 AI Fraud Protection Agents</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 px-6 mb-20 max-w-7xl mx-auto">
           <AgentPreview 
-            name="Aslan the Great" 
+            name="Big Boss" 
             role="Commander" 
             avatar="/lottie/Lion - Breath.json"
-            ability="Supreme orchestrator coordinating all agents and strategic decisions"
+            ability="Command Center coordinating all agents and managing fraud defense strategy"
           />
           <AgentPreview 
-            name="Eagleton Skywatcher" 
-            role="Navigator" 
+            name="Hawk Eye" 
+            role="Scanner" 
             avatar="/lottie/running pigeon.json"
-            ability="Market intelligence specialist tracking real-time prices across 15,000+ tokens"
+            ability="Detecting new scam patterns and analyzing fraud trends before they spread"
           />
           <AgentPreview 
-            name="Athena Nightwing" 
-            role="Archivist" 
+            name="Memory Bank" 
+            role="Analyst" 
             avatar="/lottie/Duo Attack.json"
-            ability="Sentiment analysis expert aggregating news and detecting market-moving events"
+            ability="Knowledge base with scam fingerprinting and similarity matching"
           />
           <AgentPreview 
-            name="Reynard Swift" 
-            role="Merchant" 
+            name="Guardian Angel" 
+            role="Protector" 
             avatar="/lottie/Happy Unicorn Dog.json"
-            ability="DEX executor monitoring signals and swapping HBAR/SAUCE on SaucerSwap"
+            ability="Friendly AI assistant protecting citizens from SMS and call scams"
           />
           <AgentPreview 
-            name="Ursus Guardian" 
-            role="Sentinel" 
+            name="Scam Trainer" 
+            role="Trainer" 
             avatar="/lottie/Cute bear dancing.json"
-            ability="Risk manager calculating volatility and protecting capital with stop-loss triggers"
+            ability="Creating scam simulations and educational videos for fraud awareness"
           />
           <AgentPreview 
-            name="Luna Mysticfang" 
-            role="Oracle" 
+            name="Money Guard" 
+            role="Business Shield" 
             avatar="/lottie/happy fox.json"
-            ability="Technical analyst using AI for chart patterns and trading signal generation"
+            ability="Protecting businesses from BEC scams and invoice fraud"
           />
           <AgentPreview 
-            name="Corvus Messenger" 
-            role="Glitch" 
+            name="Lightning Alert" 
+            role="Messenger" 
             avatar="/lottie/Dragon.json"
-            ability="Alert system detecting breaking news, whale movements, and instant notifications"
+            ability="Emergency broadcaster sending real-time fraud alerts via multiple channels"
           />
         </div>
 
@@ -186,7 +186,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLaunchApp }) => {
           <div className="inline-block p-8 bg-black/40 rounded-xl backdrop-blur-sm border border-neon-green/20">
             <h3 className="text-2xl font-bold mb-3 font-mono text-neon-green uppercase tracking-wider">Ready to Deploy?</h3>
             <p className="text-gray-400 mb-6 max-w-2xl mx-auto font-mono text-sm">
-              Experience autonomous AI agents on Hedera Hashgraph
+              Experience AI-powered fraud protection for Thailand
             </p>
             <button
               onClick={onLaunchApp}

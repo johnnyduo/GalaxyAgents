@@ -8,10 +8,11 @@ import ConsolePanel from './components/ConsolePanel';
 import AgentDetailPanel from './components/AgentDetailPanel';
 import { AgentDialogue } from './components/AgentDialogue';
 import { AgentResultsPage } from './components/AgentResultsPage';
+import { ProcessTasksPanel } from './components/ProcessTasksPanel';
 import { AgentProgressBar } from './components/AgentProgressBar';
 import { CaptainControlPanel } from './components/CaptainControlPanel';
 import LandingPage from './components/LandingPage';
-import { BarChart3 } from 'lucide-react';
+import { BarChart3, X, ListChecks } from 'lucide-react';
 import { orchestrator, cryptoService, newsService, agentStatusManager, geminiService } from './services/api';
 import { testAPIs } from './testAPIs';
 import { authService } from './services/auth';
@@ -59,6 +60,13 @@ const App: React.FC = () => {
     agentId: string;
     dialogue: string;
   } | null>(null);
+  
+  // Random dialogue bubbles for active agents
+  const [randomDialogues, setRandomDialogues] = useState<Record<string, {
+    dialogue: string;
+    timestamp: number;
+  }>>({});
+  
   const [taskResults, setTaskResults] = useState<AgentTaskResult[]>(() => {
     const stored = localStorage.getItem('taskResults');
     if (stored) {
@@ -71,6 +79,7 @@ const App: React.FC = () => {
     return [];
   });
   const [showResultsPage, setShowResultsPage] = useState(false);
+  const [showProcessTasks, setShowProcessTasks] = useState(false);
   const [agentPositions, setAgentPositions] = useState<Record<string, { x: number; y: number }>>({});
   
   // --- Mode Control State ---
@@ -122,14 +131,15 @@ const App: React.FC = () => {
   // --- Initialization: Check API Status ---
   useEffect(() => {
     const checkAPIs = async () => {
-      addLog('SYSTEM', '🚀 Galaxy Agents Network Initializing...');
+      addLog('SYSTEM', '🚀 Galaxy Agents Defense Network Initializing...');
       addLog('SYSTEM', '💡 TIP: Run testAPIs() in browser console to verify all API connections');
       
       setTimeout(() => {
         addLog('SYSTEM', '✅ Gemini AI: Ready for agent intelligence');
-        addLog('SYSTEM', '✅ CoinGecko: Ready for crypto market data');
+        addLog('SYSTEM', '✅ Fraud Pattern Database: Ready for scam detection');
         addLog('SYSTEM', '✅ News API: Ready for sentiment analysis');
         addLog('SYSTEM', '✅ AI Network: Online and operational');
+        addLog('SYSTEM', '🛡️ Defense systems ready. Agents standing by.');
       }, 1000);
     };
     
@@ -141,14 +151,65 @@ const App: React.FC = () => {
     localStorage.setItem('activeAgents', JSON.stringify(activeAgents));
   }, [activeAgents]);
 
+  // Random dialogue generator - makes agents chat periodically
+  useEffect(() => {
+    if (activeAgents.length === 0) return;
+
+    const showRandomDialogue = () => {
+      // Pick a random active agent
+      const randomIndex = Math.floor(Math.random() * activeAgents.length);
+      const agentId = activeAgents[randomIndex];
+      const agent = AGENTS.find(a => a.id === agentId);
+      
+      if (!agent || !agent.personality?.dialogues) return;
+      
+      // Pick a random dialogue from the agent's personality
+      const dialogues = agent.personality.dialogues;
+      const randomDialogue = dialogues[Math.floor(Math.random() * dialogues.length)];
+      
+      // Show dialogue bubble
+      setRandomDialogues(prev => ({
+        ...prev,
+        [agentId]: {
+          dialogue: randomDialogue,
+          timestamp: Date.now()
+        }
+      }));
+      
+      // Auto-hide after 5-8 seconds
+      const hideDelay = 5000 + Math.random() * 3000;
+      setTimeout(() => {
+        setRandomDialogues(prev => {
+          const newDialogues = { ...prev };
+          delete newDialogues[agentId];
+          return newDialogues;
+        });
+      }, hideDelay);
+    };
+
+    // Show dialogues at random intervals (8-20 seconds)
+    const interval = setInterval(() => {
+      if (Math.random() > 0.2) { // 80% chance to show dialogue
+        showRandomDialogue();
+      }
+    }, 8000 + Math.random() * 12000);
+
+    // Initial dialogue after short delay
+    const initialTimeout = setTimeout(showRandomDialogue, 3000 + Math.random() * 4000);
+
+    return () => {
+      clearInterval(interval);
+      clearTimeout(initialTimeout);
+    };
+  }, [activeAgents]);
+
   // Log helper
   const addLog = useCallback((agent: string, message: string) => {
     const newLog: LogMessage = {
       id: `log_${Date.now()}_${Math.random()}`,
       timestamp: new Date().toLocaleTimeString(),
-      agent,
-      message,
-      type: agent === 'SYSTEM' ? 'system' : agent === 'ERROR' ? 'error' : 'agent'
+      type: agent === 'SYSTEM' ? 'SYSTEM' : agent === 'COMMANDER' ? 'COMMANDER' : 'A2A',
+      content: message
     };
     setLogs(prev => [...prev.slice(-99), newLog]);
   }, []);
@@ -201,6 +262,32 @@ const App: React.FC = () => {
     }, 1000);
   }, [addLog]);
 
+  // Delete agent permanently
+  const handleDeleteAgent = useCallback((agentId: string) => {
+    const agent = AGENTS.find(a => a.id === agentId);
+    if (!agent) return;
+
+    addLog('SYSTEM', `🗑️ Removing ${agent.name} from the network...`);
+    
+    // Deactivate first if active
+    setActiveAgents(prev => prev.filter(id => id !== agentId));
+    setAgentStatuses(prev => {
+      const newStatuses = { ...prev };
+      delete newStatuses[agentId];
+      return newStatuses;
+    });
+    
+    // Remove from progress tracking
+    setAgentProgress(prev => {
+      const newProgress = { ...prev };
+      delete newProgress[agentId];
+      return newProgress;
+    });
+    
+    addLog('SYSTEM', `✅ ${agent.name} has been removed from the team.`);
+    toast.success(`${agent.name} deleted successfully`);
+  }, [addLog]);
+
   // Execute agent task (AI-powered)
   const executeAgentTask = useCallback(async (agentId: string, taskDescription?: string) => {
     const agent = AGENTS.find(a => a.id === agentId);
@@ -248,11 +335,11 @@ const App: React.FC = () => {
       
       if (agent.role === 'Navigator') {
         // Crypto market data
-        const prices = await cryptoService.getCryptoPrices(['bitcoin', 'ethereum', 'solana']);
+        const prices = await cryptoService.getMultiplePrices(['bitcoin', 'ethereum', 'solana']);
         result = { type: 'market_data', data: prices, agentRole: agent.role };
       } else if (agent.role === 'Archivist') {
         // News and sentiment
-        const news = await newsService.getCryptoNews('bitcoin', 5);
+        const news = await newsService.getCryptoNews();
         result = { type: 'news', data: news, agentRole: agent.role };
       } else if (agent.role === 'Oracle') {
         // AI analysis
@@ -277,13 +364,13 @@ const App: React.FC = () => {
 
       // Save result
       const taskResult: AgentTaskResult = {
-        id: `task_${Date.now()}`,
         agentId,
         agentName: agent.name,
-        timestamp: new Date().toISOString(),
-        task: taskDescription || agent.role,
-        result,
-        success: true
+        taskType: 'custom_order',
+        timestamp: Date.now(),
+        status: 'success',
+        data: result,
+        summary: `Task completed successfully!`
       };
 
       setTaskResults(prev => [taskResult, ...prev].slice(0, 50));
@@ -310,7 +397,7 @@ const App: React.FC = () => {
   // Commander orchestration
   const handleCommanderAction = useCallback(async (customOrder?: string) => {
     if (operationMode !== 'auto') {
-      toast.info('Switch to AUTO mode for commander orchestration');
+      toast.info('Switch to AUTO mode for Big Boss orchestration');
       return;
     }
 
@@ -372,50 +459,13 @@ const App: React.FC = () => {
       <div className="flex-1 flex overflow-hidden">
         {/* Left Sidebar */}
         <div className="w-80 bg-black/40 backdrop-blur-sm border-r border-white/10 flex flex-col overflow-hidden">
-          {/* Commander Controls (Auto Mode) */}
-          {operationMode === 'auto' && activeAgents.includes('a0') && (
+          {/* Mode Control */}
+          <div className="p-4 border-b border-white/10">
             <CaptainControlPanel
               mode={operationMode}
               onModeChange={setOperationMode}
-              budget={commanderBudget}
-              budgetSpent={budgetSpent}
-              onBudgetChange={setCommanderBudget}
-              customOrder={commanderCustomOrder}
-              onCustomOrderChange={setCommanderCustomOrder}
-              onExecuteOrder={() => handleCommanderAction(commanderCustomOrder)}
-              pendingFundRequest={pendingFundRequest}
-              onFund={() => toast.info('Funding system placeholder - add budget management')}
             />
-          )}
-
-          {/* Mode Toggle */}
-          {!activeAgents.includes('a0') && (
-            <div className="p-4 border-b border-white/10">
-              <div className="flex gap-2">
-                <button
-                  onClick={() => setOperationMode('manual')}
-                  className={`flex-1 py-2 px-3 rounded transition-colors ${
-                    operationMode === 'manual'
-                      ? 'bg-blue-500 text-white'
-                      : 'bg-white/5 text-gray-400 hover:bg-white/10'
-                  }`}
-                >
-                  Manual
-                </button>
-                <button
-                  onClick={() => setOperationMode('auto')}
-                  className={`flex-1 py-2 px-3 rounded transition-colors ${
-                    operationMode === 'auto'
-                      ? 'bg-purple-500 text-white'
-                      : 'bg-white/5 text-gray-400 hover:bg-white/10'
-                  }`}
-                  title="Requires Commander to be active"
-                >
-                  Auto
-                </button>
-              </div>
-            </div>
-          )}
+          </div>
 
           {/* Agent Cards */}
           <div className="flex-1 overflow-y-auto p-4 space-y-3">
@@ -451,15 +501,30 @@ const App: React.FC = () => {
             })}
           </div>
 
-          {/* Results Button */}
+          {/* Results Summary */}
           {taskResults.length > 0 && (
-            <div className="p-4 border-t border-white/10">
+            <div className="p-4 border-t border-white/10 space-y-2">
+              <div className="bg-gradient-to-r from-green-500/10 to-blue-500/10 border border-green-500/20 rounded-lg p-3">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-mono text-green-400 uppercase tracking-wider">Mission Results</span>
+                  <span className="text-neon-green font-bold font-mono">{taskResults.length}</span>
+                </div>
+                <button
+                  onClick={() => setShowResultsPage(!showResultsPage)}
+                  className="w-full bg-neon-green/10 hover:bg-neon-green/20 border border-neon-green/30 text-neon-green font-semibold py-2 px-4 rounded transition-all flex items-center justify-center gap-2 text-sm font-mono"
+                >
+                  <BarChart3 size={16} />
+                  {showResultsPage ? 'HIDE DETAILS' : 'VIEW DETAILS'}
+                </button>
+              </div>
+              
+              {/* Process Tasks Button */}
               <button
-                onClick={() => setShowResultsPage(true)}
-                className="w-full bg-gradient-to-r from-green-500/20 to-blue-500/20 hover:from-green-500/30 hover:to-blue-500/30 border border-green-500/30 text-green-400 font-semibold py-3 px-4 rounded transition-all flex items-center justify-center gap-2"
+                onClick={() => setShowProcessTasks(true)}
+                className="w-full bg-gradient-to-r from-blue-500/10 to-purple-500/10 hover:from-blue-500/20 hover:to-purple-500/20 border border-blue-500/30 text-blue-400 font-semibold py-2.5 px-4 rounded transition-all flex items-center justify-center gap-2 text-sm font-mono"
               >
-                <BarChart3 size={18} />
-                View Results ({taskResults.length})
+                <ListChecks size={16} />
+                PROCESS TASKS
               </button>
             </div>
           )}
@@ -479,13 +544,14 @@ const App: React.FC = () => {
               onEdgesChange={handleEdgesChange}
               agentStatuses={agentStatuses}
               onNodePositionsChange={handleNodePositionsChange}
+              randomDialogues={randomDialogues}
             />
 
             {/* Dialogue Overlay */}
             {activeDialogue && (
               <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-20">
                 <AgentDialogue
-                  agentId={activeDialogue.agentId}
+                  agent={AGENTS.find(a => a.id === activeDialogue.agentId)!}
                   dialogue={activeDialogue.dialogue}
                   onClose={handleCloseDialogue}
                 />
@@ -506,15 +572,59 @@ const App: React.FC = () => {
           onActivate={handleActivateAgent}
           onDeactivate={handleDeactivateAgent}
           onExecuteTask={executeAgentTask}
+          onDeleteAgent={handleDeleteAgent}
           isActive={selectedAgent ? activeAgents.includes(selectedAgent.id) : false}
         />
+
+        {/* Results Floating Panel */}
+        {showResultsPage && (
+          <div className="absolute bottom-4 right-4 w-96 max-h-[500px] bg-black/95 backdrop-blur-md border border-neon-green/30 rounded-lg shadow-2xl shadow-neon-green/20 flex flex-col z-50 animate-in slide-in-from-bottom duration-300">
+            <div className="flex items-center justify-between p-4 border-b border-white/10">
+              <div className="flex items-center gap-2">
+                <BarChart3 size={18} className="text-neon-green" />
+                <h3 className="font-bold text-white font-mono">Mission Results</h3>
+              </div>
+              <button
+                onClick={() => setShowResultsPage(false)}
+                className="text-white/50 hover:text-white transition-colors"
+                title="Close"
+              >
+                <X size={18} />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-4 space-y-3">
+              {taskResults.map((result, index) => (
+                <div key={`result_${index}_${result.timestamp}`} className="bg-white/5 border border-white/10 rounded-lg p-3 hover:border-neon-green/30 transition-colors">
+                  <div className="flex items-start justify-between mb-2">
+                    <div className="flex-1">
+                      <div className="font-bold text-white text-sm font-mono">{result.agentName}</div>
+                      <div className="text-xs text-gray-400 font-mono">{result.summary}</div>
+                    </div>
+                    <div className={`text-xs px-2 py-0.5 rounded font-mono ${
+                      result.status === 'success' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
+                    }`}>
+                      {result.status === 'success' ? '✓ SUCCESS' : '✗ FAILED'}
+                    </div>
+                  </div>
+                  <div className="text-xs text-white/60 font-mono">
+                    {new Date(result.timestamp).toLocaleString()}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* Results Page Modal */}
-      {showResultsPage && (
-        <AgentResultsPage
+      {/* Process Tasks Panel */}
+      {showProcessTasks && (
+        <ProcessTasksPanel
+          agents={AGENTS}
           results={taskResults}
-          onClose={() => setShowResultsPage(false)}
+          onClose={() => setShowProcessTasks(false)}
+          activeAgents={activeAgents}
+          agentConnections={persistentEdges}
+          agentStatuses={agentStatuses}
         />
       )}
 

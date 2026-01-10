@@ -39,7 +39,7 @@ const AgentCard: React.FC<AgentCardProps> = ({ agent, isActive, onToggle, onClic
   } else if (isOnChain) {
     buttonText = isActive ? 'Deactivate' : 'Activate';
   } else {
-    buttonText = 'Register';
+    buttonText = isActive ? 'Deactivate' : 'Register';
   }
   
   const getStatusColor = () => {

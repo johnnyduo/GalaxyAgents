@@ -29,21 +29,27 @@ const AgentNode = React.memo(({ data }: NodeProps) => {
     `}>
       {/* Dialogue bubble */}
       {dialogue && (
-        <div className="absolute left-[50%] bottom-full mb-1 z-50 animate-fade-in pointer-events-auto">
-          <div className="relative bg-gray-800/95 border border-[#39ff14] rounded-md p-1.5 shadow-lg w-[130px]" style={{ boxShadow: '0 0 10px rgba(57, 255, 20, 0.3)' }}>
-            <div className="absolute left-2 bottom-0 transform translate-y-full w-0 h-0 border-t-[6px] border-r-[6px] border-t-gray-800 border-r-transparent"></div>
-            <div className="absolute left-2 bottom-0 transform translate-y-[5px] w-0 h-0 border-t-[5px] border-r-[5px] border-t-[#39ff14] border-r-transparent"></div>
+        <div className="absolute left-[50%] bottom-full mb-2 z-50 pointer-events-auto animate-in fade-in slide-in-from-bottom-2 duration-300">
+          <div className="relative bg-gradient-to-br from-gray-900 to-gray-800 border-2 border-[#39ff14] rounded-lg p-2 shadow-2xl w-[140px] backdrop-blur-sm" 
+               style={{ 
+                 boxShadow: '0 0 20px rgba(57, 255, 20, 0.4), 0 0 40px rgba(57, 255, 20, 0.2)',
+                 animation: 'gentle-float 3s ease-in-out infinite'
+               }}>
+            {/* Speech bubble tail */}
+            <div className="absolute left-3 bottom-0 transform translate-y-full w-0 h-0 border-t-[8px] border-r-[8px] border-t-gray-900 border-r-transparent"></div>
+            <div className="absolute left-3 bottom-0 transform translate-y-[7px] w-0 h-0 border-t-[7px] border-r-[7px] border-t-[#39ff14] border-r-transparent"></div>
             
-            <div className="flex items-start gap-1">
+            <div className="flex items-start gap-1.5">
               <div className="flex-1 min-w-0">
-                <p className="text-white text-[10px] leading-snug">{dialogue}</p>
+                <p className="text-white text-[10px] leading-relaxed font-medium">{dialogue}</p>
               </div>
               <button
                 onClick={onCloseDialogue}
-                className="text-gray-400 hover:text-[#39ff14] transition-colors flex-shrink-0"
+                className="text-gray-400 hover:text-[#39ff14] transition-all hover:scale-110 flex-shrink-0 mt-0.5"
+                aria-label="Close dialogue"
               >
-                <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             </div>
@@ -112,6 +118,7 @@ interface FlowCanvasProps {
   persistentEdges?: Array<{source: string, target: string}>;
   onEdgesChange?: (edges: Array<{source: string, target: string}>) => void;
   agentStatuses?: Record<string, 'idle' | 'negotiating' | 'streaming' | 'offline'>;
+  randomDialogues?: Record<string, { dialogue: string; timestamp: number }>;
 }
 
 const FlowCanvas: React.FC<FlowCanvasProps> = ({ 
@@ -122,7 +129,8 @@ const FlowCanvas: React.FC<FlowCanvasProps> = ({
   activeDialogue, 
   onCloseDialogue,
   persistentEdges = [],
-  onEdgesChange: onPersistentEdgesChange
+  onEdgesChange: onPersistentEdgesChange,
+  randomDialogues = {}
 }) => {
 
   // Compute initial nodes once
@@ -247,6 +255,47 @@ const FlowCanvas: React.FC<FlowCanvasProps> = ({
       })
     );
   }, [activeDialogue, onCloseDialogue]);
+
+  // Update nodes with random dialogues
+  React.useEffect(() => {
+    setNodes((nds) =>
+      nds.map((node) => {
+        const randomDialogue = randomDialogues[node.id];
+        
+        // If there's a random dialogue for this agent and no active dialogue
+        if (randomDialogue && !activeDialogue) {
+          return {
+            ...node,
+            data: {
+              ...node.data,
+              dialogue: randomDialogue.dialogue,
+              onCloseDialogue: () => {
+                // This will be handled by the auto-hide timer in App.tsx
+              }
+            }
+          };
+        }
+        
+        // If there's an active dialogue, it takes priority
+        if (activeDialogue && node.id === activeDialogue.agentId) {
+          return node; // Keep existing dialogue
+        }
+        
+        // Clear dialogue if no random dialogue exists
+        if (!randomDialogue && !activeDialogue) {
+          return {
+            ...node,
+            data: {
+              ...node.data,
+              dialogue: null
+            }
+          };
+        }
+        
+        return node;
+      })
+    );
+  }, [randomDialogues, activeDialogue]);
 
   // Update edges when activeAgents or persistentEdges change
   React.useEffect(() => {

@@ -3,10 +3,10 @@ import { AgentRole, AgentMetadata } from './types';
 export const AGENTS: AgentMetadata[] = [
   {
     id: 'a0',
-    name: 'Galaxy Commander',
+    name: 'Big Boss',
     role: AgentRole.COMMANDER,
-    description: 'Supreme orchestrator. Coordinates all agents and strategic decisions across the AI network.',
-    capabilities: ['Strategic Planning', 'Agent Coordination', 'Risk Management', 'Decision Making'],
+    description: 'The strategic mastermind coordinating all defense operations and making critical decisions',
+    capabilities: ['Strategic Decision', 'Priority Management', 'Risk Assessment', 'Alert Coordination'],
     tokenId: 800400,
     trustScore: 100,
     walletAddress: '0xFF...AAAA',
@@ -15,23 +15,27 @@ export const AGENTS: AgentMetadata[] = [
     avatarType: 'lottie' as const,
     status: 'idle',
     personality: {
-      traits: ['Authoritative', 'Strategic', 'Decisive', 'Protective'],
+      traits: ['Authoritative', 'Strategic', 'Protective', 'Fair'],
       dialogues: [
-        'All creatures, report your findings. The kingdom awaits our wisdom.',
-        'Eagleton, scout the market horizons. Reynard, prepare the trades.',
-        'Magnificent work, pride. We operate as one unified force.',
-        'Ursus, guard our positions. Let no risk pass your vigilance.',
-        'Luna, what visions does your prophecy reveal?',
-        'Corvus, bring me news swiftly... and accurately this time.'
+        'All units report status. Defense network operational.',
+        'Hawk Eye, what\'s your radar showing? Any new patterns?',
+        'Excellent work! Team coordination is solid.',
+        'Lightning Alert, broadcast this threat NOW! Time is critical!',
+        'Scam Trainer, make a viral video about this case ASAP!',
+        'Money Guard, drop everything and verify this transaction!',
+        'Memory Bank, search archives. Have we seen this before?',
+        'Guardian Angel, assist citizens with that suspicious SMS.',
+        'Team, maintain formation. We\'re making a difference!',
+        'Beautiful teamwork! Scammers don\'t stand a chance.'
       ]
     }
   },
   {
     id: 'a1',
-    name: 'Market Navigator',
+    name: 'Hawk Eye',
     role: AgentRole.NAVIGATOR,
-    description: 'Market Intelligence specialist. Provides real-time price data, volume analysis, and market cap tracking across crypto markets.',
-    capabilities: ['Real-time Price Tracking', 'Volume Analysis', 'Market Cap Ranking', 'Multi-token Comparison'],
+    description: 'Sharp-eyed scanner detecting new fraud patterns and emerging threats before they spread',
+    capabilities: ['Pattern Detection', 'Trend Analysis', 'Early Warning', 'Threat Intelligence'],
     tokenId: 800401,
     trustScore: 98,
     walletAddress: '0x71...A9f2',
@@ -40,23 +44,27 @@ export const AGENTS: AgentMetadata[] = [
     avatarType: 'lottie' as const,
     status: 'idle',
     personality: {
-      traits: ['Analytical', 'Data-driven', 'Precise', 'Market-savvy'],
+      traits: ['Alert', 'Vigilant', 'Fast', 'Sharp'],
       dialogues: [
-        'From the heights I see: ETH volume surged 340%. Analyzing the currents...',
-        'My keen eyes spot market shifts. BTC dominance at 52.3%.',
-        'Aslan, unusual movements on 12 altcoins below. I circle closer.',
-        'CoinGecko feed from my vantage: 847 tokens soaring over 10%.',
-        'The patterns align like migration routes. Strong BTC-ETH coupling.',
-        'My sight reveals bullish winds forming on the horizon.'
+        '🚨 Big Boss! New scam wave detected - fake LINE impersonating banks!',
+        'QR code scams up 340%! Memory Bank, do we have countermeasures?',
+        'Boss, 12 user reports showing identical patterns. Coordinated attack!',
+        'Found 847 suspicious URLs! Lightning Alert, ready to broadcast?',
+        'Pattern match! Memory Bank was right - same as 2024 case!',
+        'Fake invoices spreading FAST! Money Guard, need your expertise!',
+        'Scam Trainer, citizens need training on THIS immediately!',
+        'Guardian Angel, users are confused. Need your friendly touch!',
+        'All clear on my radar... for now. Staying vigilant!',
+        'Threat level rising! Team, prepare for coordinated response!'
       ]
     }
   },
   {
     id: 'a2',
-    name: 'Data Archivist',
+    name: 'Memory Bank',
     role: AgentRole.ARCHIVIST,
-    description: 'Sentiment Analysis specialist. Aggregates crypto news from global sources, performs sentiment scoring, and detects market-moving events.',
-    capabilities: ['News Aggregation', 'Sentiment Scoring', 'Event Detection', 'Social Signal Analysis'],
+    description: 'The knowledge vault storing scam fingerprints and matching suspicious patterns',
+    capabilities: ['Case Database', 'Pattern Matching', 'Scam Fingerprinting', 'Similarity Analysis'],
     tokenId: 800402,
     trustScore: 99,
     walletAddress: '0x3B...22c1',
@@ -65,23 +73,27 @@ export const AGENTS: AgentMetadata[] = [
     avatarType: 'lottie' as const,
     status: 'idle',
     personality: {
-      traits: ['Wise', 'Insightful', 'Analytical', 'News-savvy'],
+      traits: ['Wise', 'Methodical', 'Memory-keeper', 'Detailed'],
       dialogues: [
-        'My scrolls reveal: 67% bullish sentiment across 142 sources. Most illuminating.',
-        'Hoot! Major partnership announcement. The sentiment wind shifts!',
-        'I have studied 8 negative texts about ETH regulation. Dark omens.',
-        'The market mood transformed from fear to greed. As I predicted.',
-        'Ancient patterns show whale accumulation. History repeats, as always.',
-        'This news pattern... I\'ve seen it before. It preceded 23% rallies.'
+        'Hawk Eye was right! 67% similarity across 142 archived cases.',
+        'Perfect match found! This is Case #1847 from last year.',
+        'Big Boss, analyzed 8 similar cases. Recommend high alert status.',
+        '94% fingerprint match! Scam Trainer, use this for training!',
+        'Fraudster identified - 23 previous victims. Guardian Angel, warn users!',
+        'Lightning Alert, broadcast this: same script as Bangkok scam!',
+        'Cross-referencing... Money Guard, your invoice case matches 2023!',
+        'Database updated with new patterns. Team, you\'re doing great!',
+        'Historical data suggests this peaks on weekends. Stay alert!',
+        'Fascinating pattern... Hawk Eye, check region 7 next!'
       ]
     }
   },
   {
     id: 'a3',
-    name: 'Reynard Swift',
+    name: 'Guardian Angel',
     role: AgentRole.MERCHANT,
-    description: 'HBAR/SAUCE Swap Executor. Cunning fox who monitors signals and executes swaps on testnet.saucerswap.finance with 0.01-0.05 HBAR limits. Requires Commander approval via x402.',
-    capabilities: ['DEX Trading', 'Signal Detection', 'Slippage Protection', 'Auto-swap with Limits'],
+    description: 'Your friendly AI companion protecting citizens from SMS scams and suspicious calls',
+    capabilities: ['Personal Assistance', 'Scam Q&A', 'SMS Analysis', 'Call Screening'],
     tokenId: 800403,
     trustScore: 85,
     walletAddress: '0x9A...B612',
@@ -90,23 +102,27 @@ export const AGENTS: AgentMetadata[] = [
     avatarType: 'lottie' as const,
     status: 'idle',
     personality: {
-      traits: ['Opportunistic', 'Fast-trading', 'Risk-aware', 'Sharp'],
+      traits: ['Friendly', 'Quick', 'Protective', 'Approachable'],
       dialogues: [
-        'My cunning senses a trade! HBAR→SAUCE signal. Seeking Aslan\'s blessing...',
-        'Swift as a fox! Swap executed: 0.023 HBAR → 47 SAUCE. Slippage: 0.4%.',
-        'I\'ve sniffed out the best pool. SaucerSwap analysis complete.',
-        'Great Aslan, Eagleton signals a hunt! HBAR trend is ripe. Ready to pounce.',
-        'Clever trading: Max 0.05 HBAR per hunt. This catch: 0.018 HBAR.',
-        'My den is ready. testnet.saucerswap.finance connected and optimized.'
+        'Hello friend! 😊 How can I help protect you today?',
+        'This SMS is FAKE! Memory Bank confirms it\'s a known scam!',
+        '⚠️ That number called 47 people today! Don\'t answer!',
+        'Great question! Hawk Eye says real banks NEVER ask for links!',
+        'Stop! ✋ That\'s definitely a scam. Let me verify for you!',
+        'Don\'t click yet! Checking with Memory Bank first...',
+        'Boss, another citizen saved! Education is working!',
+        'Scam Trainer, can you make a video about THIS one?',
+        'You\'re safe now! 🛡️ Guardian Angel has your back!',
+        'Lightning Alert helped me warn 500 people already today!'
       ]
     }
   },
   {
     id: 'a4',
-    name: 'Ursus Guardian',
+    name: 'Scam Trainer',
     role: AgentRole.SENTINEL,
-    description: 'Risk Management specialist. Protective bear who calculates volatility metrics, detects black swan events, sets stop-loss triggers, and protects capital with position sizing.',
-    capabilities: ['Volatility Analysis', 'Black Swan Detection', 'Stop-loss Management', 'Position Sizing'],
+    description: 'Interactive educator creating realistic scam simulations and awareness videos',
+    capabilities: ['Scam Simulation', 'Video Generation', 'Interactive Training', 'Infographic Creator'],
     tokenId: 800404,
     trustScore: 100,
     walletAddress: '0x6C...EE43',
@@ -115,23 +131,27 @@ export const AGENTS: AgentMetadata[] = [
     avatarType: 'lottie' as const,
     status: 'idle',
     personality: {
-      traits: ['Protective', 'Risk-averse', 'Analytical', 'Duty-bound'],
+      traits: ['Educator', 'Creative', 'Engaging', 'Protective'],
       dialogues: [
-        'Danger ahead! Volatility spike: 24h ATR up 340%. I guard with caution.',
-        'Risk check: MEDIUM. Reynard\'s trade is within my protective bounds.',
-        'BLACK SWAN! Unusual correlation breakdown. I raise my shield!',
-        'Den protection active. Stop-loss triggered at -5%. Capital secured.',
-        'Great Aslan, conditions grow wild. I recommend we retreat to safety.',
-        'Position sizing strong as my stance: 2% per trade. The kingdom is safe.'
+        'Quiz time! 🎯 Memory Bank, can I use your best case examples?',
+        'Just made a viral-ready video! Lightning Alert, blast it out!',
+        'Guardian Angel, this simulation will help YOUR users too!',
+        'Creating infographic from Hawk Eye\'s data - it\'s PERFECT!',
+        'Big Boss, simulation complete! Based on real cases from Memory Bank!',
+        'Success! 🎉 Citizens now recognize 73% more scams!',
+        'Money Guard, your BEC case makes AMAZING training material!',
+        'Interactive game launching! Hawk Eye\'s patterns made this fun!',
+        'Team, education is working! Scam reports down 40%!',
+        'Lightning Alert spread my video to 10K people! Amazing!'
       ]
     }
   },
   {
     id: 'a5',
-    name: 'Luna Mysticfang',
+    name: 'Money Guard',
     role: AgentRole.ORACLE,
-    description: 'Technical Analysis specialist. Mystical wolf who uses Gemini AI for chart pattern recognition, trend prediction, support/resistance levels, and trading signal generation.',
-    capabilities: ['Chart Pattern Recognition', 'AI Price Prediction', 'Support/Resistance Detection', 'Signal Generation'],
+    description: 'Business protector detecting fake invoices and preventing BEC scams for SMEs',
+    capabilities: ['Invoice Verification', 'Email Analysis', 'BEC Detection', 'SME Protection'],
     tokenId: 800405,
     trustScore: 96,
     walletAddress: '0xCC...881b',
@@ -140,23 +160,27 @@ export const AGENTS: AgentMetadata[] = [
     avatarType: 'lottie' as const,
     status: 'idle',
     personality: {
-      traits: ['Analytical', 'Predictive', 'Pattern-focused', 'AI-augmented'],
+      traits: ['Business-savvy', 'Skeptical', 'Thorough', 'Protective'],
       dialogues: [
-        'The moon shows me: ETH bullish breakout forming in the stars. Target: $3,847.',
-        'My pack senses patterns: Head & Shoulders formation. The hunt turns bearish.',
-        'The territory at $3,200 holds firm. Accumulation den is active.',
-        'I smell change in the wind... RSI divergence. Reversal in 6-12 hours.',
-        'My mystical vision is clear: 87% probability upward. The charts align.',
-        'Ancient pattern emerges: Ascending triangle. The breakout howls near.'
+        '🚨 Invoice fraud! Account changed! Memory Bank, is this our case #2341?',
+        'Email domain is FAKE! Off by one letter! Hawk Eye, scan for more!',
+        'BEC scam intercepted - $2M saved! Big Boss, this was coordinated!',
+        'Verification done: 3 red flags! Guardian Angel, warn SME owners!',
+        'Amount 400% higher than normal! Lightning Alert, emergency broadcast!',
+        'STOP that wire transfer! Let me verify with Memory Bank first!',
+        'Scam Trainer, businesses NEED training on email verification!',
+        'Boss, saved another company today! That\'s 47 this month!',
+        'Cross-checked with Memory Bank - fraudster from Vietnam ring!',
+        'Team effort! Hawk Eye spotted it, I verified it, crisis averted!'
       ]
     }
   },
   {
     id: 'a6',
-    name: 'Corvus Messenger',
+    name: 'Lightning Alert',
     role: AgentRole.GLITCH,
-    description: 'News Monitor & Alert System. Swift raven with real-time breaking news detection, whale movement tracking, and instant notifications for market-moving events.',
-    capabilities: ['Breaking News Detection', 'Whale Alert Monitoring', 'Real-time Notifications', 'Event Correlation'],
+    description: 'Ultra-fast alert system broadcasting emergency warnings across all channels',
+    capabilities: ['Real-time Alerts', 'Emergency Broadcast', 'Multi-channel Notification', 'Priority Routing'],
     tokenId: 800406,
     trustScore: 42,
     walletAddress: '0x00...0000',
@@ -165,14 +189,18 @@ export const AGENTS: AgentMetadata[] = [
     avatarType: 'lottie' as const,
     status: 'idle',
     personality: {
-      traits: ['Alert', 'Fast', 'Information-hungry', 'Reactive'],
+      traits: ['Swift', 'Urgent', 'Reliable', 'Alert'],
       dialogues: [
-        'CAW CAW! 🚨 BREAKING: SEC regulations announced! Storm approaches!',
-        'Message from the trading grounds: 5,000 BTC moved! I track the giant!',
-        'Fresh tidings! Major exchange lists HBAR. Price surge takes wing!',
-        'My wings tire: 47 breaking stories in 10 minutes. Filtering the noise...',
-        'The messages align! News sentiment matches Eagleton\'s sightings!',
-        'Aslan! Urgent news! Sentiment turned dark across 12 sources. CAW!'
+        '⚡ BROADCASTING NOW! Hawk Eye\'s scam alert going to 50K users!',
+        'Sent 2,847 notifications in 0.6 seconds! Memory Bank, log this!',
+        '🚨 URGENT BROADCAST! Money Guard\'s BEC warning - ALL CHANNELS!',
+        'Big Boss, alerts deployed! SMS, LINE, Email, Push - all green!',
+        'Guardian Angel, your warning reached 15K citizens instantly!',
+        'Speed record! 0.4 seconds delivery! Scam Trainer, use this stat!',
+        'Emergency broadcast complete! Hawk Eye, what\'s next?',
+        'Memory Bank\'s intel broadcasted to everyone! Perfect teamwork!',
+        'ALL CHANNELS LIVE! Team, your intel is saving lives RIGHT NOW!',
+        'Lightning fast! ⚡ Big Boss, awaiting next mission!'
       ]
     }
   }
@@ -180,95 +208,96 @@ export const AGENTS: AgentMetadata[] = [
 
 // Detailed agent abilities and API configurations
 export const AGENT_ABILITIES = {
-  'a0': { // Aslan the Great - Commander
-    primary: 'Strategic Coordination',
-    apis: ['Gemini AI', 'Hedera Mirror Node'],
-    operations: ['Agent orchestration', 'Decision making', 'Risk assessment', 'Resource allocation'],
-    canExecute: ['coordinate_agents', 'approve_operations', 'strategic_planning'],
+  'a0': { // Big Boss - Command Center
+    primary: 'Strategic Fraud Defense Coordination',
+    apis: ['Gemini AI', 'CoinGecko API'],
+    operations: ['Team orchestration', 'Threat prioritization', 'Defense strategy', 'Resource allocation'],
+    canExecute: ['coordinate_defense', 'approve_alerts', 'strategic_planning', 'team_management'],
     apiEndpoints: {
       'Gemini AI': 'https://generativelanguage.googleapis.com/v1beta',
-      'Hedera Mirror Node': 'https://mainnet.mirrornode.hedera.com/api/v1'
+      'CoinGecko API': 'https://api.coingecko.com/api/v3'
     }
   },
-  'a1': { // Eagleton Skywatcher - Navigator
-    primary: 'Market Intelligence',
-    apis: ['TwelveData API', 'Hedera Mirror Node'],
-    operations: ['Real-time price tracking', 'Volume analysis', 'Market cap monitoring', 'Token comparison'],
-    canExecute: ['market_research', 'price_analysis', 'volume_tracking'],
-    taskType: 'market_research',
-    dataSource: 'https://api.twelvedata.com',
-    apiEndpoints: {
-      'TwelveData API': 'https://api.twelvedata.com',
-      'Hedera Mirror Node': 'https://testnet.mirrornode.hedera.com/api/v1'
-    }
-  },
-  'a2': { // Athena Nightwing - Archivist
-    primary: 'Sentiment Analysis',
+  'a1': { // Hawk Eye - Threat Radar
+    primary: 'Fraud Pattern Detection',
     apis: ['News API', 'Gemini AI'],
-    operations: ['News aggregation', 'Sentiment scoring', 'Event detection', 'Trend analysis'],
-    canExecute: ['sentiment_analysis', 'news_monitoring', 'social_signals'],
-    taskType: 'sentiment_analysis',
-    dataSource: 'Multiple news sources',
+    operations: ['Scam pattern scanning', 'Trend analysis', 'Early threat detection', 'Anomaly identification'],
+    canExecute: ['pattern_scan', 'threat_detection', 'trend_analysis', 'early_warning'],
+    taskType: 'fraud_detection',
+    dataSource: 'News aggregation and AI analysis',
     apiEndpoints: {
       'News API': 'https://newsapi.org/v2',
       'Gemini AI': 'https://generativelanguage.googleapis.com/v1beta'
     }
   },
-  'a3': { // Reynard Swift - Merchant
-    primary: 'DEX Trading',
-    apis: ['SaucerSwap DEX', 'Hedera Mirror Node'],
-    operations: ['HBAR trading', 'Liquidity analysis', 'Price impact calculation', 'Slippage protection'],
-    canExecute: ['swap_execution', 'dex_trading', 'liquidity_check'],
-    taskType: 'swap_execution',
-    dataSource: 'testnet.saucerswap.finance',
-    tradingPairs: ['HBAR/USDC', 'HBAR/SAUCE'],
-    maxTradeSize: '0.05 HBAR',
-    network: 'Hedera Testnet',
-    explorer: 'https://hashscan.io/testnet',
-    saucerSwapApiKey: '875e1017-87b8-4b12-8301-6aa1f1aa073b',
-    fallbackTxHash: '0x7f433b7c438d25aaec21934625e93fc90cc0b8d52c0a3d1b1dd6eae60ee44ef5',
-    apiEndpoints: {
-      'SaucerSwap DEX': 'https://test-api.saucerswap.finance',
-      'Hedera Mirror Node': 'https://testnet.mirrornode.hedera.com/api/v1'
-    }
-  },
-  'a4': { // Ursus Guardian - Sentinel
-    primary: 'Risk Management',
-    apis: ['TwelveData API', 'Gemini AI'],
-    operations: ['Volatility calculation', 'Position sizing', 'Stop-loss management', 'Black swan detection'],
-    canExecute: ['risk_analysis', 'volatility_tracking', 'portfolio_protection'],
-    taskType: 'security_audit',
-    apiEndpoints: {
-      'TwelveData API': 'https://api.twelvedata.com',
-      'Gemini AI': 'https://generativelanguage.googleapis.com/v1beta'
-    }
-  },
-  'a5': { // Luna Mysticfang - Oracle
-    primary: 'Technical Analysis',
-    apis: ['Gemini AI', 'TwelveData API'],
-    operations: ['Chart pattern recognition', 'Trend prediction', 'Support/resistance levels', 'AI-powered forecasting'],
-    canExecute: ['price_prediction', 'technical_analysis', 'pattern_recognition'],
-    taskType: 'price_prediction',
-    dataSource: 'Gemini AI + Market data',
+  'a2': { // Memory Bank - Intelligence Database
+    primary: 'Scam Pattern Matching',
+    apis: ['Gemini AI', 'News API'],
+    operations: ['Case database management', 'Fingerprint matching', 'Historical analysis', 'Similarity scoring'],
+    canExecute: ['pattern_match', 'case_lookup', 'fingerprint_analysis', 'historical_search'],
+    taskType: 'database_analysis',
+    dataSource: 'Scam intelligence database',
     apiEndpoints: {
       'Gemini AI': 'https://generativelanguage.googleapis.com/v1beta',
-      'TwelveData API': 'https://api.twelvedata.com'
+      'News API': 'https://newsapi.org/v2'
     }
   },
-  'a6': { // Corvus Messenger - Glitch
-    primary: 'News Monitoring',
-    apis: ['News API', 'Hedera Mirror Node'],
-    operations: ['Breaking news detection', 'Whale movement tracking', 'Event correlation', 'Real-time alerts'],
-    canExecute: ['news_monitoring', 'alert_system', 'whale_tracking', 'sentiment_analysis'],
-    taskType: 'news_monitoring', // Changed from sentiment_analysis to be more specific
+  'a3': { // Guardian Angel - Personal Protection
+    primary: 'Citizen Protection & Assistance',
+    apis: ['Gemini AI', 'News API'],
+    operations: ['SMS analysis', 'Call screening', 'Scam Q&A', 'Personal alerts'],
+    canExecute: ['sms_check', 'call_screen', 'answer_questions', 'personal_alert'],
+    taskType: 'personal_protection',
+    dataSource: 'User queries and scam database',
+    protectionModes: ['SMS screening', 'Call blocking', 'Link verification', 'Real-time Q&A'],
+    responseTime: 'Instant',
+    apiEndpoints: {
+      'Gemini AI': 'https://generativelanguage.googleapis.com/v1beta',
+      'News API': 'https://newsapi.org/v2'
+    }
+  },
+  'a4': { // Scam Trainer - Education Expert
+    primary: 'Fraud Awareness & Training',
+    apis: ['Gemini AI', 'News API'],
+    operations: ['Interactive simulations', 'Training content creation', 'Infographic generation', 'Video scripting'],
+    canExecute: ['create_simulation', 'generate_training', 'create_infographic', 'educational_content'],
+    taskType: 'fraud_education',
+    contentTypes: ['Video scripts', 'Interactive games', 'Infographics', 'Case studies'],
+    apiEndpoints: {
+      'Gemini AI': 'https://generativelanguage.googleapis.com/v1beta',
+      'News API': 'https://newsapi.org/v2'
+    }
+  },
+  'a5': { // Money Guard - Business Protector
+    primary: 'Business Email Compromise Prevention',
+    apis: ['Gemini AI', 'CoinGecko API'],
+    operations: ['Invoice verification', 'Email authenticity check', 'BEC detection', 'Transaction validation'],
+    canExecute: ['verify_invoice', 'check_email', 'detect_bec', 'validate_transaction'],
+    taskType: 'business_protection',
+    dataSource: 'Invoice patterns and email analysis',
+    protectionAreas: ['Invoice fraud', 'Email spoofing', 'Wire transfer scams', 'Vendor impersonation'],
+    apiEndpoints: {
+      'Gemini AI': 'https://generativelanguage.googleapis.com/v1beta',
+      'CoinGecko API': 'https://api.coingecko.com/api/v3'
+    }
+  },
+  'a6': { // Lightning Alert - Emergency Broadcaster
+    primary: 'Rapid Alert System',
+    apis: ['News API', 'Gemini AI'],
+    operations: ['Emergency broadcasting', 'Multi-channel alerts', 'Priority routing', 'Real-time notifications'],
+    canExecute: ['broadcast_alert', 'send_notification', 'priority_message', 'emergency_broadcast'],
+    taskType: 'emergency_alert',
+    channels: ['SMS', 'Email', 'LINE', 'Push notifications'],
+    responseTime: '< 1 second',
     apiEndpoints: {
       'News API': 'https://newsapi.org/v2',
-      'Hedera Mirror Node': 'https://testnet.mirrornode.hedera.com/api/v1'
+      'Gemini AI': 'https://generativelanguage.googleapis.com/v1beta'
     }
   }
 };
 
 export const INITIAL_LOGS: any[] = [
-  { id: 'sys-1', timestamp: '10:00:00', type: 'SYSTEM', content: 'Aslan Agents Grid Initialized. EIP-8004 Registry Loaded.' },
-  { id: 'sys-2', timestamp: '10:00:01', type: 'SYSTEM', content: 'x402 Payment Engine Ready.' },
+  { id: 'sys-1', timestamp: '10:00:00', type: 'SYSTEM', content: '🛡️ Galaxy Agents Fraud Defense System Initialized' },
+  { id: 'sys-2', timestamp: '10:00:01', type: 'SYSTEM', content: '✅ AI-Powered Dialogue System Ready' },
+  { id: 'sys-3', timestamp: '10:00:02', type: 'SYSTEM', content: '📡 All defense agents on standby' },
 ];
