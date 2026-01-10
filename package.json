@@ -2,6 +2,7 @@
   "name": "galaxy-agents",
   "private": true,
   "version": "1.0.0",
+  "description": "Autonomous AI Agent Intelligence Network",
   "type": "module",
   "scripts": {
     "dev": "vite",

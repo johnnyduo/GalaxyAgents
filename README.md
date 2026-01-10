@@ -51,7 +51,7 @@ A modern web application featuring autonomous AI agents that can analyze crypto 
 
 2. **Install dependencies**
    ```bash
-   npm install
+   yarn install
    ```
 
 3. **Configure environment (optional)**
@@ -64,7 +64,7 @@ A modern web application featuring autonomous AI agents that can analyze crypto 
 
 4. **Start development server**
    ```bash
-   npm run dev
+   yarn dev
    ```
 
 5. **Open your browser**
@@ -144,12 +144,12 @@ GalaxyAgent/
 
 ### Build for Production
 ```bash
-npm run build
+yarn build
 ```
 
 ### Preview Production Build
 ```bash
-npm run preview
+yarn preview
 ```
 
 ### Clear All Data
