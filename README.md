@@ -3,6 +3,8 @@
 > **Multi-Agent AI System for Digital Fraud Prevention**  
 > Enterprise-grade fraud detection powered by Google Gemini AI
 
+🌐 **Live Demo**: [https://galaxy-agents.vercel.app](https://galaxy-agents.vercel.app)
+
 A professional fraud defense platform featuring 7 specialized AI agents working in coordination to protect individuals and businesses from digital fraud, scams, and cybersecurity threats. Built with modern React architecture and powered exclusively by Google Gemini AI.
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?logo=typescript)](https://www.typescriptlang.org/)
