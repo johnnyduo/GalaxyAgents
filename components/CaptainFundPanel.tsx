@@ -51,7 +51,7 @@ export const CaptainFundPanel: React.FC<CaptainFundPanelProps> = ({
         <span className={`font-bold ${isLowFund ? 'text-red-400' : 'text-[#39ff14]'}`}>
           {currentBalance.toFixed(3)}
         </span>
-        <span className="text-white/50">HBAR</span>
+        <span className="text-white/50">USD</span>
         <ChevronDown size={12} className={`transition-transform ${showDropdown ? 'rotate-180' : ''}`} />
       </button>
 

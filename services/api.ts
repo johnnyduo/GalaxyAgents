@@ -1,13 +1,9 @@
 // API Service Layer for Galaxy Agents Fraud Defense
-// Integrates: Gemini AI, CoinGecko, and News API for fraud detection
+// Integrates: Gemini AI for intelligent fraud detection and analysis
 
 import { GoogleGenAI } from "@google/genai";
 
 const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY || '';
-const TWELVEDATA_API_KEY = import.meta.env.VITE_TWELVEDATA_API_KEY || '';
-const NEWS_API_KEY = import.meta.env.VITE_NEWS_API_KEY || '';
-const HEDERA_MIRROR_NODE_URL = import.meta.env.VITE_HEDERA_MIRROR_NODE_URL || 'https://testnet.mirrornode.hedera.com/api/v1';
-const PYTH_HERMES_URL = 'https://hermes.pyth.network';
 
 // Initialize Gemini AI
 const ai = GEMINI_API_KEY ? new GoogleGenAI({ apiKey: GEMINI_API_KEY }) : null;
@@ -89,9 +85,7 @@ const cache = new SmartCache();
 class RateLimiter {
   private calls: Record<string, number[]> = {};
   private limits: Record<string, { maxCalls: number; windowMs: number }> = {
-    gemini: { maxCalls: 10, windowMs: 60000 }, // 10 calls per minute
-    coingecko: { maxCalls: 30, windowMs: 60000 }, // 30 calls per minute
-    news: { maxCalls: 20, windowMs: 60000 } // 20 calls per minute
+    gemini: { maxCalls: 10, windowMs: 60000 } // 10 calls per minute
   };
 
   canMakeCall(service: string): boolean {
@@ -238,7 +232,7 @@ export const geminiService = {
       return cached;
     }
 
-    const prompt = `As a crypto market analyst, analyze ${symbol} with the following data: ${JSON.stringify(data)}. Provide a concise 2-sentence market insight.`;
+    const prompt = `As a fraud analysis expert, analyze the following data: ${JSON.stringify(data)}. Provide a concise 2-sentence security insight.`;
     const response = await this.chat({ prompt, temperature: 0.5 });
     
     // Cache successful responses
@@ -354,7 +348,7 @@ Provide response in this exact JSON format:
     }
   },
 
-  // Generate dynamic agent dialogue based on context
+  // Generate dynamic agent dialogue based on context (FRAUD DEFENSE FOCUSED)
   async generateAgentDialogue(agentName: string, agentRole: string, context: string = ''): Promise<string> {
     if (!ai || !GEMINI_API_KEY) {
       // Fallback to rule-based responses
@@ -461,9 +455,11 @@ Generate a brief, professional status update or commentary (1-2 sentences max) t
 };
 
 // ===========================
-// PYTH NETWORK PRICE FEED SERVICE (FALLBACK)
+// CRYPTO PRICE SERVICES (LEGACY - COMMENTED OUT FOR FRAUD-ONLY FOCUS)
 // ===========================
 
+/*
+// PYTH NETWORK PRICE FEED SERVICE (FALLBACK)
 interface PythPriceData {
   id: string;
   price: {
@@ -545,9 +541,10 @@ const pythService = {
 };
 
 // ===========================
-// COINGECKO CRYPTO SERVICE (PRIMARY)
+// COINGECKO CRYPTO SERVICE (LEGACY - COMMENTED OUT FOR FRAUD-ONLY FOCUS)
 // ===========================
 
+/*
 export interface CryptoPriceData {
   symbol: string;
   price: number;
@@ -590,7 +587,7 @@ function getCoinGeckoId(input: string): string {
   return mapping[normalized] || normalized;
 }
 
-export const coingeckoService = {
+const coingeckoService = {
   async getMarketData(coinId: string = 'ethereum'): Promise<CryptoPriceData> {
     // Convert symbol to CoinGecko ID
     coinId = getCoinGeckoId(coinId);
@@ -707,11 +704,13 @@ export const coingeckoService = {
     };
   }
 };
+*/
 
 // ===========================
-// TWELVEDATA CRYPTO SERVICE (LEGACY)
+// CRYPTO PRICE SERVICE (LEGACY - COMMENTED OUT FOR FRAUD-ONLY FOCUS)
 // ===========================
 
+/*
 export const cryptoService = {
   async getPrice(symbol: string = 'ETH/USD'): Promise<CryptoPriceData> {
     if (!TWELVEDATA_API_KEY) {
@@ -793,6 +792,7 @@ export const cryptoService = {
     };
   }
 };
+*/
 
 // ===========================
 // NEWS SENTIMENT SERVICE
@@ -815,63 +815,9 @@ export interface NewsSentiment {
 }
 
 export const newsService = {
-  async getCryptoNews(query: string = 'cryptocurrency'): Promise<NewsSentiment> {
-    const cacheKey = `news_${query}`;
-    
-    // Check cache first (10 minutes TTL for news)
-    const cached = cache.get<NewsSentiment>(cacheKey);
-    if (cached) {
-      return cached;
-    }
-
-    if (!NEWS_API_KEY) {
-      console.warn('News API key not configured');
-      return this._getFallbackNews();
-    }
-
-    // Check rate limit
-    if (!rateLimiter.canMakeCall('news')) {
-      console.warn('⏳ News API rate limit reached, using fallback');
-      return this._getFallbackNews();
-    }
-
-    try {
-      rateLimiter.recordCall('news');
-      
-      const response = await fetch(
-        `https://newsapi.org/v2/everything?q=${query}&sortBy=publishedAt&pageSize=10&apiKey=${NEWS_API_KEY}`
-      );
-
-      if (!response.ok) {
-        throw new Error(`News API error: ${response.status}`);
-      }
-
-      const data = await response.json();
-      const articles: NewsArticle[] = (data.articles || []).map((article: any) => ({
-        title: article.title,
-        description: article.description,
-        url: article.url,
-        publishedAt: article.publishedAt,
-        source: article.source?.name || 'Unknown',
-        sentiment: this._analyzeSentiment(article.title + ' ' + article.description)
-      }));
-
-      const score = this._calculateOverallSentiment(articles);
-      
-      const result: NewsSentiment = {
-        articles,
-        overallSentiment: score > 0.2 ? 'bullish' : score < -0.2 ? 'bearish' : 'neutral',
-        score
-      };
-
-      // Cache the result (10 minutes)
-      cache.set(cacheKey, result, 600);
-      
-      return result;
-    } catch (error) {
-      console.error('News API error:', error);
-      return this._getFallbackNews();
-    }
+  async getCryptoNews(query: string = 'fraud scam'): Promise<NewsSentiment> {
+    // Stub function - returns fallback only (News API removed, use Gemini AI instead)
+    return this._getFallbackNews();
   },
 
   _analyzeSentiment(text: string): 'positive' | 'negative' | 'neutral' {
@@ -918,9 +864,10 @@ export const newsService = {
 };
 
 // ===========================
-// HEDERA MIRROR NODE SERVICE
+// HEDERA MIRROR NODE SERVICE (LEGACY - COMMENTED OUT FOR FRAUD-ONLY FOCUS)
 // ===========================
 
+/*
 export interface HederaAccount {
   account: string;
   balance: number;
@@ -1009,13 +956,13 @@ export const hederaService = {
     }
   }
 };
+*/
 
 // ===========================
 // UNIFIED API ORCHESTRATOR
 // ===========================
 
 export interface AgentIntelligence {
-  marketData?: CryptoPriceData;
   sentiment?: NewsSentiment;
   onchainData?: any;
   aiInsight?: string;
@@ -1023,33 +970,33 @@ export interface AgentIntelligence {
 }
 
 export const orchestrator = {
-  async getMarketResearch(coinId: string = 'ethereum'): Promise<AgentIntelligence> {
+  async getMarketResearch(topic: string = 'fraud detection trends'): Promise<AgentIntelligence> {
     const results: AgentIntelligence = {
       timestamp: Date.now()
     };
 
     try {
-      // Get comprehensive market data from CoinGecko
-      const marketData = await coingeckoService.getMarketData(coinId);
-      results.marketData = marketData;
-
-      // Generate AI analysis based on real data
+      // Generate AI-powered fraud intelligence
       try {
-        const context = `${marketData.symbol} is trading at $${marketData.price.toLocaleString()} with a 24h change of ${marketData.changePercent >= 0 ? '+' : ''}${marketData.changePercent.toFixed(2)}%. Market cap: $${(marketData.marketCap / 1e9).toFixed(2)}B. Volume: $${(marketData.volume / 1e9).toFixed(2)}B.`;
-        const aiResponse = await geminiService.analyzeMarket(marketData.symbol, marketData);
+        const prompt = `Provide a brief intelligence briefing on current ${topic} focusing on emerging fraud patterns, prevention strategies, and market risks.`;
+        const aiResponse = await geminiService.generateAgentDialogue(
+          'Intelligence Analyst',
+          prompt,
+          `Analyzing ${topic}`
+        );
         
         if (aiResponse && !aiResponse.includes('unavailable') && !aiResponse.includes('busy')) {
           results.aiInsight = aiResponse;
         } else {
-          results.aiInsight = `Market analysis: ${context}`;
+          results.aiInsight = `Analyzing ${topic} for fraud defense intelligence...`;
         }
       } catch (error) {
-        results.aiInsight = `${marketData.symbol} at $${marketData.price.toLocaleString()}. 24h: ${marketData.changePercent >= 0 ? '+' : ''}${marketData.changePercent.toFixed(2)}%`;
+        results.aiInsight = `Intelligence analysis for ${topic} is currently being processed...`;
       }
 
       return results;
     } catch (error) {
-      console.error('Market research error:', error);
+      console.error('Intelligence research error:', error);
       return results;
     }
   },
@@ -1060,46 +1007,30 @@ export const orchestrator = {
     };
 
     try {
-      // Parallel API calls for efficiency
-      const [marketData, sentiment, transactions] = await Promise.all([
-        coingeckoService.getMarketData('ethereum').catch(() => undefined),
-        newsService.getCryptoNews(symbol.split('/')[0]).catch(() => undefined),
-        hederaService.getRecentTransactions(undefined, 5).catch(() => [])
+      // Parallel API calls for efficiency - simplified for fraud defense
+      const [sentiment] = await Promise.all([
+        newsService.getCryptoNews('fraud scam').catch(() => undefined)
       ]);
 
-      results.marketData = marketData;
       results.sentiment = sentiment;
-      results.onchainData = { recentTransactions: transactions };
 
       // Generate AI insight based on collected data (non-blocking)
       try {
-        if (marketData && marketData.price && sentiment) {
-          const context = `${symbol} is at $${marketData.price.toFixed(2)} with ${sentiment.overallSentiment} sentiment`;
+        if (sentiment) {
+          const context = `Fraud defense monitoring with ${sentiment.overallSentiment} sentiment in scam news`;
           const aiResponse = await geminiService.generateStrategy(agentRole, context);
           // Only use AI response if it's not an error message
           if (aiResponse && !aiResponse.includes('unavailable') && !aiResponse.includes('busy')) {
             results.aiInsight = aiResponse;
           } else {
-            results.aiInsight = `Monitoring ${symbol}. Current price: $${marketData.price.toFixed(2)}`;
-          }
-        } else if (marketData && marketData.price) {
-          const context = `${symbol} is currently at $${marketData.price.toFixed(2)}`;
-          const aiResponse = await geminiService.generateStrategy(agentRole, context);
-          if (aiResponse && !aiResponse.includes('unavailable') && !aiResponse.includes('busy')) {
-            results.aiInsight = aiResponse;
-          } else {
-            results.aiInsight = `${symbol} at $${marketData.price.toFixed(2)}. Standing by for market signals.`;
+            results.aiInsight = `Monitoring fraud patterns. Sentiment: ${sentiment.overallSentiment}`;
           }
         } else {
-          results.aiInsight = 'Awaiting market data feed. Systems operational.';
+          results.aiInsight = 'Awaiting fraud intelligence feed. Systems operational.';
         }
       } catch (error) {
-        // Fallback insight when AI is completely unavailable
-        if (marketData && marketData.price) {
-          results.aiInsight = `Agent ready. Tracking ${symbol} at $${marketData.price.toFixed(2)}.`;
-        } else {
-          results.aiInsight = 'Systems operational. Awaiting data feed.';
-        }
+        // Fallback insight when AI is unavailable
+        results.aiInsight = 'Fraud defense systems operational. Standing by for intelligence updates.';
       }
 
       return results;
@@ -1109,16 +1040,14 @@ export const orchestrator = {
     }
   },
 
-  async analyzeMultiChainActivity(): Promise<any> {
-    const [hederaStats, ethPrice, btcPrice] = await Promise.all([
-      hederaService.getNetworkStats(),
-      cryptoService.getPrice('ETH/USD'),
-      cryptoService.getPrice('BTC/USD')
-    ]);
+  // analyzeMultiChainActivity() removed - not needed for fraud defense
+  async analyzeFraudPatterns(): Promise<any> {
+    // Fraud defense focused analysis
+    const newsData = await newsService.getCryptoNews('scam fraud')
+      .catch(() => ({ articles: [], overallSentiment: 'neutral' as const, score: 0 }));
 
     return {
-      hedera: hederaStats,
-      prices: { eth: ethPrice, btc: btcPrice },
+      fraudNews: newsData,
       timestamp: Date.now()
     };
   }
@@ -1227,6 +1156,11 @@ export const agentStatusManager = {
   }
 };
 
+// ===========================
+// CRYPTO SWAP SERVICES (LEGACY - COMMENTED OUT FOR FRAUD-ONLY FOCUS)
+// ===========================
+
+/*
 // --- SauceSwap DEX Service for HBAR/SAUCE Swaps ---
 export const sauceSwapService = {
   baseURL: 'https://api.sauceswap.finance',
@@ -1337,11 +1271,13 @@ export const sauceSwapService = {
     };
   }
 };
+*/
 
 // ===========================
-// PYTH NETWORK PRICE SERVICE
+// PYTH NETWORK PRICE SERVICE (LEGACY - COMMENTED OUT FOR FRAUD-ONLY FOCUS)
 // ===========================
 
+/*
 export const pythNetworkService = {
   // Pyth Network price feed IDs
   PRICE_FEED_IDS: {
@@ -1415,11 +1351,13 @@ export const pythNetworkService = {
     };
   }
 };
+*/
 
 // ===========================
-// HEDERA SWAP TRACKING SERVICE
+// HEDERA SWAP TRACKING SERVICE (LEGACY - COMMENTED OUT FOR FRAUD-ONLY FOCUS)
 // ===========================
 
+/*
 export const hederaSwapTracker = {
   SAUCERSWAP_ROUTER_ADDRESS: '0x00000000000000000000000000000000002e1fa7', // Example
   
@@ -1502,14 +1440,12 @@ export const hederaSwapTracker = {
     }
   }
 };
+*/
 
 // Make utilities available globally for debugging
 if (typeof window !== 'undefined') {
   (window as any).apiUtils = apiUtils;
   (window as any).agentStatusManager = agentStatusManager;
-  (window as any).sauceSwapService = sauceSwapService;
-  (window as any).pythNetworkService = pythNetworkService;
-  (window as any).hederaSwapTracker = hederaSwapTracker;
   
   // Helpful console commands
   console.log('%c🛡️ GALAXY AGENTS FRAUD DEFENSE', 'color: #39ff14; font-weight: bold; font-size: 14px;');
@@ -1519,5 +1455,4 @@ if (typeof window !== 'undefined') {
   console.log('  apiUtils.clearCache() - Clear all cached data');
   console.log('  apiUtils.shouldMakeApiCall("gemini") - Check if safe to call API');
   console.log('  agentStatusManager.getAllStatuses() - View agent activity cache');
-  console.log('  sauceSwapService.getSwapQuote(0.02) - Get HBAR→SAUCE swap quote');
 }

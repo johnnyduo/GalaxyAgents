@@ -72,3 +72,30 @@
 .animate-fade-in {
   animation: fade-in 0.3s ease-in-out;
 }
+/* ReactFlow Controls styling */
+.react-flow__controls {
+  background: rgba(17, 24, 39, 0.95) !important;
+  border: 1px solid rgba(67, 255, 77, 0.3) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 0 20px rgba(67, 255, 77, 0.2) !important;
+}
+
+.react-flow__controls-button {
+  background: rgba(26, 26, 26, 0.8) !important;
+  border-bottom: 1px solid rgba(67, 255, 77, 0.2) !important;
+  color: #43FF4D !important;
+  transition: all 0.2s ease !important;
+}
+
+.react-flow__controls-button:hover {
+  background: rgba(67, 255, 77, 0.2) !important;
+  color: #43FF4D !important;
+}
+
+.react-flow__controls-button svg {
+  fill: #43FF4D !important;
+}
+
+.react-flow__controls-button:hover svg {
+  fill: #ffffff !important;
+}

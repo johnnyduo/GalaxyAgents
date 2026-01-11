@@ -37,26 +37,31 @@ export const AgentResultsPage: React.FC<AgentResultsPageProps> = ({
 
   const getTaskIcon = (taskType: AgentTaskResult['taskType']) => {
     switch (taskType) {
-      case 'market_research': return <Search className="w-5 h-5" />;
-      case 'sentiment_analysis': return <TrendingUp className="w-5 h-5" />;
-      case 'security_audit': return <Shield className="w-5 h-5" />;
-      case 'price_prediction': return <Target className="w-5 h-5" />;
-      case 'arbitrage_scan': return <Zap className="w-5 h-5" />;
-      case 'route_optimization': return <TrendingDown className="w-5 h-5" />;
-      case 'swap_execution': return <DollarSign className="w-5 h-5" />;
+      case 'fraud_detection': return <Shield className="w-5 h-5" />;
+      case 'pattern_analysis': return <Search className="w-5 h-5" />;
+      case 'database_search': return <Search className="w-5 h-5" />;
+      case 'verification': return <CheckCircle className="w-5 h-5" />;
+      case 'user_assistance': return <TrendingUp className="w-5 h-5" />;
+      case 'education': return <Target className="w-5 h-5" />;
+      case 'alert_broadcast': return <Zap className="w-5 h-5" />;
+      case 'strategic_command': return <Target className="w-5 h-5" />;
+      case 'custom_order': return <Zap className="w-5 h-5" />;
+      default: return <Activity className="w-5 h-5" />;
     }
   };
 
   const getTaskName = (taskType: AgentTaskResult['taskType']) => {
     switch (taskType) {
-      case 'market_research': return 'Market Research';
-      case 'sentiment_analysis': return 'Sentiment Analysis';
-      case 'security_audit': return 'Security Audit';
-      case 'price_prediction': return 'Price Prediction';
-      case 'arbitrage_scan': return 'Arbitrage Scanner';
-      case 'route_optimization': return 'Route Optimization';
-      case 'swap_execution': return 'DEX Swap Execution';
-      case 'custom_order': return 'Custom Order';
+      case 'fraud_detection': return 'Fraud Detection';
+      case 'pattern_analysis': return 'Pattern Analysis';
+      case 'database_search': return 'Database Search';
+      case 'verification': return 'Verification Check';
+      case 'user_assistance': return 'User Protection';
+      case 'education': return 'Scam Education';
+      case 'alert_broadcast': return 'Emergency Alert';
+      case 'strategic_command': return 'Strategic Command';
+      case 'custom_order': return 'Custom Operation';
+      default: return taskType.replace(/_/g, ' ').toUpperCase();
     }
   };
 
@@ -140,12 +145,13 @@ export const AgentResultsPage: React.FC<AgentResultsPageProps> = ({
     if (!ability) return null;
 
     const orders: { [key: string]: string } = {
-      'a1': `"Monitor all major DeFi token prices using ${ability.apis.join(' & ')}. Provide real-time market intelligence on HBAR, ETH, BTC, and SAUCE pairs. Track volume spikes and price movements."`,
-      'a2': `"Analyze market sentiment across news sources using ${ability.apis.join(' & ')}. Process breaking news about Hedera, DeFi, and crypto markets. Score sentiment and detect emerging trends."`,
-      'a3': `"Execute HBAR trading operations on ${ability.apis[0]} when conditions are favorable. Trade HBAR/USDC and HBAR/SAUCE pairs, calculate slippage, and monitor DEX pools.${(ability as any).maxTradeSize ? ` Maximum trade: ${(ability as any).maxTradeSize}.` : ''}"`,
-      'a4': `"Assess portfolio risk and calculate risk metrics using ${ability.apis.join(' & ')}. Analyze volatility, risk-reward ratios, position sizing, and portfolio exposure. Protect against excessive risk."`,
-      'a5': `"Generate AI-powered predictions using ${ability.apis.join(' & ')}. Analyze chart patterns, forecast price movements, and identify support/resistance levels for key assets."`,
-      'a6': `"Monitor breaking news and whale movements using ${ability.apis.join(' & ')}. Alert on major transactions, detect market-moving events, and track real-time developments."`
+      'a0': `"Coordinate all fraud defense operations using ${ability.apis.join(' & ')}. Prioritize threats, allocate team resources, and maintain strategic oversight of scam prevention network."`,
+      'a1': `"Scan for emerging fraud patterns using ${ability.apis.join(' & ')}. Monitor SMS scams, LINE impersonation, QR code frauds, and fake banking alerts. Report new threat patterns immediately."`,
+      'a2': `"Search intelligence database for pattern matches using ${ability.apis.join(' & ')}. Cross-reference suspicious activity with historical fraud cases. Provide similarity scores and case recommendations."`,
+      'a3': `"Assist citizens with scam verification using ${ability.apis.join(' & ')}. Analyze suspicious SMS, emails, and calls. Provide instant protection guidance and friendly fraud prevention advice."`,
+      'a4': `"Create fraud awareness content using ${ability.apis.join(' & ')}. Develop interactive training, educational videos, infographics, and scam simulations. Make fraud prevention engaging and viral."`,
+      'a5': `"Protect businesses from BEC and invoice fraud using ${ability.apis.join(' & ')}. Verify email authenticity, analyze invoices, detect domain spoofing, and prevent wire transfer scams."`,
+      'a6': `"Broadcast emergency fraud alerts using ${ability.apis.join(' & ')}. Deliver multi-channel warnings via SMS, LINE, Email, and push notifications. Lightning-fast threat distribution to protect citizens."`
     };
 
     return orders[agentId] || null;
@@ -313,80 +319,6 @@ export const AgentResultsPage: React.FC<AgentResultsPageProps> = ({
                 <span>DATA SOURCE</span>
               </div>
               <div className="text-xs text-gray-400">{data.dataSource || 'Real-time market data from CoinGecko API'}</div>
-            </div>
-          </div>
-        );
-      }
-
-      // Swap Execution - DEX Trading on SaucerSwap
-      if (result.taskType === 'swap_execution' && data.swap) {
-        return (
-          <div className="space-y-3">
-            <div className="grid grid-cols-2 gap-3">
-              <div className="bg-gray-900/50 border border-purple-500/30 rounded-lg p-4">
-                <div className="text-xs text-gray-400 mb-1 font-mono">SWAP DETAILS</div>
-                <div className="text-sm font-bold text-purple-400 font-mono">
-                  {data.swap.amountIn} {data.swap.tokenIn} → {data.swap.amountOut} {data.swap.tokenOut}
-                </div>
-                <div className="text-xs text-gray-500 mt-1 font-mono">testnet.saucerswap.finance</div>
-              </div>
-              <div className="bg-gray-900/50 border border-gray-700 rounded-lg p-4">
-                <div className="text-xs text-gray-400 mb-1 font-mono">EXECUTION RATE</div>
-                <div className="text-lg font-bold text-white font-mono">{data.swap.rate || 'N/A'}</div>
-                <div className="text-xs text-gray-500 mt-1 font-mono">
-                  Slippage: {data.swap.slippage || '0.5'}%
-                </div>
-              </div>
-            </div>
-
-            {data.swap.profitability && (
-              <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-3">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="text-xs text-green-400 mb-1 font-mono">PROFITABILITY SIGNAL</div>
-                    <div className="text-sm text-white font-mono">{data.swap.profitability}</div>
-                  </div>
-                  <TrendingUp className="w-6 h-6 text-green-400" />
-                </div>
-              </div>
-            )}
-
-            {result.txHash && result.txUrl && (
-              <div className="bg-neon-green/10 border border-neon-green/30 rounded-lg p-3">
-                <div className="flex items-center justify-between gap-3">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 text-xs text-neon-green font-mono mb-1">
-                      <Server className="w-3 h-3" />
-                      <span>ON-CHAIN TRANSACTION</span>
-                    </div>
-                    <div className="text-xs text-gray-400 font-mono break-all">
-                      TX: {result.txHash}
-                    </div>
-                  </div>
-                  <a 
-                    href={result.txUrl} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-1 px-3 py-1.5 bg-neon-green/20 hover:bg-neon-green/30 border border-neon-green/50 rounded text-neon-green text-xs font-mono transition-all"
-                  >
-                    <ExternalLink className="w-3 h-3" />
-                    HashScan
-                  </a>
-                </div>
-              </div>
-            )}
-
-            <div className="bg-purple-500/10 border border-purple-500/30 rounded-lg p-3">
-              <div className="flex items-center gap-2 text-xs text-purple-400 font-mono mb-1">
-                <DollarSign className="w-3 h-3" />
-                <span>TRADE LIMITS & REQUIREMENTS</span>
-              </div>
-              <div className="text-xs text-gray-400 mb-2">
-                Max per trade: 0.05 HBAR • Network: Hedera Testnet • Auto-execution enabled
-              </div>
-              <div className="text-xs text-yellow-400 bg-yellow-500/10 border border-yellow-500/30 rounded px-2 py-1">
-                ⚠️ Trading operations require Merchant agent (Reynard Swift - a3) to be active on canvas
-              </div>
             </div>
           </div>
         );

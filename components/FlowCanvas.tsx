@@ -354,7 +354,16 @@ const FlowCanvas: React.FC<FlowCanvasProps> = ({
           size={1} 
           color="#1f2937" 
         />
-        <Controls className="bg-black border border-white/20 fill-white" />
+        <Controls 
+          className="!bg-gray-900 !border-neon-green/30 !rounded-lg !shadow-lg"
+          style={{
+            button: {
+              backgroundColor: '#1a1a1a',
+              borderColor: '#43FF4D40',
+              color: '#43FF4D',
+            }
+          }}
+        />
       </ReactFlow>
       
       {activeAgents.length === 0 && (

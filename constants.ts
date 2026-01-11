@@ -210,41 +210,38 @@ export const AGENTS: AgentMetadata[] = [
 export const AGENT_ABILITIES = {
   'a0': { // Big Boss - Command Center
     primary: 'Strategic Fraud Defense Coordination',
-    apis: ['Gemini AI', 'CoinGecko API'],
+    apis: ['Gemini AI'],
     operations: ['Team orchestration', 'Threat prioritization', 'Defense strategy', 'Resource allocation'],
     canExecute: ['coordinate_defense', 'approve_alerts', 'strategic_planning', 'team_management'],
     apiEndpoints: {
-      'Gemini AI': 'https://generativelanguage.googleapis.com/v1beta',
-      'CoinGecko API': 'https://api.coingecko.com/api/v3'
+      'Gemini AI': 'https://generativelanguage.googleapis.com/v1beta'
     }
   },
   'a1': { // Hawk Eye - Threat Radar
     primary: 'Fraud Pattern Detection',
-    apis: ['News API', 'Gemini AI'],
+    apis: ['Gemini AI'],
     operations: ['Scam pattern scanning', 'Trend analysis', 'Early threat detection', 'Anomaly identification'],
     canExecute: ['pattern_scan', 'threat_detection', 'trend_analysis', 'early_warning'],
     taskType: 'fraud_detection',
-    dataSource: 'News aggregation and AI analysis',
+    dataSource: 'AI-powered analysis',
     apiEndpoints: {
-      'News API': 'https://newsapi.org/v2',
       'Gemini AI': 'https://generativelanguage.googleapis.com/v1beta'
     }
   },
   'a2': { // Memory Bank - Intelligence Database
     primary: 'Scam Pattern Matching',
-    apis: ['Gemini AI', 'News API'],
+    apis: ['Gemini AI'],
     operations: ['Case database management', 'Fingerprint matching', 'Historical analysis', 'Similarity scoring'],
     canExecute: ['pattern_match', 'case_lookup', 'fingerprint_analysis', 'historical_search'],
     taskType: 'database_analysis',
     dataSource: 'Scam intelligence database',
     apiEndpoints: {
-      'Gemini AI': 'https://generativelanguage.googleapis.com/v1beta',
-      'News API': 'https://newsapi.org/v2'
+      'Gemini AI': 'https://generativelanguage.googleapis.com/v1beta'
     }
   },
   'a3': { // Guardian Angel - Personal Protection
     primary: 'Citizen Protection & Assistance',
-    apis: ['Gemini AI', 'News API'],
+    apis: ['Gemini AI'],
     operations: ['SMS analysis', 'Call screening', 'Scam Q&A', 'Personal alerts'],
     canExecute: ['sms_check', 'call_screen', 'answer_questions', 'personal_alert'],
     taskType: 'personal_protection',
@@ -252,52 +249,51 @@ export const AGENT_ABILITIES = {
     protectionModes: ['SMS screening', 'Call blocking', 'Link verification', 'Real-time Q&A'],
     responseTime: 'Instant',
     apiEndpoints: {
-      'Gemini AI': 'https://generativelanguage.googleapis.com/v1beta',
-      'News API': 'https://newsapi.org/v2'
+      'Gemini AI': 'https://generativelanguage.googleapis.com/v1beta'
     }
   },
   'a4': { // Scam Trainer - Education Expert
     primary: 'Fraud Awareness & Training',
-    apis: ['Gemini AI', 'News API'],
+    apis: ['Gemini AI'],
     operations: ['Interactive simulations', 'Training content creation', 'Infographic generation', 'Video scripting'],
     canExecute: ['create_simulation', 'generate_training', 'create_infographic', 'educational_content'],
     taskType: 'fraud_education',
     contentTypes: ['Video scripts', 'Interactive games', 'Infographics', 'Case studies'],
     apiEndpoints: {
-      'Gemini AI': 'https://generativelanguage.googleapis.com/v1beta',
-      'News API': 'https://newsapi.org/v2'
+      'Gemini AI': 'https://generativelanguage.googleapis.com/v1beta'
     }
   },
   'a5': { // Money Guard - Business Protector
     primary: 'Business Email Compromise Prevention',
-    apis: ['Gemini AI', 'CoinGecko API'],
+    apis: ['Gemini AI'],
     operations: ['Invoice verification', 'Email authenticity check', 'BEC detection', 'Transaction validation'],
     canExecute: ['verify_invoice', 'check_email', 'detect_bec', 'validate_transaction'],
     taskType: 'business_protection',
     dataSource: 'Invoice patterns and email analysis',
     protectionAreas: ['Invoice fraud', 'Email spoofing', 'Wire transfer scams', 'Vendor impersonation'],
     apiEndpoints: {
-      'Gemini AI': 'https://generativelanguage.googleapis.com/v1beta',
-      'CoinGecko API': 'https://api.coingecko.com/api/v3'
+      'Gemini AI': 'https://generativelanguage.googleapis.com/v1beta'
     }
   },
   'a6': { // Lightning Alert - Emergency Broadcaster
     primary: 'Rapid Alert System',
-    apis: ['News API', 'Gemini AI'],
+    apis: ['Gemini AI'],
     operations: ['Emergency broadcasting', 'Multi-channel alerts', 'Priority routing', 'Real-time notifications'],
     canExecute: ['broadcast_alert', 'send_notification', 'priority_message', 'emergency_broadcast'],
     taskType: 'emergency_alert',
     channels: ['SMS', 'Email', 'LINE', 'Push notifications'],
     responseTime: '< 1 second',
     apiEndpoints: {
-      'News API': 'https://newsapi.org/v2',
       'Gemini AI': 'https://generativelanguage.googleapis.com/v1beta'
     }
   }
 };
 
 export const INITIAL_LOGS: any[] = [
-  { id: 'sys-1', timestamp: '10:00:00', type: 'SYSTEM', content: '🛡️ Galaxy Agents Fraud Defense System Initialized' },
-  { id: 'sys-2', timestamp: '10:00:01', type: 'SYSTEM', content: '✅ AI-Powered Dialogue System Ready' },
-  { id: 'sys-3', timestamp: '10:00:02', type: 'SYSTEM', content: '📡 All defense agents on standby' },
+  { id: 'sys-1', timestamp: '10:00:00', type: 'SYSTEM', content: '🛡️ Galaxy Agents Anti-Fraud Defense Network: ONLINE' },
+  { id: 'sys-2', timestamp: '10:00:01', type: 'SYSTEM', content: '🤖 AI Threat Analysis Engine: READY' },
+  { id: 'sys-3', timestamp: '10:00:02', type: 'SYSTEM', content: '📡 Real-time Scam Detection Grid: ACTIVE' },
+  { id: 'sys-4', timestamp: '10:00:03', type: 'SYSTEM', content: '⚡ Emergency Alert Broadcast System: STANDBY' },
+  { id: 'sys-5', timestamp: '10:00:04', type: 'SYSTEM', content: '📚 Fraud Pattern Database: 847,392 cases indexed' },
+  { id: 'sys-6', timestamp: '10:00:05', type: 'SYSTEM', content: '✅ All 7 specialized agents awaiting activation...' },
 ];

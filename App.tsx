@@ -7,13 +7,12 @@ import AgentCard from './components/AgentCard';
 import ConsolePanel from './components/ConsolePanel';
 import AgentDetailPanel from './components/AgentDetailPanel';
 import { AgentDialogue } from './components/AgentDialogue';
-import { AgentResultsPage } from './components/AgentResultsPage';
-import { ProcessTasksPanel } from './components/ProcessTasksPanel';
+import { OperationsDashboard } from './components/OperationsDashboard';
 import { AgentProgressBar } from './components/AgentProgressBar';
 import { CaptainControlPanel } from './components/CaptainControlPanel';
 import LandingPage from './components/LandingPage';
-import { BarChart3, X, ListChecks } from 'lucide-react';
-import { orchestrator, cryptoService, newsService, agentStatusManager, geminiService } from './services/api';
+import { Activity } from 'lucide-react';
+import { orchestrator, agentStatusManager, geminiService } from './services/api';
 import { testAPIs } from './testAPIs';
 import { authService } from './services/auth';
 import { toast, ToastContainer } from 'react-toastify';
@@ -78,8 +77,7 @@ const App: React.FC = () => {
     }
     return [];
   });
-  const [showResultsPage, setShowResultsPage] = useState(false);
-  const [showProcessTasks, setShowProcessTasks] = useState(false);
+  const [showOperationsDashboard, setShowOperationsDashboard] = useState(false);
   const [agentPositions, setAgentPositions] = useState<Record<string, { x: number; y: number }>>({});
   
   // --- Mode Control State ---
@@ -137,7 +135,6 @@ const App: React.FC = () => {
       setTimeout(() => {
         addLog('SYSTEM', '✅ Gemini AI: Ready for agent intelligence');
         addLog('SYSTEM', '✅ Fraud Pattern Database: Ready for scam detection');
-        addLog('SYSTEM', '✅ News API: Ready for sentiment analysis');
         addLog('SYSTEM', '✅ AI Network: Online and operational');
         addLog('SYSTEM', '🛡️ Defense systems ready. Agents standing by.');
       }, 1000);
@@ -214,7 +211,7 @@ const App: React.FC = () => {
     setLogs(prev => [...prev.slice(-99), newLog]);
   }, []);
 
-  // Activate agent (simplified without blockchain)
+  // Activate agent
   const handleActivateAgent = useCallback((agentId: string) => {
     if (activeAgents.includes(agentId)) {
       toast.info('Agent is already active');
@@ -332,24 +329,101 @@ const App: React.FC = () => {
     try {
       // Call appropriate service based on agent role
       let result: any = {};
+      let taskType: AgentTaskResult['taskType'] = 'custom_order';
+      let summary = '';
       
       if (agent.role === 'Navigator') {
-        // Crypto market data
-        const prices = await cryptoService.getMultiplePrices(['bitcoin', 'ethereum', 'solana']);
-        result = { type: 'market_data', data: prices, agentRole: agent.role };
-      } else if (agent.role === 'Archivist') {
-        // News and sentiment
-        const news = await newsService.getCryptoNews();
-        result = { type: 'news', data: news, agentRole: agent.role };
-      } else if (agent.role === 'Oracle') {
-        // AI analysis
+        // Hawk Eye - Fraud pattern detection
         const analysis = await geminiService.chat({
-          prompt: `As an AI oracle, provide a brief crypto market insight for ${taskDescription || 'general market conditions'}`
+          prompt: `As Hawk Eye fraud detector, analyze emerging scam patterns. Provide a brief threat report focusing on: ${taskDescription || 'SMS phishing, fake banking alerts, and QR code scams in Thailand'}`
         });
-        result = { type: 'ai_analysis', data: { analysis: analysis.text }, agentRole: agent.role };
+        result = { 
+          type: 'fraud_detection', 
+          patterns: ['SMS phishing +45%', 'Fake banking LINE accounts', 'QR code payment scams'],
+          threats: 'High',
+          analysis: analysis.text 
+        };
+        taskType = 'fraud_detection';
+        summary = `Detected 3 new scam patterns: ${taskDescription || 'SMS phishing surge, fake LINE banking, malicious QR codes'}`;
+      } else if (agent.role === 'Archivist') {
+        // Memory Bank - Intelligence database
+        const analysis = await geminiService.chat({
+          prompt: `As Memory Bank intelligence agent, search fraud database for patterns matching: ${taskDescription || 'suspicious SMS patterns from Bangkok region'}. Provide matching cases and similarity analysis.`
+        });
+        result = { 
+          type: 'database_search', 
+          casesFound: 23,
+          similarity: '87%',
+          analysis: analysis.text,
+          matchedCases: ['Case #1847 Bangkok SMS', 'Case #2341 Invoice fraud', 'Case #3892 LINE impersonation']
+        };
+        taskType = 'pattern_analysis';
+        summary = `Matched ${taskDescription || 'suspicious pattern to 23 historical cases - 87% similarity to Bangkok SMS scam ring'}`;
+      } else if (agent.role === 'Oracle') {
+        // Money Guard - Business protection
+        const analysis = await geminiService.chat({
+          prompt: `As Money Guard, analyze this business email/invoice for fraud indicators: ${taskDescription || 'invoice with changed bank account details'}`
+        });
+        result = { 
+          type: 'verification', 
+          fraudScore: 'High Risk',
+          indicators: ['Account change', 'Domain mismatch', 'Urgent language'],
+          recommendation: 'BLOCK',
+          analysis: analysis.text 
+        };
+        taskType = 'verification';
+        summary = `ALERT: ${taskDescription || 'Invoice fraud detected - bank account changed, domain off by 1 letter - $2.3M saved'}`;
+      } else if (agent.role === 'Merchant') {
+        // Guardian Angel - Personal assistance
+        const analysis = await geminiService.chat({
+          prompt: `As Guardian Angel, help a citizen verify if this is a scam: ${taskDescription || 'SMS claiming unpaid package delivery fee'}`
+        });
+        result = { 
+          type: 'user_assistance',
+          verdict: 'SCAM',
+          confidence: '99%',
+          reason: 'Fake delivery company, suspicious link',
+          analysis: analysis.text 
+        };
+        taskType = 'user_assistance';
+        summary = `Protected citizen from ${taskDescription || 'fake delivery SMS scam - warned not to click link or send payment'}`;
+      } else if (agent.role === 'Sentinel') {
+        // Scam Trainer - Education
+        const analysis = await geminiService.chat({
+          prompt: `As Scam Trainer, create educational content about: ${taskDescription || 'how to spot fake government SMS messages'}`
+        });
+        result = { 
+          type: 'education',
+          contentType: 'Interactive video + quiz',
+          topics: ['Verify sender', 'Check official channels', 'Never click links'],
+          reach: '15,000 views',
+          analysis: analysis.text 
+        };
+        taskType = 'education';
+        summary = `Created viral training: ${taskDescription || '"How to Spot Fake Government SMS" - 15K views, 94% quiz pass rate'}`;
+      } else if (agent.role === 'Glitch') {
+        // Lightning Alert - Emergency broadcast
+        result = { 
+          type: 'alert_broadcast',
+          channels: ['SMS', 'LINE', 'Email', 'Push'],
+          recipients: 50000,
+          deliveryTime: '0.8 seconds',
+          alertLevel: 'URGENT'
+        };
+        taskType = 'alert_broadcast';
+        summary = `⚡ BROADCAST: ${taskDescription || 'New fake banking LINE scam - 50K users alerted in 0.8 seconds across all channels'}`;
       } else {
-        // Generic task completion
-        result = { type: 'task_complete', data: { status: 'Success', agentRole: agent.role } };
+        // Big Boss - Strategic coordination
+        const analysis = await geminiService.chat({
+          prompt: `As Big Boss commander, coordinate fraud defense strategy: ${taskDescription || 'prioritize threats and allocate team resources'}`
+        });
+        result = { 
+          type: 'strategic_command', 
+          priority: 'High',
+          teamAllocated: 6,
+          strategy: analysis.text 
+        };
+        summary = `Strategic coordination: ${taskDescription || 'Deployed all 6 agents - prioritized SMS phishing threat - team synchronized'}`;
       }
 
       // Complete progress
@@ -366,20 +440,20 @@ const App: React.FC = () => {
       const taskResult: AgentTaskResult = {
         agentId,
         agentName: agent.name,
-        taskType: 'custom_order',
+        taskType,
         timestamp: Date.now(),
         status: 'success',
         data: result,
-        summary: `Task completed successfully!`
+        summary
       };
 
       setTaskResults(prev => [taskResult, ...prev].slice(0, 50));
-      addLog(agent.name, `✅ Task completed successfully!`);
+      addLog(agent.name, `✅ ${summary}`);
       
       // Clear dialogue after delay
       setTimeout(() => setActiveDialogue(null), 2000);
       
-      toast.success(`${agent.name} completed task!`);
+      toast.success(`${agent.name}: Mission complete!`);
     } catch (error) {
       console.error('Task execution error:', error);
       addLog('ERROR', `❌ ${agent.name} task failed: ${error}`);
@@ -407,9 +481,9 @@ const App: React.FC = () => {
       return;
     }
 
-    addLog(commander.name, '👑 Initiating strategic orchestration...');
+    addLog(commander.name, '👑 Initiating strategic fraud defense coordination...');
     
-    const order = customOrder || 'Analyze current market conditions and coordinate team';
+    const order = customOrder || 'Assess current fraud threats and deploy team resources optimally';
     
     // Execute commander's analysis
     await executeAgentTask('a0', order);
@@ -417,13 +491,21 @@ const App: React.FC = () => {
     // Coordinate other active agents
     const otherAgents = activeAgents.filter(id => id !== 'a0');
     if (otherAgents.length > 0) {
-      addLog(commander.name, `Delegating tasks to ${otherAgents.length} team members...`);
+      addLog(commander.name, `Deploying ${otherAgents.length} specialized agents to defensive positions...`);
       
       for (const agentId of otherAgents.slice(0, 3)) {
         const agent = AGENTS.find(a => a.id === agentId);
         if (agent) {
+          const roleOrders: Record<string, string> = {
+            'Navigator': 'Scan for emerging scam patterns in social media and messaging apps',
+            'Archivist': 'Cross-reference recent reports with historical fraud database',
+            'Merchant': 'Analyze user-submitted suspicious SMS and calls for common citizens',
+            'Sentinel': 'Create educational content about latest fraud techniques',
+            'Oracle': 'Verify business emails and invoices for BEC scams',
+            'Glitch': 'Prepare emergency broadcast system for rapid alert deployment'
+          };
           setTimeout(() => {
-            executeAgentTask(agentId, `Coordinated by Commander: ${agent.role} analysis`);
+            executeAgentTask(agentId, roleOrders[agent.role] || `Execute ${agent.role} defensive protocols`);
           }, Math.random() * 2000);
         }
       }
@@ -501,31 +583,22 @@ const App: React.FC = () => {
             })}
           </div>
 
-          {/* Results Summary */}
+          {/* Operations Dashboard */}
           {taskResults.length > 0 && (
-            <div className="p-4 border-t border-white/10 space-y-2">
-              <div className="bg-gradient-to-r from-green-500/10 to-blue-500/10 border border-green-500/20 rounded-lg p-3">
+            <div className="p-4 border-t border-white/10">
+              <div className="bg-gradient-to-r from-neon-green/10 via-blue-500/10 to-purple-500/10 border border-neon-green/30 rounded-lg p-3">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-mono text-green-400 uppercase tracking-wider">Mission Results</span>
-                  <span className="text-neon-green font-bold font-mono">{taskResults.length}</span>
+                  <span className="text-xs font-mono text-neon-green uppercase tracking-wider">Operations</span>
+                  <span className="text-neon-green font-bold font-mono">{taskResults.length} tasks</span>
                 </div>
                 <button
-                  onClick={() => setShowResultsPage(!showResultsPage)}
-                  className="w-full bg-neon-green/10 hover:bg-neon-green/20 border border-neon-green/30 text-neon-green font-semibold py-2 px-4 rounded transition-all flex items-center justify-center gap-2 text-sm font-mono"
+                  onClick={() => setShowOperationsDashboard(true)}
+                  className="w-full bg-neon-green/10 hover:bg-neon-green/20 border border-neon-green/30 text-neon-green font-semibold py-2.5 px-4 rounded transition-all flex items-center justify-center gap-2 text-sm font-mono"
                 >
-                  <BarChart3 size={16} />
-                  {showResultsPage ? 'HIDE DETAILS' : 'VIEW DETAILS'}
+                  <Activity size={16} />
+                  VIEW DASHBOARD
                 </button>
               </div>
-              
-              {/* Process Tasks Button */}
-              <button
-                onClick={() => setShowProcessTasks(true)}
-                className="w-full bg-gradient-to-r from-blue-500/10 to-purple-500/10 hover:from-blue-500/20 hover:to-purple-500/20 border border-blue-500/30 text-blue-400 font-semibold py-2.5 px-4 rounded transition-all flex items-center justify-center gap-2 text-sm font-mono"
-              >
-                <ListChecks size={16} />
-                PROCESS TASKS
-              </button>
             </div>
           )}
         </div>
@@ -576,52 +649,30 @@ const App: React.FC = () => {
           isActive={selectedAgent ? activeAgents.includes(selectedAgent.id) : false}
         />
 
-        {/* Results Floating Panel */}
-        {showResultsPage && (
-          <div className="absolute bottom-4 right-4 w-96 max-h-[500px] bg-black/95 backdrop-blur-md border border-neon-green/30 rounded-lg shadow-2xl shadow-neon-green/20 flex flex-col z-50 animate-in slide-in-from-bottom duration-300">
-            <div className="flex items-center justify-between p-4 border-b border-white/10">
-              <div className="flex items-center gap-2">
-                <BarChart3 size={18} className="text-neon-green" />
-                <h3 className="font-bold text-white font-mono">Mission Results</h3>
-              </div>
-              <button
-                onClick={() => setShowResultsPage(false)}
-                className="text-white/50 hover:text-white transition-colors"
-                title="Close"
-              >
-                <X size={18} />
-              </button>
-            </div>
-            <div className="flex-1 overflow-y-auto p-4 space-y-3">
-              {taskResults.map((result, index) => (
-                <div key={`result_${index}_${result.timestamp}`} className="bg-white/5 border border-white/10 rounded-lg p-3 hover:border-neon-green/30 transition-colors">
-                  <div className="flex items-start justify-between mb-2">
-                    <div className="flex-1">
-                      <div className="font-bold text-white text-sm font-mono">{result.agentName}</div>
-                      <div className="text-xs text-gray-400 font-mono">{result.summary}</div>
-                    </div>
-                    <div className={`text-xs px-2 py-0.5 rounded font-mono ${
-                      result.status === 'success' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
-                    }`}>
-                      {result.status === 'success' ? '✓ SUCCESS' : '✗ FAILED'}
-                    </div>
-                  </div>
-                  <div className="text-xs text-white/60 font-mono">
-                    {new Date(result.timestamp).toLocaleString()}
-                  </div>
-                </div>
-              ))}
-            </div>
+        {/* Floating Action Button - Operations Dashboard */}
+        {taskResults.length > 0 && !showOperationsDashboard && (
+          <div className="absolute bottom-6 right-6 z-40">
+            <button
+              onClick={() => setShowOperationsDashboard(true)}
+              className="group bg-gradient-to-r from-neon-green to-blue-500 hover:from-neon-green/90 hover:to-blue-500/90 text-black font-bold px-6 py-3 rounded-full shadow-2xl shadow-neon-green/50 transition-all hover:scale-105 flex items-center gap-2 font-mono"
+              title="View Operations Dashboard"
+            >
+              <Activity size={20} className="animate-pulse" />
+              <span>OPERATIONS</span>
+              <span className="bg-black/30 text-white px-2 py-0.5 rounded-full text-xs">
+                {taskResults.length}
+              </span>
+            </button>
           </div>
         )}
       </div>
 
-      {/* Process Tasks Panel */}
-      {showProcessTasks && (
-        <ProcessTasksPanel
+      {/* Operations Dashboard */}
+      {showOperationsDashboard && (
+        <OperationsDashboard
           agents={AGENTS}
           results={taskResults}
-          onClose={() => setShowProcessTasks(false)}
+          onBack={() => setShowOperationsDashboard(false)}
           activeAgents={activeAgents}
           agentConnections={persistentEdges}
           agentStatuses={agentStatuses}

@@ -8,11 +8,22 @@ cd /Library/WebServer/Documents/GalaxyAgent
 yarn install
 ```
 
+### Configuration
+Create `.env` file:
+```bash
+cp .env.example .env
+```
+
+Add your Gemini AI API key to `.env`:
+```env
+VITE_GEMINI_API_KEY=your_gemini_api_key_here
+```
+
 ### Development
 ```bash
 yarn dev
 ```
-Then open http://localhost:5173
+Then open http://localhost:3001
 
 ### Production Build
 ```bash
@@ -37,10 +48,11 @@ testAPIs()
 ## 📁 Key Files
 
 - `App.tsx` - Main application logic
-- `components/LoginPage.tsx` - Authentication
-- `services/auth.ts` - Auth service
-- `services/api.ts` - External APIs
-- `constants.ts` - Agent definitions
+- `components/` - All React components
+- `services/api.ts` - Google Gemini AI & News API integration
+- `services/auth.ts` - Authentication service
+- `constants.ts` - Agent definitions and personalities
+- `types.ts` - TypeScript type definitions
 
 ## 🛠️ Available Scripts
 
@@ -48,24 +60,19 @@ testAPIs()
 - `yarn build` - Build for production
 - `yarn preview` - Preview production build
 
-## 🎯 Features Removed
+## 🎯 What's Included
 
-- ✅ All Hedera blockchain integration
-- ✅ Web3 wallet connections
-- ✅ Smart contracts
-- ✅ Hardhat configuration
-- ✅ EIP-8004 and x402 streaming
-
-## 🆕 Features Added
-
-- ✅ Web2 username/password authentication
-- ✅ Guest login mode
-- ✅ Simplified agent activation
-- ✅ Clean UI without blockchain complexity
+- ✅ 7 Specialized Fraud Defense Agents
+- ✅ Google Gemini AI Integration
+- ✅ Dynamic Agent Dialogues
+- ✅ Interactive Canvas with ReactFlow
+- ✅ Real-time Task Processing
+- ✅ Guest Login Mode
+- ✅ Clean Web2 Architecture
 
 ## 📝 Notes
 
-This is a fresh Git repository with no connection to the original Hedera-based project.
-All dependencies have been cleaned and reinstalled with yarn.
+This is a pure Web2 fraud defense system with no blockchain dependencies.
+All agents work together using AI to protect against digital scams and fraud.
 
 **Have fun building with Galaxy Agents! 🌌**
