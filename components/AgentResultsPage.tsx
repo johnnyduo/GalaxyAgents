@@ -318,7 +318,7 @@ export const AgentResultsPage: React.FC<AgentResultsPageProps> = ({
                 <Activity className="w-3 h-3" />
                 <span>DATA SOURCE</span>
               </div>
-              <div className="text-xs text-gray-400">{data.dataSource || 'Real-time market data from CoinGecko API'}</div>
+              <div className="text-xs text-gray-400">{data.dataSource || 'AI-powered fraud analysis from Gemini'}</div>
             </div>
           </div>
         );

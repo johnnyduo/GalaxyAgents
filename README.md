@@ -292,7 +292,7 @@ case 'new_agent_id':
 The unified command center ([components/OperationsDashboard.tsx](components/OperationsDashboard.tsx)) provides:
 
 ### Features
-- **Auto-migration** - Detects and clears legacy crypto agent data
+- **Auto-migration** - Detects and clears legacy data from previous versions
 - **Manual data clear** - "Clear Data" button for fresh start
 - **Scrollable layout** - Professional flex-based layout with overflow handling
 - **Accurate costs** - Simplified calculation: `results.length × $0.002`

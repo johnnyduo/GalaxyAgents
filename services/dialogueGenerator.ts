@@ -1,23 +1,28 @@
+// ===========================
+// LEGACY DIALOGUE GENERATOR (DEPRECATED)
+// ===========================
+// This file contains legacy crypto trading dialogue logic.
+// The fraud defense system now uses geminiService.generateAgentDialogue() directly.
+// This file is kept for backward compatibility but should not be actively used.
+
 // Dynamic Dialogue Generator for Agent-to-Agent Communication
 // Enhanced with Gemini AI for dynamic, contextual responses
 
 import { AgentMetadata } from '../types';
-import { coingeckoService, CryptoPriceData, geminiService } from './api';
+import { geminiService } from './api';
 
 export interface DialogueContext {
   agentId: string;
-  context?: 'greeting' | 'analyzing' | 'negotiating' | 'success' | 'idle' | 'error' | 'price_alert';
+  context?: 'greeting' | 'analyzing' | 'negotiating' | 'success' | 'idle' | 'error' | 'threat_alert';
   customMessage?: string;
-  priceData?: CryptoPriceData;
   connectedAgents?: AgentMetadata[];
   hasTeam?: boolean;
   connectedToCaptain?: boolean;
 }
 
 export class DialogueGenerator {
-  private priceCache: Map<string, CryptoPriceData> = new Map();
-  private lastPriceFetch: number = 0;
-  private PRICE_CACHE_TTL = 30000; // 30 seconds
+  private lastAnalysisFetch: number = 0;
+  private ANALYSIS_CACHE_TTL = 30000; // 30 seconds
 
   async generateDialogue(agent: AgentMetadata, context: DialogueContext): Promise<string> {
     const { 
@@ -89,11 +94,10 @@ export class DialogueGenerator {
       dialogueContext?: string;
       hasTeam: boolean;
       connectedAgents: AgentMetadata[];
-      priceData?: CryptoPriceData;
       connectedToCaptain: boolean;
     }
   ): string {
-    const { dialogueContext, hasTeam, connectedAgents, priceData, connectedToCaptain } = options;
+    const { dialogueContext, hasTeam, connectedAgents, connectedToCaptain } = options;
     
     const parts: string[] = [];
     
@@ -112,23 +116,10 @@ export class DialogueGenerator {
     return parts.join(', ') || 'normal operations';
   }
 
-  private async fetchLatestPrice(symbol: string = 'ethereum'): Promise<CryptoPriceData | null> {
-    const now = Date.now();
-    
-    // Check cache first
-    if (this.priceCache.has(symbol) && (now - this.lastPriceFetch) < this.PRICE_CACHE_TTL) {
-      return this.priceCache.get(symbol) || null;
-    }
-
-    try {
-      const priceData = await coingeckoService.getMarketData(symbol);
-      this.priceCache.set(symbol, priceData);
-      this.lastPriceFetch = now;
-      return priceData;
-    } catch (error) {
-      console.error('Failed to fetch price for dialogue:', error);
-      return null;
-    }
+  // Legacy method - no longer fetches crypto prices
+  private async fetchLatestPrice(symbol: string = 'fraud-data'): Promise<any | null> {
+    // Stubbed for fraud defense - no crypto price needed
+    return null;
   }
 
   private generateCaptainDialogue(
@@ -137,7 +128,6 @@ export class DialogueGenerator {
       dialogueContext?: string;
       hasTeam: boolean;
       connectedAgents: AgentMetadata[];
-      priceData?: CryptoPriceData;
     }
   ): string {
     const { dialogueContext, hasTeam, connectedAgents, priceData } = options;
@@ -209,22 +199,9 @@ export class DialogueGenerator {
     const { dialogueContext, connectedToCaptain, priceData, dialogues } = options;
 
     // Price-enhanced dialogues for market-focused agents
-    if (priceData && ['a1', 'a2', 'a5'].includes(agent.id)) {
-      const priceStr = priceData.price < 1 
-        ? `$${priceData.price.toFixed(4)}` 
-        : `$${priceData.price.toLocaleString()}`;
-      const changeStr = priceData.changePercent >= 0 
-        ? `+${priceData.changePercent.toFixed(2)}%` 
-        : `${priceData.changePercent.toFixed(2)}%`;
-      const trend = priceData.changePercent >= 0 ? '📈' : '📉';
+    // Price data no longer used for fraud defense - legacy code removed
 
-      // Agent-specific price commentary
-      if (agent.id === 'a1') { // Eagleton - Market Intelligence
-        if (Math.abs(priceData.changePercent) > 5) {
-          return `🦅 From the heights I see: ${priceData.symbol} at ${priceStr} ${trend} ${changeStr}! Major currents shifting, Commander.`;
-        }
-        return `🦅 Scanning markets: ${priceData.symbol} trading ${priceStr} ${trend}. Volume: $${(priceData.volume / 1e9).toFixed(2)}B. Eyes sharp.`;
-      }
+    // Use Gemini AI for fraud-focused dialogues
 
       if (agent.id === 'a2') { // Athena - Sentiment Analysis
         const sentiment = priceData.changePercent > 2 ? 'Bullish winds' : priceData.changePercent < -2 ? 'Bearish shadows' : 'Neutral currents';
