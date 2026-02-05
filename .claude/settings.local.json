@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(*)",
+      "Read(*)",
+      "Write(*)",
+      "Edit(*)",
+      "Glob(*)",
+      "Grep(*)",
+      "WebFetch(*)",
+      "WebSearch(*)",
+      "NotebookEdit(*)",
+      "Task(*)",
+      "WebFetch(domain:www.remotion.dev)",
+      "WebFetch(domain:gsap.com)",
+      "WebFetch(domain:docs.cloud.google.com)",
+      "Bash(npx tsc:*)",
+      "Bash(npm install:*)",
+      "Bash(ls:*)"
+    ],
+    "deny": [
+      "Bash(sudo *)",
+      "Bash(rm -rf *)",
+      "Bash(rm -r /*)"
+    ]
+  }
+}

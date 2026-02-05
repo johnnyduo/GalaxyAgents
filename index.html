@@ -138,6 +138,17 @@
         height: 14px;
         box-shadow: 0 0 10px #43FF4D;
       }
+
+      /* Simulation: floating money loss animation */
+      @keyframes floatUp {
+        0% { opacity: 1; transform: translateY(0); }
+        100% { opacity: 0; transform: translateY(-40px); }
+      }
+      /* Gentle float for dialogue bubbles */
+      @keyframes gentle-float {
+        0%, 100% { transform: translateY(0) translateX(-50%); }
+        50% { transform: translateY(-4px) translateX(-50%); }
+      }
     </style>
   <script type="importmap">
 {

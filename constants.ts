@@ -1,4 +1,4 @@
-import { AgentRole, AgentMetadata } from './types';
+import { AgentRole, AgentMetadata, EvilVariant } from './types';
 
 export const AGENTS: AgentMetadata[] = [
   {
@@ -287,6 +287,133 @@ export const AGENT_ABILITIES = {
       'Gemini AI': 'https://generativelanguage.googleapis.com/v1beta'
     }
   }
+};
+
+// ===========================
+// EVIL AGENT VARIANTS
+// ===========================
+
+export const EVIL_VARIANTS: Record<string, EvilVariant> = {
+  'a0': {
+    name: 'พ.ต.อ.สมชาย',
+    description: 'แอบอ้างเป็นตำรวจกองปราบไซเบอร์ ข่มขู่เหยื่อให้โอนเงิน',
+    personality: {
+      traits: ['Intimidating', 'Deceptive', 'Authoritative', 'Manipulative'],
+      dialogues: [
+        'สวัสดีครับ ผม พ.ต.อ.สมชาย กองบังคับการปราบปรามอาชญากรรมทางเทคโนโลยี',
+        'บัญชีของคุณถูกใช้ในการฟอกเงินข้ามชาติ!',
+        'ถ้าไม่ให้ความร่วมมือ จะออกหมายจับภายใน 24 ชั่วโมง',
+        'โอนเงินไปบัญชีปลอดภัยที่เราจัดให้ เพื่อพิสูจน์ความบริสุทธิ์',
+      ]
+    },
+    avatar: '/lottie/Lion - Breath.json',
+    avatarType: 'lottie',
+    colorTheme: { primary: '#FF4444', glow: 'rgba(255,68,68,0.3)', border: '#FF4444' },
+    trustScore: 15,
+  },
+  'a1': {
+    name: 'จนท.ธนาคาร (ปลอม)',
+    description: 'แอบอ้างเป็นเจ้าหน้าที่ธนาคารยืนยันเรื่องบัญชีผิดปกติ',
+    personality: {
+      traits: ['Smooth-talking', 'Professional-sounding', 'Urgent', 'Deceptive'],
+      dialogues: [
+        'สวัสดีค่ะ ดิฉัน เจ้าหน้าที่จากธนาคาร ขอยืนยันข้อมูลบัญชีของคุณค่ะ',
+        'ระบบตรวจพบความผิดปกติในบัญชีของท่าน ต้องดำเนินการด่วนค่ะ',
+        'กรุณาแจ้ง OTP ที่ได้รับ เพื่อยืนยันตัวตนค่ะ',
+        'เป็นขั้นตอนมาตรฐานค่ะ ไม่ต้องกังวล ข้อมูลปลอดภัย 100%',
+      ]
+    },
+    avatar: '/lottie/running pigeon.json',
+    avatarType: 'lottie',
+    colorTheme: { primary: '#9333EA', glow: 'rgba(147,51,234,0.3)', border: '#9333EA' },
+    trustScore: 10,
+  },
+  'a2': {
+    // Memory Bank ALWAYS stays good — the voice of reason
+    name: 'Memory Bank',
+    description: 'ฐานข้อมูลจดจำรูปแบบการโกง คอยเตือนเหยื่อ',
+    personality: {
+      traits: ['Wise', 'Methodical', 'Memory-keeper', 'Detailed'],
+      dialogues: [
+        'ระวัง! รูปแบบนี้ตรงกับเคสโกง #1847!',
+        'ฐานข้อมูลยืนยัน: นี่คือกลโกงที่พบบ่อยที่สุดในไทย!',
+        'เหยื่อ 142 ราย ถูกหลอกด้วยวิธีเดียวกันนี้!',
+        'อย่าหลงเชื่อ! ข้อมูลทั้งหมดที่คนร้ายบอก ไม่มีจริง!',
+      ]
+    },
+    avatar: '/lottie/Duo Attack.json',
+    avatarType: 'lottie',
+    colorTheme: { primary: '#43FF4D', glow: 'rgba(67,255,77,0.3)', border: '#43FF4D' },
+    trustScore: 99,
+  },
+  'a3': {
+    name: 'น้องพลอย',
+    description: 'สร้างความสัมพันธ์ทางอารมณ์เพื่อหลอกเอาเงิน (Romance Scam)',
+    personality: {
+      traits: ['Charming', 'Emotional', 'Manipulative', 'Patient'],
+      dialogues: [
+        'หวัดดีค่ะ~ เห็นโปรไฟล์แล้วอยากทำความรู้จัก',
+        'พลอยรู้สึกเชื่อมต่อกับพี่มากเลย ไม่เคยรู้สึกแบบนี้',
+        'พลอยมีปัญหาเรื่องเงินน่ะค่ะ... พี่ช่วยได้ไหม?',
+        'ขอยืมแค่นิดเดียวค่ะ แล้วจะคืนให้เดือนหน้า สัญญา~',
+      ]
+    },
+    avatar: '/lottie/Happy Unicorn Dog.json',
+    avatarType: 'lottie',
+    colorTheme: { primary: '#EC4899', glow: 'rgba(236,72,153,0.3)', border: '#EC4899' },
+    trustScore: 8,
+  },
+  'a4': {
+    name: 'กูรูการลงทุน',
+    description: 'หลอกล่อเหยื่อลงทุนในแพลตฟอร์มปลอม ผลตอบแทนสูงเกินจริง',
+    personality: {
+      traits: ['Persuasive', 'Confident', 'Flashy', 'Deceptive'],
+      dialogues: [
+        'การันตีผลตอบแทน 300% ใน 30 วัน! โอกาสพิเศษสำหรับคุณเท่านั้น!',
+        'ลงทุนแค่ 50,000 ได้คืน 150,000! ดูรีวิวจากสมาชิก 10,000 คน!',
+        'คนอื่นรวยกันหมดแล้ว คุณจะรอหรอ?',
+        'ลงทุนวันนี้ รับโบนัส 100%! โปรนี้หมดเวลาเที่ยงคืน!',
+      ]
+    },
+    avatar: '/lottie/Cute bear dancing.json',
+    avatarType: 'lottie',
+    colorTheme: { primary: '#F59E0B', glow: 'rgba(245,158,11,0.3)', border: '#D97706' },
+    trustScore: 5,
+  },
+  'a5': {
+    name: 'คุณสมคิด (ธนาคาร)',
+    description: 'แอบอ้างเป็นผู้จัดการธนาคาร หลอกเอาข้อมูลบัญชีและ OTP',
+    personality: {
+      traits: ['Professional', 'Trustworthy-sounding', 'Urgent', 'Technical'],
+      dialogues: [
+        'สวัสดีครับ ผม สมคิด ผู้จัดการสาขาธนาคาร ขอแจ้งเรื่องด่วนครับ',
+        'มีรายการผิดปกติในบัญชีของท่าน ต้องยืนยันตัวตนด่วน',
+        'กรุณากดลิงก์นี้เพื่ออัปเดตข้อมูลบัญชี ก่อนที่จะถูกอายัด',
+        'เป็นมาตรฐาน ธปท. ครับ ทุกธนาคารต้องทำ ไม่มีอะไรน่ากังวล',
+      ]
+    },
+    avatar: '/lottie/happy fox.json',
+    avatarType: 'lottie',
+    colorTheme: { primary: '#1E1E1E', glow: 'rgba(30,30,30,0.5)', border: '#F59E0B' },
+    trustScore: 12,
+  },
+  'a6': {
+    name: 'SMS Bot ร้าย',
+    description: 'ส่ง SMS/LINE หลอกลวงจำนวนมากพร้อมลิงก์อันตราย',
+    personality: {
+      traits: ['Relentless', 'Automated', 'Deceptive', 'Mass-targeting'],
+      dialogues: [
+        '[SMS] คุณมีพัสดุที่ยังไม่ได้ชำระค่าส่ง กรุณากดลิงก์: bit.ly/xxx',
+        '[SMS] ธนาคารแจ้งเตือน: บัญชีผิดปกติ ยืนยันตัวตนที่ http://fake-bank.com',
+        '[LINE] คุณได้รับสิทธิ์คืนเงินภาษี 15,000 บาท คลิกรับสิทธิ์เลย!',
+        '[SMS] ระบบ e-Tax: คุณค้างชำระภาษี กรุณาจ่ายก่อนถูกฟ้อง คลิก →',
+      ]
+    },
+    avatar: '/lottie/Dragon.json',
+    avatarType: 'lottie',
+    colorTheme: { primary: '#EA580C', glow: 'rgba(234,88,12,0.3)', border: '#EA580C' },
+    trustScore: 3,
+  },
 };
 
 export const INITIAL_LOGS: any[] = [

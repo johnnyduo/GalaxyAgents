@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { AgentTaskResult, AgentMetadata } from '../types';
 import { Shield, Search, Target, Zap, Clock, CheckCircle, XCircle, AlertCircle, DollarSign, Activity, Server, ChevronDown, ChevronUp, Users, TrendingUp, Radio, Brain, Database, Bell, ArrowLeft, BarChart3, ListChecks } from 'lucide-react';
 import { AGENT_ABILITIES } from '../constants';
@@ -24,33 +24,6 @@ export const OperationsDashboard: React.FC<OperationsDashboardProps> = ({
   const [activeTab, setActiveTab] = useState<'hierarchy' | 'results'>('hierarchy');
   const [expandedAgents, setExpandedAgents] = useState<Set<string>>(new Set(['a0']));
   const [expandedResults, setExpandedResults] = useState<Set<number>>(new Set());
-  const [totalCost, setTotalCost] = useState(0);
-  const [apiCalls, setApiCalls] = useState(0);
-
-  // Auto-migrate old data on mount
-  useEffect(() => {
-    const storedResults = localStorage.getItem('taskResults');
-    if (storedResults) {
-      try {
-        const parsed = JSON.parse(storedResults);
-        // Check if any result has old crypto agent names
-        const hasOldData = parsed.some((r: AgentTaskResult) => 
-          ['Dolphin Trainer', 'Octopus Architect', 'Sea Turtle Guardian', 'Flying Fish Scout', 
-           'Hamster Analyst', 'Parrot Oracle'].includes(r.agentName)
-        );
-        
-        if (hasOldData) {
-          console.warn('🔄 Detected old crypto agent data in localStorage. Clearing...');
-          localStorage.removeItem('taskResults');
-          localStorage.removeItem('activeAgents');
-          window.location.reload();
-        }
-      } catch (e) {
-        console.error('Failed to parse stored results:', e);
-      }
-    }
-  }, []);
-
   const clearAllData = () => {
     if (confirm('Clear all task results and start fresh?')) {
       localStorage.removeItem('taskResults');
@@ -59,13 +32,9 @@ export const OperationsDashboard: React.FC<OperationsDashboardProps> = ({
     }
   };
 
-  // Calculate costs and API usage
-  useEffect(() => {
-    // All tasks now use Gemini AI only ($0.002 per call)
-    const cost = results.length * 0.002;
-    setTotalCost(cost);
-    setApiCalls(results.length);
-  }, [results]);
+  // Derived values - no need for state + useEffect
+  const totalCost = results.length * 0.002;
+  const apiCalls = results.length;
 
   const toggleAgent = (agentId: string) => {
     setExpandedAgents(prev => {
@@ -204,13 +173,16 @@ export const OperationsDashboard: React.FC<OperationsDashboardProps> = ({
     };
   };
 
-  const sortedAgentIds = activeAgents.sort((a, b) => {
-    if (a === 'a0') return -1;
-    if (b === 'a0') return 1;
-    const aResults = resultsByAgent[a]?.length || 0;
-    const bResults = resultsByAgent[b]?.length || 0;
-    return bResults - aResults;
-  });
+  const sortedAgentIds = useMemo(() =>
+    [...activeAgents].sort((a, b) => {
+      if (a === 'a0') return -1;
+      if (b === 'a0') return 1;
+      const aResults = resultsByAgent[a]?.length || 0;
+      const bResults = resultsByAgent[b]?.length || 0;
+      return bResults - aResults;
+    }),
+    [activeAgents, resultsByAgent]
+  );
 
   return (
     <div className="h-screen flex flex-col bg-gradient-to-br from-gray-900 via-black to-gray-900 overflow-hidden">

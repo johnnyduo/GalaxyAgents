@@ -1,6 +1,6 @@
 import React from 'react';
 import { AgentMetadata } from '../types';
-import { X, Play, Square, Zap, Trash2, RefreshCw } from 'lucide-react';
+import { X, Play, Square, Zap, Trash2 } from 'lucide-react';
 import { AGENT_ABILITIES } from '../constants';
 import LottieAvatar from './LottieAvatar';
 

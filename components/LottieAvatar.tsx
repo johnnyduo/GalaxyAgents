@@ -1,6 +1,10 @@
 import React from 'react';
 import Lottie from 'lottie-react';
 
+// Module-level cache: prevents duplicate fetches across all LottieAvatar instances
+const lottieCache = new Map<string, any>();
+const pendingFetches = new Map<string, Promise<any>>();
+
 interface LottieAvatarProps {
   animationPath: string;
   width?: number;
@@ -10,23 +14,39 @@ interface LottieAvatarProps {
   autoplay?: boolean;
 }
 
-const LottieAvatar: React.FC<LottieAvatarProps> = ({ 
-  animationPath, 
-  width = 80, 
-  height = 80, 
+const LottieAvatar: React.FC<LottieAvatarProps> = ({
+  animationPath,
+  width = 80,
+  height = 80,
   className = '',
   loop = true,
   autoplay = true
 }) => {
-  const [animationData, setAnimationData] = React.useState<any>(null);
+  const [animationData, setAnimationData] = React.useState<any>(() => lottieCache.get(animationPath) || null);
   const [error, setError] = React.useState<boolean>(false);
 
   React.useEffect(() => {
-    // Load the Lottie JSON file
-    fetch(animationPath)
-      .then(response => response.json())
-      .then(data => setAnimationData(data))
+    // Already cached in memory
+    if (lottieCache.has(animationPath)) {
+      setAnimationData(lottieCache.get(animationPath));
+      return;
+    }
+
+    // Deduplicate in-flight fetches for the same path
+    let fetchPromise = pendingFetches.get(animationPath);
+    if (!fetchPromise) {
+      fetchPromise = fetch(animationPath).then(r => r.json());
+      pendingFetches.set(animationPath, fetchPromise);
+    }
+
+    fetchPromise
+      .then(data => {
+        lottieCache.set(animationPath, data);
+        pendingFetches.delete(animationPath);
+        setAnimationData(data);
+      })
       .catch(err => {
+        pendingFetches.delete(animationPath);
         console.error('Failed to load Lottie animation:', err);
         setError(true);
       });
