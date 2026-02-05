@@ -1,0 +1,197 @@
+import { FraudScenario } from '../types';
+
+export const socialImpersonationScenario: FraudScenario = {
+  id: 'social-impersonation-001',
+  titleTh: 'ปลอมเป็นธนาคารใน LINE',
+  titleEn: 'Bank Impersonation on LINE',
+  category: 'social_impersonation',
+  difficulty: 'intermediate',
+  estimatedDuration: 110,
+  description: {
+    th: 'ได้รับข้อความ LINE จากบัญชีที่ใช้โลโก้ธนาคาร แจ้งว่าบัญชีผิดปกติ ขอให้กดลิงก์ยืนยันตัวตน ลงท้ายด้วยการดูดเงิน',
+    en: 'You receive a LINE message from an account using a bank logo, claiming your account is compromised and asking you to click a verification link.',
+  },
+  involvedAgents: ['a6', 'a5', 'a2', 'a0'],
+  evilAgents: ['a6', 'a5'],
+  victimSetup: {
+    defaultName: 'คุณมานี',
+    defaultMoney: 200000,
+    scenarioContext: {
+      th: 'ได้รับข้อความ LINE จากบัญชี "SCB Connect" (มีรูปโลโก้ SCB) แจ้งเตือนว่าบัญชีถูกล็อค...',
+      en: 'You receive a LINE message from "SCB Connect" (with SCB logo) warning your account is locked...',
+    },
+  },
+  steps: [
+    {
+      id: 'si-01',
+      order: 1,
+      type: 'action',
+      agentId: 'a6',
+      alignment: 'good',
+      content: {
+        th: '📱 LINE แจ้งเตือน: ข้อความจาก "SCB Connect" (บัญชี Official ปลอม มีโลโก้ SCB)',
+        en: '📱 LINE notification: Message from "SCB Connect" (fake Official Account with SCB logo)',
+      },
+      duration: 3000,
+    },
+    {
+      id: 'si-02',
+      order: 2,
+      type: 'transformation',
+      agentId: 'a6',
+      alignment: 'transitioning',
+      content: {
+        th: '⚠️ Lightning Alert กำลังแปลงร่างเป็น "SMS Bot — ส่งข้อความธนาคารปลอม"...',
+        en: '⚠️ Lightning Alert is transforming into fake bank notification bot...',
+      },
+      duration: 2500,
+    },
+    {
+      id: 'si-03',
+      order: 3,
+      type: 'dialogue',
+      agentId: 'a6',
+      alignment: 'evil',
+      content: {
+        th: '[SCB Connect] แจ้งเตือน: บัญชีของท่านถูกล็อคชั่วคราว เนื่องจากพบการเข้าใช้งานผิดปกติ กรุณายืนยันตัวตนภายใน 30 นาที คลิก: scb-verify.cc/auth',
+        en: '[SCB Connect] Alert: Your account is temporarily locked due to suspicious activity. Verify within 30 minutes: scb-verify.cc/auth',
+      },
+      duration: 5000,
+    },
+    {
+      id: 'si-04',
+      order: 4,
+      type: 'action',
+      agentId: 'a6',
+      alignment: 'evil',
+      content: {
+        th: '🔗 เหยื่อกดลิงก์ → เว็บปลอมหน้าตาเหมือน SCB Easy เป๊ะ ให้กรอก Username/Password',
+        en: '🔗 Victim clicks link → Fake website that looks exactly like SCB Easy. Asks for username/password.',
+      },
+      duration: 3500,
+    },
+    {
+      id: 'si-05',
+      order: 5,
+      type: 'transformation',
+      agentId: 'a5',
+      alignment: 'transitioning',
+      content: {
+        th: '⚠️ Money Guard กำลังแปลงร่างเป็น "คุณสมคิด — แฮกเกอร์เข้าบัญชี"...',
+        en: '⚠️ Money Guard is transforming into the account hacker...',
+      },
+      duration: 2500,
+    },
+    {
+      id: 'si-06',
+      order: 6,
+      type: 'dialogue',
+      agentId: 'a5',
+      alignment: 'evil',
+      content: {
+        th: '"ระบบจะส่ง OTP ไปที่เบอร์ xxx-xxx-x789 กรุณากรอก OTP 6 หลักเพื่อยืนยันตัวตน" (จริงๆ คือ OTP สำหรับโอนเงิน!)',
+        en: '"System will send OTP to xxx-xxx-x789. Please enter 6-digit OTP to verify." (Actually an OTP for money transfer!)',
+      },
+      duration: 5000,
+      edgeAnimation: { source: 'a5', target: 'a6', style: 'data_flow' },
+    },
+    {
+      id: 'si-07',
+      order: 7,
+      type: 'money_flow',
+      agentId: 'a5',
+      alignment: 'evil',
+      content: {
+        th: '💸 เหยื่อกรอก OTP → มิจฉาชีพใช้ OTP โอนเงิน ฿89,000 ออกจากบัญชี!',
+        en: '💸 Victim enters OTP → Scammer uses OTP to transfer ฿89,000 out of account!',
+      },
+      duration: 4000,
+      moneyChange: -89000,
+    },
+    {
+      id: 'si-08',
+      order: 8,
+      type: 'dialogue',
+      agentId: 'a2',
+      alignment: 'good',
+      content: {
+        th: '🚨 ระวัง! "scb-verify.cc" ไม่ใช่เว็บ SCB จริง! เว็บจริงคือ scbeasy.com เท่านั้น! ธนาคารไม่เคยส่งลิงก์ผ่าน LINE ให้กรอก OTP!',
+        en: '🚨 Warning! "scb-verify.cc" is NOT real SCB! Official site is scbeasy.com only! Banks NEVER send OTP request links via LINE!',
+      },
+      duration: 5000,
+    },
+    {
+      id: 'si-09',
+      order: 9,
+      type: 'money_flow',
+      agentId: 'a5',
+      alignment: 'evil',
+      content: {
+        th: '💸 มิจฉาชีพโอนเพิ่มอีก ฿65,000 ก่อนเหยื่อรู้ตัว รวมเสียไป ฿154,000!',
+        en: '💸 Scammer transfers another ฿65,000 before victim realizes. Total lost: ฿154,000!',
+      },
+      duration: 3500,
+      moneyChange: -65000,
+    },
+    {
+      id: 'si-10',
+      order: 10,
+      type: 'reveal',
+      agentId: 'a2',
+      alignment: 'good',
+      content: {
+        th: '🔍 เปิดโปง! บัญชี LINE "SCB Connect" เป็นของปลอม! ใช้โลโก้ธนาคารหลอก ลิงก์ไปเว็บฟิชชิ่ง ดูด Username, Password, และ OTP!',
+        en: '🔍 REVEALED! The "SCB Connect" LINE account is FAKE! Uses bank logo to phish credentials and OTP!',
+      },
+      duration: 5000,
+    },
+    {
+      id: 'si-11',
+      order: 11,
+      type: 'education',
+      agentId: 'a2',
+      alignment: 'good',
+      content: {
+        th: '📚 วิธีสังเกต: 1) เช็คเครื่องหมาย "Official Account" ของ LINE (โล่สีเขียว) 2) ธนาคารจริงไม่ส่งลิงก์ให้กรอก OTP 3) URL จริงคือ .com หรือ .co.th ไม่ใช่ .cc 4) โทรสายด่วนธนาคารยืนยัน',
+        en: '📚 How to spot: 1) Check LINE Official Account badge (green shield) 2) Real banks never ask OTP via links 3) Real URLs end in .com or .co.th not .cc 4) Call bank hotline to verify',
+      },
+      duration: 7000,
+    },
+    {
+      id: 'si-12',
+      order: 12,
+      type: 'education',
+      agentId: 'a0',
+      alignment: 'good',
+      content: {
+        th: '🛡️ ป้องกัน: 1) อย่ากดลิงก์จากข้อความ เข้าแอปธนาคารเอง 2) OTP ห้ามบอกใครเด็ดขาด 3) ตั้ง 2FA ทุกบัญชี 4) เปลี่ยนรหัสทันทีถ้าสงสัย 5) แจ้งธนาคาร + 1599',
+        en: '🛡️ Prevention: 1) Never click links, open bank app directly 2) NEVER share OTP 3) Enable 2FA on all accounts 4) Change password immediately if suspicious 5) Contact bank + 1599',
+      },
+      duration: 7000,
+    },
+  ],
+  moneyLost: 154000,
+  educationalPoints: [
+    {
+      th: 'ธนาคารจริงไม่เคยส่งลิงก์ให้กรอก OTP ผ่าน LINE หรือ SMS',
+      en: 'Real banks NEVER send OTP request links via LINE or SMS',
+    },
+    {
+      th: 'OTP คือรหัสลับสุด ห้ามบอกใคร แม้แต่ "เจ้าหน้าที่ธนาคาร"',
+      en: 'OTP is top secret. Never share it, even with "bank officers"',
+    },
+    {
+      th: 'เว็บปลอมมักใช้โดเมน .cc, .top, .xyz แทน .com หรือ .co.th',
+      en: 'Fake websites often use .cc, .top, .xyz domains instead of .com or .co.th',
+    },
+    {
+      th: 'ถ้าสงสัย โทรหาสายด่วนธนาคารเอง อย่าโทรเบอร์ที่ให้มา',
+      en: 'If suspicious, call bank hotline yourself. Never call the number they provide.',
+    },
+  ],
+  realWorldCases: [
+    'LINE ปลอม "Krungthai Connect" หลอก OTP เหยื่อ 3,000+ ราย เสียหาย 200 ล้าน (2024)',
+    'เว็บปลอม SCB Easy ดูดข้อมูล 500+ ราย ในสัปดาห์เดียว (2023)',
+    'แอดมินเพจปลอม "ธนาคารกสิกร" หลอกโอนเงิน 50 ราย/วัน (2024)',
+  ],
+};

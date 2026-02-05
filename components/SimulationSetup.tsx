@@ -45,10 +45,10 @@ const SimulationSetup: React.FC<SimulationSetupProps> = ({ onStart, onCancel }) 
       <div className="p-4 border-b border-red-500/30 bg-red-500/5">
         <div className="flex items-center gap-2 mb-1">
           <AlertTriangle size={16} className="text-red-400" />
-          <h2 className="text-red-400 font-bold font-mono text-sm">SCAM SIMULATION</h2>
+          <h2 className="text-red-400 font-bold font-mono text-sm">จำลองสถานการณ์โกง</h2>
         </div>
         <p className="text-gray-500 text-[10px] font-mono">
-          จำลองสถานการณ์โกง เพื่อเรียนรู้และป้องกัน
+          เรียนรู้กลโกงจริงๆ ผ่านการจำลอง เพื่อป้องกันตัวเอง
         </p>
       </div>
 
@@ -57,7 +57,7 @@ const SimulationSetup: React.FC<SimulationSetupProps> = ({ onStart, onCancel }) 
         <div className="space-y-3">
           <label className="text-xs text-gray-500 font-mono uppercase flex items-center gap-1">
             <Users size={10} />
-            Your Profile
+            ข้อมูลเหยื่อ (จำลอง)
           </label>
           <input
             type="text"
@@ -91,7 +91,7 @@ const SimulationSetup: React.FC<SimulationSetupProps> = ({ onStart, onCancel }) 
         <div className="space-y-2">
           <label className="text-xs text-gray-500 font-mono uppercase flex items-center gap-1">
             <Shield size={10} />
-            Select Scenario
+            เลือกสถานการณ์
           </label>
           {FRAUD_SCENARIOS.map((scenario) => (
             <button
@@ -111,7 +111,7 @@ const SimulationSetup: React.FC<SimulationSetupProps> = ({ onStart, onCancel }) 
                       {scenario.titleTh}
                     </span>
                     <span className={`text-[8px] px-1.5 py-0.5 rounded border font-mono ${difficultyColors[scenario.difficulty]}`}>
-                      {scenario.difficulty.toUpperCase()}
+                      {scenario.difficulty === 'beginner' ? 'ง่าย' : scenario.difficulty === 'intermediate' ? 'ปานกลาง' : 'ยาก'}
                     </span>
                   </div>
                   <p className="text-gray-500 text-[10px] leading-relaxed line-clamp-2">
@@ -120,14 +120,14 @@ const SimulationSetup: React.FC<SimulationSetupProps> = ({ onStart, onCancel }) 
                   <div className="flex items-center gap-3 mt-1.5 text-[9px] font-mono text-gray-600">
                     <span className="flex items-center gap-0.5">
                       <Clock size={8} />
-                      {scenario.estimatedDuration}s
+                      ~{Math.round(scenario.estimatedDuration / 60)} นาที
                     </span>
                     <span className="flex items-center gap-0.5">
                       <Users size={8} />
-                      {scenario.involvedAgents.length} agents
+                      {scenario.involvedAgents.length} ตัว
                     </span>
                     <span className="text-red-400 font-bold">
-                      ฿{scenario.moneyLost.toLocaleString()}
+                      เสี่ยง ฿{scenario.moneyLost.toLocaleString()}
                     </span>
                   </div>
                 </div>
@@ -137,7 +137,7 @@ const SimulationSetup: React.FC<SimulationSetupProps> = ({ onStart, onCancel }) 
 
           {FRAUD_SCENARIOS.length === 0 && (
             <div className="text-center py-8 text-gray-600 text-xs font-mono">
-              No scenarios available yet
+              ยังไม่มีสถานการณ์ให้เลือก
             </div>
           )}
         </div>
@@ -151,13 +151,13 @@ const SimulationSetup: React.FC<SimulationSetupProps> = ({ onStart, onCancel }) 
           className="w-full bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 disabled:from-gray-700 disabled:to-gray-600 disabled:cursor-not-allowed text-white font-bold py-3 px-4 rounded-lg transition-all flex items-center justify-center gap-2 font-mono text-sm shadow-lg shadow-red-500/20"
         >
           <Play size={16} />
-          เริ่มจำลอง / START
+          เริ่มจำลอง
         </button>
         <button
           onClick={onCancel}
           className="w-full bg-white/5 hover:bg-white/10 border border-white/10 text-gray-400 font-mono text-xs py-2 px-4 rounded-lg transition-all"
         >
-          Cancel
+          ยกเลิก
         </button>
       </div>
     </div>

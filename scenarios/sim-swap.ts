@@ -1,0 +1,198 @@
+import { FraudScenario } from '../types';
+
+export const simSwapScenario: FraudScenario = {
+  id: 'sim-swap-001',
+  titleTh: 'SIM Swap / ขโมย OTP',
+  titleEn: 'SIM Swap Attack',
+  category: 'sim_swap',
+  difficulty: 'advanced',
+  estimatedDuration: 130,
+  description: {
+    th: 'มิจฉาชีพทำ SIM Swap (สวมซิมใหม่แทนของเหยื่อ) ทำให้ OTP ทั้งหมดเข้าเบอร์มิจฉาชีพ แล้วเข้าบัญชีธนาคาร/crypto ดูดเงินทั้งหมด',
+    en: 'Scammers perform SIM swap (replace victim\'s SIM) to intercept all OTPs, then access bank/crypto accounts and drain them.',
+  },
+  involvedAgents: ['a1', 'a6', 'a2', 'a5'],
+  evilAgents: ['a1', 'a6'],
+  victimSetup: {
+    defaultName: 'คุณธนพล',
+    defaultMoney: 300000,
+    scenarioContext: {
+      th: 'วันนี้มือถือสัญญาณหายกะทันหัน ทั้งโทรไม่ได้ รับ SMS ไม่ได้ ทั้งๆ ที่อยู่ในเมือง...',
+      en: 'Your phone suddenly loses all signal. Can\'t make calls or receive SMS, even though you\'re in the city...',
+    },
+  },
+  steps: [
+    {
+      id: 'sim-01',
+      order: 1,
+      type: 'action',
+      agentId: 'a1',
+      alignment: 'good',
+      content: {
+        th: '📵 มือถือสัญญาณหาย! ไม่มีซิมการ์ด ทั้งที่เมื่อกี้ยังใช้ได้ปกติ',
+        en: '📵 Phone signal lost! No SIM detected, even though it was working moments ago.',
+      },
+      duration: 3000,
+    },
+    {
+      id: 'sim-02',
+      order: 2,
+      type: 'transformation',
+      agentId: 'a1',
+      alignment: 'transitioning',
+      content: {
+        th: '⚠️ Hawk Eye กำลังแปลงร่างเป็น "แฮกเกอร์ — ผู้ขอซิมใหม่"...',
+        en: '⚠️ Hawk Eye is transforming into the SIM swap hacker...',
+      },
+      duration: 2500,
+    },
+    {
+      id: 'sim-03',
+      order: 3,
+      type: 'dialogue',
+      agentId: 'a1',
+      alignment: 'evil',
+      content: {
+        th: '(มิจฉาชีพไปศูนย์บริการ AIS/TRUE/DTAC ด้วยบัตรประชาชนปลอม ขอซิมใหม่เบอร์เดิม → ซิมเดิมของเหยื่อถูกตัดสัญญาณทันที)',
+        en: '(Scammer visits carrier store with fake ID card, requests new SIM for victim\'s number → victim\'s original SIM is deactivated)',
+      },
+      duration: 5000,
+    },
+    {
+      id: 'sim-04',
+      order: 4,
+      type: 'transformation',
+      agentId: 'a6',
+      alignment: 'transitioning',
+      content: {
+        th: '⚠️ Lightning Alert กำลังแปลงร่างเป็น "SMS Bot — รับ OTP แทนเหยื่อ"...',
+        en: '⚠️ Lightning Alert is transforming into OTP interceptor bot...',
+      },
+      duration: 2500,
+    },
+    {
+      id: 'sim-05',
+      order: 5,
+      type: 'dialogue',
+      agentId: 'a6',
+      alignment: 'evil',
+      content: {
+        th: '📨 OTP จากธนาคาร ถูกส่งไปเบอร์เดิม → แต่ตอนนี้ซิมอยู่กับมิจฉาชีพ! ได้ OTP ทุกตัว!',
+        en: '📨 Bank OTP sent to the same number → But now the SIM is with the scammer! They receive every OTP!',
+      },
+      duration: 4000,
+      edgeAnimation: { source: 'a6', target: 'a1', style: 'data_flow' },
+    },
+    {
+      id: 'sim-06',
+      order: 6,
+      type: 'money_flow',
+      agentId: 'a1',
+      alignment: 'evil',
+      content: {
+        th: '💸 มิจฉาชีพ login เข้าบัญชีธนาคาร → ใช้ OTP โอนเงิน ฿150,000 ออก!',
+        en: '💸 Scammer logs into bank account → Uses OTP to transfer ฿150,000 out!',
+      },
+      duration: 4000,
+      moneyChange: -150000,
+      edgeAnimation: { source: 'a1', target: 'a6', style: 'money_flow' },
+    },
+    {
+      id: 'sim-07',
+      order: 7,
+      type: 'dialogue',
+      agentId: 'a1',
+      alignment: 'evil',
+      content: {
+        th: '(เปลี่ยนรหัสแอปธนาคาร เปลี่ยนอีเมลกู้คืน เข้าถึง Line Pay, Wallet, TrueMoney ทั้งหมด)',
+        en: '(Changes bank app password, recovery email. Accesses Line Pay, Wallet, TrueMoney — everything)',
+      },
+      duration: 4000,
+    },
+    {
+      id: 'sim-08',
+      order: 8,
+      type: 'dialogue',
+      agentId: 'a2',
+      alignment: 'good',
+      content: {
+        th: '🚨 อันตรายมาก! นี่คือ "SIM Swap"! ถ้ามือถือสัญญาณหายกะทันหัน ต้องโทรหาค่ายมือถือและธนาคารทันที!',
+        en: '🚨 CRITICAL! This is a "SIM Swap"! If your phone signal suddenly drops, call your carrier and bank IMMEDIATELY!',
+      },
+      duration: 5000,
+    },
+    {
+      id: 'sim-09',
+      order: 9,
+      type: 'money_flow',
+      agentId: 'a6',
+      alignment: 'evil',
+      content: {
+        th: '💸 โอนอีก ฿100,000 จากบัญชีออมทรัพย์ → บัญชีม้า → Crypto → หายไป!',
+        en: '💸 Transfer another ฿100,000 from savings → mule account → Crypto → Gone!',
+      },
+      duration: 4000,
+      moneyChange: -100000,
+    },
+    {
+      id: 'sim-10',
+      order: 10,
+      type: 'reveal',
+      agentId: 'a2',
+      alignment: 'good',
+      content: {
+        th: '🔍 เปิดโปง! มิจฉาชีพใช้บัตรประชาชนปลอมไปขอซิมใหม่ ทำให้ซิมเดิมถูกตัด OTP ทั้งหมดเข้ามือมิจฉาชีพ เข้าถึงทุกบัญชีที่ผูกเบอร์!',
+        en: '🔍 REVEALED! Scammer used fake ID to request new SIM. Original SIM cut off. All OTPs go to scammer. Every account linked to that number is compromised!',
+      },
+      duration: 5000,
+    },
+    {
+      id: 'sim-11',
+      order: 11,
+      type: 'education',
+      agentId: 'a2',
+      alignment: 'good',
+      content: {
+        th: '📚 วิธีป้องกัน SIM Swap: 1) ตั้ง PIN ล็อค SIM ที่ค่ายมือถือ 2) ใช้ Authenticator App แทน SMS OTP 3) ตั้งแจ้งเตือนทุกการโอนเงิน 4) ถ้าสัญญาณหาย → โทรค่ายมือถือทันที!',
+        en: '📚 SIM Swap prevention: 1) Set SIM lock PIN at carrier 2) Use Authenticator App instead of SMS OTP 3) Enable transfer notifications 4) If signal drops → call carrier immediately!',
+      },
+      duration: 7000,
+    },
+    {
+      id: 'sim-12',
+      order: 12,
+      type: 'education',
+      agentId: 'a5',
+      alignment: 'good',
+      content: {
+        th: '🛡️ ถ้าถูก SIM Swap แล้ว: 1) ไปศูนย์ค่ายมือถือทันที ขอระงับเบอร์ 2) โทรอายัดบัญชีธนาคารทุกบัญชี 3) เปลี่ยน 2FA เป็น Authenticator App 4) แจ้งความที่ สน. 5) โทร 1599',
+        en: '🛡️ If SIM swapped: 1) Go to carrier store, suspend number 2) Block all bank accounts 3) Switch 2FA to Authenticator App 4) File police report 5) Call 1599',
+      },
+      duration: 7000,
+    },
+  ],
+  moneyLost: 250000,
+  educationalPoints: [
+    {
+      th: 'มือถือสัญญาณหายกะทันหัน = อาจถูก SIM Swap ต้องโทรค่ายมือถือทันที',
+      en: 'Sudden signal loss = possible SIM Swap. Call carrier immediately.',
+    },
+    {
+      th: 'ใช้ Authenticator App (Google/Microsoft) แทน OTP ผ่าน SMS',
+      en: 'Use Authenticator App (Google/Microsoft) instead of SMS OTP',
+    },
+    {
+      th: 'ตั้ง PIN ล็อค SIM ที่ค่ายมือถือ ป้องกันคนอื่นขอซิมใหม่',
+      en: 'Set SIM lock PIN at your carrier to prevent unauthorized SIM swap',
+    },
+    {
+      th: 'ตั้งแจ้งเตือนทุกการโอนเงิน จะได้รู้ทันทีถ้ามีรายการแปลก',
+      en: 'Enable notifications for all transfers to detect suspicious activity instantly',
+    },
+  ],
+  realWorldCases: [
+    'นักธุรกิจกรุงเทพ ถูก SIM Swap เสียเงินในบัญชี 3.5 ล้านบาท ภายใน 30 นาที (2024)',
+    'สาว Crypto trader เสีย Bitcoin มูลค่า 2 ล้านบาท จาก SIM Swap (2023)',
+    'ข้าราชการ ถูก SIM Swap + เข้า Mobile Banking โอนเงินเกษียณ 1.2 ล้านบาท (2024)',
+  ],
+};

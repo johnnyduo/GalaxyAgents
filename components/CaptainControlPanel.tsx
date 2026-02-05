@@ -28,10 +28,10 @@ export const CaptainControlPanel: React.FC<CaptainControlPanelProps> = ({
               : 'text-white/50 hover:text-white/80'
             }
           `}
-          title="Manual Control"
+          title="ควบคุมเอง"
         >
           <Hand size={12} />
-          MANUAL
+          ควบคุม
         </button>
         <button
           onClick={() => onModeChange('auto')}
@@ -42,10 +42,10 @@ export const CaptainControlPanel: React.FC<CaptainControlPanelProps> = ({
               : 'text-white/50 hover:text-white/80'
             }
           `}
-          title="Auto Mode"
+          title="อัตโนมัติ"
         >
           <Zap size={12} />
-          AUTO
+          อัตโนมัติ
         </button>
         <button
           onClick={() => onModeChange('simulation')}
@@ -56,10 +56,10 @@ export const CaptainControlPanel: React.FC<CaptainControlPanelProps> = ({
               : 'text-white/50 hover:text-red-400'
             }
           `}
-          title="Scam Simulation Mode"
+          title="จำลองกลโกง"
         >
           <Film size={12} />
-          SIMULATE
+          จำลอง
         </button>
       </div>
     </div>

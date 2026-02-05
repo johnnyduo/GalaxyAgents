@@ -404,7 +404,7 @@ const FlowCanvas: React.FC<FlowCanvasProps> = ({
       {isSimulationActive && (
         <div className="absolute top-3 left-1/2 -translate-x-1/2 z-20 px-4 py-1.5 rounded-lg bg-red-500/20 border border-red-500/50 backdrop-blur-md">
           <span className="text-red-400 font-mono text-xs font-bold tracking-widest animate-pulse">
-            SIMULATION MODE
+            กำลังจำลองสถานการณ์
           </span>
         </div>
       )}
@@ -434,8 +434,8 @@ const FlowCanvas: React.FC<FlowCanvasProps> = ({
       {activeAgents.length === 0 && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           <div className="text-center">
-            <h2 className="text-2xl font-mono text-white/30 font-bold">GRID OFFLINE</h2>
-            <p className="text-neon-green/50 text-sm font-mono mt-2">Activate agents to begin orchestration</p>
+            <h2 className="text-2xl font-mono text-white/30 font-bold">ยังไม่มี Agent</h2>
+            <p className="text-neon-green/50 text-sm font-mono mt-2">เปิดใช้งาน Agent เพื่อเริ่มต้น</p>
           </div>
         </div>
       )}

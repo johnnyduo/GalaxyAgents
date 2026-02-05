@@ -39,14 +39,14 @@ const SimulationControls: React.FC<SimulationControlsProps> = ({
           onClick={onStep}
           disabled={status === 'completed'}
           className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-gray-400 transition-all disabled:opacity-30"
-          title="Next Step"
+          title="ขั้นตอนถัดไป"
         >
           <SkipForward size={14} />
         </button>
         <button
           onClick={onReset}
           className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-gray-400 transition-all"
-          title="Reset"
+          title="เริ่มใหม่"
         >
           <RotateCcw size={14} />
         </button>
@@ -62,10 +62,10 @@ const SimulationControls: React.FC<SimulationControlsProps> = ({
         </div>
         <div className="flex justify-between mt-0.5">
           <span className="text-[9px] font-mono text-gray-600">
-            Step {currentStepIndex + 1}/{totalSteps}
+            ขั้นที่ {currentStepIndex + 1}/{totalSteps}
           </span>
           <span className="text-[9px] font-mono text-gray-600">
-            {status === 'completed' ? 'COMPLETED' : status.toUpperCase()}
+            {status === 'completed' ? 'จบแล้ว' : status === 'playing' ? 'กำลังเล่น' : status === 'paused' ? 'หยุดชั่วคราว' : status.toUpperCase()}
           </span>
         </div>
       </div>
