@@ -115,7 +115,7 @@ const AgentNode = React.memo(({ data }: NodeProps) => {
           boxShadow: `0 0 10px ${colorTheme?.glow || 'rgba(255,68,68,0.5)'}`,
         }}
       >
-        COMPROMISED
+        แปลงร่าง
       </div>
 
       {/* Dialogue bubble */}

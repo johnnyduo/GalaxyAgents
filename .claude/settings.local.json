@@ -16,7 +16,8 @@
       "WebFetch(domain:docs.cloud.google.com)",
       "Bash(npx tsc:*)",
       "Bash(npm install:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(npx tsx:*)"
     ],
     "deny": [
       "Bash(sudo *)",

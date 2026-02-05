@@ -41,7 +41,7 @@ export const loanAppScenario: FraudScenario = {
       agentId: 'a3',
       alignment: 'transitioning',
       content: {
-        th: '⚠️ Guardian Angel กำลังแปลงร่างเป็น "น้องพลอย — แอดมินแอปเงินกู้เถื่อน"...',
+        th: '⚠️ น้องฟ้า กำลังแปลงร่างเป็น "น้องพลอย — แอดมินแอปเงินกู้เถื่อน"...',
         en: '⚠️ Guardian Angel is transforming into illegal loan app admin...',
       },
       duration: 2500,
@@ -77,7 +77,7 @@ export const loanAppScenario: FraudScenario = {
       agentId: 'a5',
       alignment: 'transitioning',
       content: {
-        th: '⚠️ Money Guard กำลังแปลงร่างเป็น "คุณสมคิด — หัวหน้าทีมทวงหนี้"...',
+        th: '⚠️ จ.ส.ต.จิ้งจอก กำลังแปลงร่างเป็น "ผจก.สมคิด — หัวหน้าทีมทวงหนี้"...',
         en: '⚠️ Money Guard is transforming into debt collection team leader...',
       },
       duration: 2500,

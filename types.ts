@@ -1,11 +1,11 @@
 export enum AgentRole {
-  COMMANDER = 'Commander',
-  NAVIGATOR = 'Navigator',
-  ARCHIVIST = 'Archivist',
-  MERCHANT = 'Merchant',
-  SENTINEL = 'Sentinel',
-  ORACLE = 'Oracle',
-  GLITCH = 'Glitch',
+  COMMANDER = 'ผู้บัญชาการ',
+  SCOUT = 'นักสืบ',
+  MEMORY = 'คลังความจำ',
+  GUARDIAN = 'เทวดาผู้คุ้มครอง',
+  TRAINER = 'ครูฝึกสอน',
+  FINANCE_GUARD = 'ผู้พิทักษ์การเงิน',
+  ALERT = 'สายฟ้าแจ้งเตือน',
 }
 
 export interface AgentPersonality {

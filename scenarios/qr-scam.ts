@@ -41,7 +41,7 @@ export const qrScamScenario: FraudScenario = {
       agentId: 'a5',
       alignment: 'transitioning',
       content: {
-        th: '⚠️ Money Guard กำลังแปลงร่างเป็น "คุณสมคิด — คนวาง QR ปลอม"...',
+        th: '⚠️ จ.ส.ต.จิ้งจอก กำลังแปลงร่างเป็น "ผจก.สมคิด — คนวาง QR ปลอม"...',
         en: '⚠️ Money Guard is transforming into the fake QR code planter...',
       },
       duration: 2500,

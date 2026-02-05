@@ -25,7 +25,7 @@ export const OperationsDashboard: React.FC<OperationsDashboardProps> = ({
   const [expandedAgents, setExpandedAgents] = useState<Set<string>>(new Set(['a0']));
   const [expandedResults, setExpandedResults] = useState<Set<number>>(new Set());
   const clearAllData = () => {
-    if (confirm('Clear all task results and start fresh?')) {
+    if (confirm('ล้างผลงานทั้งหมดแล้วเริ่มใหม่?')) {
       localStorage.removeItem('taskResults');
       localStorage.removeItem('activeAgents');
       window.location.reload();
@@ -81,21 +81,21 @@ export const OperationsDashboard: React.FC<OperationsDashboardProps> = ({
         return (
           <div className="flex items-center gap-1 px-2 py-1 bg-green-500/20 border border-green-500/50 rounded text-green-400 text-xs font-mono">
             <CheckCircle className="w-3 h-3" />
-            <span>COMPLETED</span>
+            <span>สำเร็จ</span>
           </div>
         );
       case 'failed': 
         return (
           <div className="flex items-center gap-1 px-2 py-1 bg-red-500/20 border border-red-500/50 rounded text-red-400 text-xs font-mono">
             <XCircle className="w-3 h-3" />
-            <span>FAILED</span>
+            <span>ล้มเหลว</span>
           </div>
         );
       case 'pending': 
         return (
           <div className="flex items-center gap-1 px-2 py-1 bg-yellow-500/20 border border-yellow-500/50 rounded text-yellow-400 text-xs font-mono animate-pulse">
             <Radio className="w-3 h-3" />
-            <span>PROCESSING</span>
+            <span>กำลังทำ</span>
           </div>
         );
     }
@@ -109,28 +109,28 @@ export const OperationsDashboard: React.FC<OperationsDashboardProps> = ({
     const minutes = Math.floor(seconds / 60);
     const hours = Math.floor(minutes / 60);
     
-    if (seconds < 60) return `${seconds}s ago`;
-    if (minutes < 60) return `${minutes}m ago`;
-    if (hours < 24) return `${hours}h ago`;
+    if (seconds < 60) return `${seconds} วิที่แล้ว`;
+    if (minutes < 60) return `${minutes} นาทีที่แล้ว`;
+    if (hours < 24) return `${hours} ชม.ที่แล้ว`;
     
-    return date.toLocaleString('en-US', { 
-      month: 'short', 
-      day: 'numeric', 
-      hour: '2-digit', 
-      minute: '2-digit' 
+    return date.toLocaleString('th-TH', {
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
     });
   };
 
   const getCommanderOrder = (agentId: string) => {
     const orders: { [key: string]: string } = {
-      'a1': 'Monitor all fraud patterns and emerging scam techniques. Scan news feeds and user reports for new threats. Alert team immediately.',
-      'a2': 'Search historical database for similar cases. Match scam fingerprints. Provide intelligence on fraudster patterns and modus operandi.',
-      'a3': 'Assist citizens with suspicious SMS and calls. Answer questions about potential scams. Provide friendly, immediate protection.',
-      'a4': 'Create awareness content and training simulations. Educate public about fraud prevention. Make engaging videos and infographics.',
-      'a5': 'Verify all business invoices and emails. Detect BEC scams targeting SMEs. Protect companies from wire transfer fraud.',
-      'a6': 'Broadcast urgent alerts across all channels. Send emergency warnings when new scams detected. Maximum speed delivery required.'
+      'a1': 'เฝ้าระวังรูปแบบกลโกงทั้งหมดและเทคนิคใหม่ สแกนข่าวและรายงานจากประชาชน แจ้งเตือนทีมทันที',
+      'a2': 'ค้นหาฐานข้อมูลประวัติเคสที่คล้ายกัน จับคู่ลายนิ้วมือกลโกง ให้ข่าวกรองเกี่ยวกับรูปแบบและวิธีการของมิจฉาชีพ',
+      'a3': 'ช่วยเหลือประชาชนเกี่ยวกับ SMS และสายโทรต้องสงสัย ตอบคำถามเกี่ยวกับกลโกง ให้ความคุ้มครองอย่างเป็นมิตรทันที',
+      'a4': 'สร้างสื่อสร้างความตระหนักรู้และจำลองสถานการณ์ ให้ความรู้ประชาชนเรื่องป้องกันกลโกง ทำวิดีโอและอินโฟกราฟิก',
+      'a5': 'ตรวจสอบใบแจ้งหนี้และอีเมลธุรกิจทั้งหมด ตรวจจับ BEC ที่พุ่งเป้าไปที่ SME ปกป้องบริษัทจากการโกงโอนเงิน',
+      'a6': 'ประกาศเตือนภัยด่วนผ่านทุกช่องทาง ส่งคำเตือนฉุกเฉินเมื่อตรวจพบกลโกงใหม่ ต้องส่งให้เร็วที่สุด'
     };
-    return orders[agentId] || 'Standby for orders from Big Boss.';
+    return orders[agentId] || 'รอคำสั่งจากลุงสิงห์';
   };
 
   const getSubordinates = (agentId: string) => {
@@ -159,7 +159,7 @@ export const OperationsDashboard: React.FC<OperationsDashboardProps> = ({
   const calculateAgentMetrics = (agentId: string, agentResults: AgentTaskResult[]) => {
     const successCount = agentResults.filter(r => r.status === 'success').length;
     const abilities = AGENT_ABILITIES[agentId];
-    const apiUsage = abilities?.apis?.join(', ') || 'None';
+    const apiUsage = abilities?.apis?.join(', ') || 'ไม่มี';
     
     // Calculate cost - all tasks use Gemini AI ($0.002/call)
     let estimatedCost = agentResults.length * 0.002;
@@ -196,15 +196,15 @@ export const OperationsDashboard: React.FC<OperationsDashboardProps> = ({
                 className="p-2 hover:bg-white/10 rounded-lg transition-colors group flex items-center gap-2 text-gray-400 hover:text-white"
               >
                 <ArrowLeft className="w-5 h-5" />
-                <span className="font-mono text-sm">Back</span>
+                <span className="font-mono text-sm">กลับ</span>
               </button>
               <div>
                 <h1 className="text-3xl font-bold text-white mb-2 font-mono flex items-center gap-3">
                   <Activity className="w-8 h-8 text-neon-green animate-pulse" />
-                  Operations Dashboard
+                  แดชบอร์ดปฏิบัติการ
                 </h1>
                 <p className="text-gray-400 text-sm font-mono">
-                  Command hierarchy, task results, and operational metrics
+                  ลำดับบัญชาการ ผลงาน และตัวชี้วัดปฏิบัติการ
                 </p>
               </div>
             </div>
@@ -216,7 +216,7 @@ export const OperationsDashboard: React.FC<OperationsDashboardProps> = ({
               title="Clear all stored task data"
             >
               <XCircle className="w-4 h-4" />
-              Clear Data
+              ล้างข้อมูล
             </button>
           </div>
 
@@ -225,28 +225,28 @@ export const OperationsDashboard: React.FC<OperationsDashboardProps> = ({
             <div className="bg-black/40 border border-neon-green/30 rounded-lg p-3">
               <div className="flex items-center gap-2 mb-1">
                 <Users className="w-4 h-4 text-neon-green" />
-                <span className="text-xs text-gray-400 font-mono">ACTIVE AGENTS</span>
+                <span className="text-xs text-gray-400 font-mono">AGENT ที่ใช้งาน</span>
               </div>
               <div className="text-2xl font-bold text-neon-green font-mono">{activeAgents.length}</div>
             </div>
             <div className="bg-black/40 border border-blue-500/30 rounded-lg p-3">
               <div className="flex items-center gap-2 mb-1">
                 <Activity className="w-4 h-4 text-blue-400" />
-                <span className="text-xs text-gray-400 font-mono">TOTAL TASKS</span>
+                <span className="text-xs text-gray-400 font-mono">งานทั้งหมด</span>
               </div>
               <div className="text-2xl font-bold text-blue-400 font-mono">{results.length}</div>
             </div>
             <div className="bg-black/40 border border-purple-500/30 rounded-lg p-3">
               <div className="flex items-center gap-2 mb-1">
                 <Server className="w-4 h-4 text-purple-400" />
-                <span className="text-xs text-gray-400 font-mono">API CALLS</span>
+                <span className="text-xs text-gray-400 font-mono">เรียก API</span>
               </div>
               <div className="text-2xl font-bold text-purple-400 font-mono">{apiCalls}</div>
             </div>
             <div className="bg-black/40 border border-yellow-500/30 rounded-lg p-3">
               <div className="flex items-center gap-2 mb-1">
                 <DollarSign className="w-4 h-4 text-yellow-400" />
-                <span className="text-xs text-gray-400 font-mono">TOTAL COST</span>
+                <span className="text-xs text-gray-400 font-mono">ค่าใช้จ่ายรวม</span>
               </div>
               <div className="text-2xl font-bold text-yellow-400 font-mono">${totalCost.toFixed(4)}</div>
             </div>
@@ -263,7 +263,7 @@ export const OperationsDashboard: React.FC<OperationsDashboardProps> = ({
               }`}
             >
               <ListChecks className="w-4 h-4" />
-              COMMAND HIERARCHY
+              ลำดับบัญชาการ
             </button>
             <button
               onClick={() => setActiveTab('results')}
@@ -274,7 +274,7 @@ export const OperationsDashboard: React.FC<OperationsDashboardProps> = ({
               }`}
             >
               <BarChart3 className="w-4 h-4" />
-              TASK RESULTS ({results.length})
+              ผลงาน ({results.length})
             </button>
           </div>
         </div>
@@ -288,7 +288,7 @@ export const OperationsDashboard: React.FC<OperationsDashboardProps> = ({
           sortedAgentIds.length === 0 ? (
             <div className="text-center py-20">
               <Activity className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-              <p className="text-gray-500 font-mono">No active agents. Activate agents to see their command structure.</p>
+              <p className="text-gray-500 font-mono">ยังไม่มี Agent ที่ใช้งาน เปิดใช้งาน Agent เพื่อดูโครงสร้างบัญชาการ</p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -338,18 +338,18 @@ export const OperationsDashboard: React.FC<OperationsDashboardProps> = ({
                             <div className="flex items-center gap-6 text-xs font-mono">
                               <div className="flex items-center gap-1">
                                 <Activity className="w-3 h-3 text-blue-400" />
-                                <span className="text-gray-400">Tasks:</span>
+                                <span className="text-gray-400">งาน:</span>
                                 <span className="text-blue-400 font-bold">{metrics.totalTasks}</span>
                               </div>
                               <div className="flex items-center gap-1">
                                 <TrendingUp className="w-3 h-3 text-green-400" />
-                                <span className="text-gray-400">Success:</span>
+                                <span className="text-gray-400">สำเร็จ:</span>
                                 <span className="text-green-400 font-bold">{metrics.successRate}%</span>
                               </div>
                               {subordinates.length > 0 && (
                                 <div className="flex items-center gap-1">
                                   <Users className="w-3 h-3 text-purple-400" />
-                                  <span className="text-gray-400">Squad:</span>
+                                  <span className="text-gray-400">หน่วย:</span>
                                   <span className="text-purple-400 font-bold">{subordinates.length}</span>
                                 </div>
                               )}
@@ -373,20 +373,20 @@ export const OperationsDashboard: React.FC<OperationsDashboardProps> = ({
                           <div className="bg-gradient-to-r from-purple-500/10 to-transparent border border-purple-500/30 rounded-lg p-4">
                             <h4 className="text-sm font-mono text-purple-400 mb-3 flex items-center gap-2">
                               <Users className="w-4 h-4" />
-                              COMMAND CHAIN
+                              สายบัญชาการ
                             </h4>
                             <div className="space-y-2">
                               {commander && (
                                 <div className="flex items-center gap-2 text-sm font-mono">
                                   <ChevronUp className="w-3 h-3 text-gray-500" />
-                                  <span className="text-gray-400">Reports to:</span>
+                                  <span className="text-gray-400">รายงานต่อ:</span>
                                   <span className="text-white font-bold">{commander.name}</span>
                                 </div>
                               )}
                               {subordinates.length > 0 && (
                                 <div className="flex items-center gap-2 text-sm font-mono">
                                   <ChevronDown className="w-3 h-3 text-gray-500" />
-                                  <span className="text-gray-400">Commands:</span>
+                                  <span className="text-gray-400">สั่งการ:</span>
                                   <div className="flex gap-2 flex-wrap">
                                     {subordinates.map(sub => (
                                       <span key={sub.id} className="px-2 py-1 bg-purple-500/20 border border-purple-500/30 rounded text-purple-300 text-xs">
@@ -404,7 +404,7 @@ export const OperationsDashboard: React.FC<OperationsDashboardProps> = ({
                           <div className="bg-gradient-to-r from-yellow-500/10 to-transparent border border-yellow-500/30 rounded-lg p-4">
                             <h4 className="text-sm font-mono text-yellow-400 mb-2 flex items-center gap-2">
                               <AlertCircle className="w-4 h-4" />
-                              MISSION ORDERS
+                              คำสั่งภารกิจ
                             </h4>
                             <p className="text-gray-300 text-sm leading-relaxed">{commanderOrder}</p>
                           </div>
@@ -413,9 +413,9 @@ export const OperationsDashboard: React.FC<OperationsDashboardProps> = ({
                         <div className="bg-gradient-to-r from-blue-500/10 to-transparent border border-blue-500/30 rounded-lg p-4">
                           <h4 className="text-sm font-mono text-blue-400 mb-2 flex items-center gap-2">
                             <Server className="w-4 h-4" />
-                            API INTEGRATIONS
+                            การเชื่อมต่อ API
                           </h4>
-                          <p className="text-gray-300 text-sm font-mono">{metrics.apiUsage || 'None'}</p>
+                          <p className="text-gray-300 text-sm font-mono">{metrics.apiUsage || 'ไม่มี'}</p>
                         </div>
                       </div>
                     )}
@@ -429,7 +429,7 @@ export const OperationsDashboard: React.FC<OperationsDashboardProps> = ({
           results.length === 0 ? (
             <div className="text-center py-20">
               <BarChart3 className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-              <p className="text-gray-500 font-mono">No task results yet. Agent activities will appear here.</p>
+              <p className="text-gray-500 font-mono">ยังไม่มีผลงาน กิจกรรมของ Agent จะแสดงที่นี่</p>
             </div>
           ) : (
             <div className="space-y-3">

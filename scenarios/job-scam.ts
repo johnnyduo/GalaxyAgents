@@ -41,7 +41,7 @@ export const jobScamScenario: FraudScenario = {
       agentId: 'a0',
       alignment: 'transitioning',
       content: {
-        th: '⚠️ Big Boss กำลังแปลงร่างเป็น "HR บริษัทปลอม"...',
+        th: '⚠️ ลุงสิงห์ กำลังแปลงร่างเป็น "HR บริษัทปลอม"...',
         en: '⚠️ Big Boss is transforming into "Fake company HR"...',
       },
       duration: 2500,
@@ -65,7 +65,7 @@ export const jobScamScenario: FraudScenario = {
       agentId: 'a4',
       alignment: 'transitioning',
       content: {
-        th: '⚠️ Scam Trainer กำลังแปลงร่างเป็น "หัวหน้าทีม — คอยกดดันให้จ่ายเงิน"...',
+        th: '⚠️ ครูหมี กำลังแปลงร่างเป็น "อ.หมีโต้ง — คอยกดดันให้จ่ายเงิน"...',
         en: '⚠️ Scam Trainer is transforming into "Team leader" who pressures payment...',
       },
       duration: 2500,

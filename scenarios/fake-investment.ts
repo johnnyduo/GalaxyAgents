@@ -41,7 +41,7 @@ export const fakeInvestmentScenario: FraudScenario = {
       agentId: 'a5',
       alignment: 'transitioning',
       content: {
-        th: '⚠️ Money Guard กำลังแปลงร่างเป็น "คุณสมคิด — ที่ปรึกษาการลงทุนปลอม"...',
+        th: '⚠️ จ.ส.ต.จิ้งจอก กำลังแปลงร่างเป็น "ผจก.สมคิด — ที่ปรึกษาการลงทุนปลอม"...',
         en: '⚠️ Money Guard is transforming into fake investment advisor...',
       },
       duration: 2500,
@@ -65,7 +65,7 @@ export const fakeInvestmentScenario: FraudScenario = {
       agentId: 'a1',
       alignment: 'transitioning',
       content: {
-        th: '⚠️ Hawk Eye กำลังแปลงร่างเป็น "เจ้าหน้าที่ฝ่ายลูกค้า GlobalTrade"...',
+        th: '⚠️ พี่เหยี่ยว กำลังแปลงร่างเป็น "จนท.สมศรี ฝ่ายลูกค้า GlobalTrade"...',
         en: '⚠️ Hawk Eye is transforming into "GlobalTrade customer service"...',
       },
       duration: 2500,

@@ -86,7 +86,7 @@ const ScenarioOverlay: React.FC<ScenarioOverlayProps> = ({
                   scenario.difficulty === 'beginner' ? 'text-green-400' :
                   scenario.difficulty === 'intermediate' ? 'text-yellow-400' : 'text-red-400'
                 }`}>
-                  {scenario.difficulty.toUpperCase()}
+                  {scenario.difficulty === 'beginner' ? 'ง่าย' : scenario.difficulty === 'intermediate' ? 'ปานกลาง' : 'ยาก'}
                 </div>
               </div>
               <div className="bg-white/5 rounded-lg p-2">
@@ -120,7 +120,7 @@ const ScenarioOverlay: React.FC<ScenarioOverlayProps> = ({
               <h2 className="text-red-400 font-bold font-mono text-xl mb-1">
                 นี่คือกลโกง!
               </h2>
-              <p className="text-gray-400 text-xs font-mono">THIS WAS A SCAM!</p>
+              <p className="text-gray-400 text-xs font-mono">ทั้งหมดเป็นกลโกง!</p>
             </div>
 
             <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4 mb-4">
@@ -156,7 +156,7 @@ const ScenarioOverlay: React.FC<ScenarioOverlayProps> = ({
               <h2 className="text-neon-green font-bold font-mono text-lg mb-1">
                 จบการจำลอง
               </h2>
-              <p className="text-gray-500 text-xs font-mono">SIMULATION COMPLETE</p>
+              <p className="text-gray-500 text-xs font-mono">การจำลองเสร็จสมบูรณ์</p>
             </div>
 
             {/* Stats */}
@@ -176,11 +176,11 @@ const ScenarioOverlay: React.FC<ScenarioOverlayProps> = ({
               <div className="bg-white/5 border border-white/10 rounded-lg p-3 text-center">
                 <div className="text-[10px] text-gray-500 font-mono mb-1">เวลาที่ใช้</div>
                 <div className="text-white text-lg font-bold font-mono">
-                  {durationSec}s
+                  {durationSec} วิ
                 </div>
               </div>
               <div className="bg-white/5 border border-white/10 rounded-lg p-3 text-center">
-                <div className="text-[10px] text-gray-500 font-mono mb-1">Events</div>
+                <div className="text-[10px] text-gray-500 font-mono mb-1">เหตุการณ์</div>
                 <div className="text-white text-lg font-bold font-mono">
                   {simulation.timeline.length}
                 </div>

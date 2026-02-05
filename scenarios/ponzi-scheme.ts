@@ -41,7 +41,7 @@ export const ponziSchemeScenario: FraudScenario = {
       agentId: 'a4',
       alignment: 'transitioning',
       content: {
-        th: '⚠️ Scam Trainer กำลังแปลงร่างเป็น "กูรูการลงทุน — ดึงคนเข้าแชร์"...',
+        th: '⚠️ ครูหมี กำลังแปลงร่างเป็น "อ.หมีโต้ง — ดึงคนเข้าแชร์"...',
         en: '⚠️ Scam Trainer is transforming into "Investment Guru recruiter"...',
       },
       duration: 2500,
@@ -78,7 +78,7 @@ export const ponziSchemeScenario: FraudScenario = {
       agentId: 'a5',
       alignment: 'transitioning',
       content: {
-        th: '⚠️ Money Guard กำลังแปลงร่างเป็น "คุณสมคิด — ผู้จัดการกองทุนปลอม"...',
+        th: '⚠️ จ.ส.ต.จิ้งจอก กำลังแปลงร่างเป็น "ผจก.สมคิด — ผู้จัดการกองทุนปลอม"...',
         en: '⚠️ Money Guard is transforming into fake fund manager...',
       },
       duration: 2500,

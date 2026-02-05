@@ -41,7 +41,7 @@ export const smsPhishingScenario: FraudScenario = {
       agentId: 'a6',
       alignment: 'transitioning',
       content: {
-        th: '⚠️ Lightning Alert กำลังแปลงร่างเป็น "SMS Bot ส่งลิงก์ปลอม"...',
+        th: '⚠️ ผบ.มังกร กำลังแปลงร่างเป็น "บอทมังกรดำ ส่งลิงก์ปลอม"...',
         en: '⚠️ Lightning Alert is transforming into "Phishing SMS Bot"...',
       },
       duration: 2500,
@@ -77,7 +77,7 @@ export const smsPhishingScenario: FraudScenario = {
       agentId: 'a3',
       alignment: 'transitioning',
       content: {
-        th: '⚠️ Guardian Angel กำลังแปลงร่างเป็น "น้องพลอย แอดมินปลอม"...',
+        th: '⚠️ น้องฟ้า กำลังแปลงร่างเป็น "น้องพลอย แอดมินปลอม"...',
         en: '⚠️ Guardian Angel is transforming into fake customer service...',
       },
       duration: 2500,

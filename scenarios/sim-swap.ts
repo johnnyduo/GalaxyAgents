@@ -41,7 +41,7 @@ export const simSwapScenario: FraudScenario = {
       agentId: 'a1',
       alignment: 'transitioning',
       content: {
-        th: '⚠️ Hawk Eye กำลังแปลงร่างเป็น "แฮกเกอร์ — ผู้ขอซิมใหม่"...',
+        th: '⚠️ พี่เหยี่ยว กำลังแปลงร่างเป็น "จนท.สมศรี — ผู้ขอซิมใหม่"...',
         en: '⚠️ Hawk Eye is transforming into the SIM swap hacker...',
       },
       duration: 2500,
@@ -65,7 +65,7 @@ export const simSwapScenario: FraudScenario = {
       agentId: 'a6',
       alignment: 'transitioning',
       content: {
-        th: '⚠️ Lightning Alert กำลังแปลงร่างเป็น "SMS Bot — รับ OTP แทนเหยื่อ"...',
+        th: '⚠️ ผบ.มังกร กำลังแปลงร่างเป็น "บอทมังกรดำ — รับ OTP แทนเหยื่อ"...',
         en: '⚠️ Lightning Alert is transforming into OTP interceptor bot...',
       },
       duration: 2500,

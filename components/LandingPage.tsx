@@ -29,7 +29,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLaunchApp }) => {
             onClick={onLaunchApp}
             className="px-4 py-1.5 bg-neon-green/10 hover:bg-neon-green/20 rounded border border-neon-green/50 transition-all duration-300 flex items-center gap-2 text-neon-green text-sm font-mono font-bold uppercase tracking-wider"
           >
-            Launch App <ArrowRight size={14} />
+            เปิดแอป <ArrowRight size={14} />
           </button>
         </header>
 
@@ -39,7 +39,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLaunchApp }) => {
           <div className="flex-1 space-y-6">
             <div className="inline-block px-3 py-1.5 bg-neon-green/10 rounded border border-neon-green/30 backdrop-blur-sm">
               <span className="text-xs font-mono uppercase tracking-wider text-neon-green">
-                ⚡ Digital Fraud Protection Network
+                ⚡ เครือข่ายป้องกันการโกงดิจิทัล
               </span>
             </div>
 
@@ -52,9 +52,9 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLaunchApp }) => {
             </h2>
 
             <p className="text-base text-gray-400 max-w-2xl leading-relaxed font-mono">
-              Deploy intelligent AI agents that <span className="text-neon-green font-bold">detect and prevent digital fraud</span> in real-time. 
-              Protect Thai citizens and businesses from scams with pattern recognition, threat intelligence, and emergency alerts.
-              Built for Samsung × KBTG Hackathon.
+              ใช้ AI Agent อัจฉริยะ <span className="text-neon-green font-bold">ตรวจจับและป้องกันการโกงดิจิทัล</span> แบบเรียลไทม์
+              ปกป้องประชาชนและธุรกิจไทยจากกลโกง ด้วยการจดจำรูปแบบ ข่าวกรองภัยคุกคาม และระบบเตือนภัยฉุกเฉิน
+              สร้างสำหรับ Samsung × KBTG Hackathon
             </p>
 
             <div className="flex flex-wrap gap-4">
@@ -62,7 +62,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLaunchApp }) => {
                 onClick={onLaunchApp}
                 className="px-6 py-3 bg-neon-green text-black rounded font-bold text-sm font-mono uppercase tracking-wider hover:shadow-[0_0_20px_rgba(67,255,77,0.5)] transition-all duration-300 flex items-center gap-2"
               >
-                <Zap size={16} /> Launch App
+                <Zap size={16} /> เปิดแอป
               </button>
               <a
                 href="https://github.com/johnnyduo/GalaxyAgents"
@@ -70,7 +70,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLaunchApp }) => {
                 rel="noopener noreferrer"
                 className="px-6 py-3 bg-white/5 hover:bg-white/10 rounded font-bold text-sm font-mono uppercase tracking-wider backdrop-blur-sm border border-white/10 hover:border-neon-green/50 transition-all duration-300"
               >
-                View on GitHub
+                ดูบน GitHub
               </a>
             </div>
 
@@ -78,15 +78,15 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLaunchApp }) => {
             <div className="flex gap-8 pt-6 font-mono">
               <div>
                 <div className="text-2xl font-bold text-neon-green">7</div>
-                <div className="text-xs text-gray-500 uppercase tracking-wider">Agents</div>
+                <div className="text-xs text-gray-500 uppercase tracking-wider">Agent</div>
               </div>
               <div>
                 <div className="text-2xl font-bold text-neon-green">∞</div>
-                <div className="text-xs text-gray-500 uppercase tracking-wider">Tasks</div>
+                <div className="text-xs text-gray-500 uppercase tracking-wider">ภารกิจ</div>
               </div>
               <div>
                 <div className="text-2xl font-bold text-neon-green">24/7</div>
-                <div className="text-xs text-gray-500 uppercase tracking-wider">Active</div>
+                <div className="text-xs text-gray-500 uppercase tracking-wider">ทำงาน</div>
               </div>
             </div>
           </div>
@@ -110,89 +110,89 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLaunchApp }) => {
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-20 px-6 max-w-7xl mx-auto">
           <FeatureCard
             icon={<Network className="text-neon-green" size={24} />}
-            title="Multi-Agent System"
-            description="7 specialized agents detecting fraud patterns"
+            title="ระบบ Multi-Agent"
+            description="7 Agent เชี่ยวชาญ ตรวจจับรูปแบบกลโกง"
           />
           <FeatureCard
             icon={<Shield className="text-neon-green" size={24} />}
-            title="Threat Intelligence"
-            description="Real-time scam pattern detection & analysis"
+            title="ข่าวกรองภัยคุกคาม"
+            description="ตรวจจับรูปแบบกลโกงแบบเรียลไทม์"
           />
           <FeatureCard
             icon={<Zap className="text-neon-green" size={24} />}
-            title="Emergency Alerts"
-            description="Multi-channel instant fraud notifications"
+            title="แจ้งเตือนฉุกเฉิน"
+            description="แจ้งเตือนหลายช่องทางทันที"
           />
           <FeatureCard
             icon={<Cpu className="text-neon-green" size={24} />}
-            title="AI-Powered"
-            description="Gemini AI driven decision making"
+            title="ขับเคลื่อนด้วย AI"
+            description="ตัดสินใจด้วย Gemini AI"
           />
         </div>
 
         {/* Agent Showcase */}
         <div className="text-center mb-8 px-6 max-w-7xl mx-auto">
-          <h3 className="text-2xl font-bold mb-2 font-mono text-neon-green uppercase tracking-wider">Defense Team</h3>
-          <p className="text-gray-500 text-sm font-mono uppercase tracking-wider">7 AI Fraud Protection Agents</p>
+          <h3 className="text-2xl font-bold mb-2 font-mono text-neon-green uppercase tracking-wider">ทีมป้องกัน</h3>
+          <p className="text-gray-500 text-sm font-mono uppercase tracking-wider">7 AI Agent ป้องกันการโกง</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 px-6 mb-20 max-w-7xl mx-auto">
-          <AgentPreview 
-            name="Big Boss" 
-            role="Commander" 
+          <AgentPreview
+            name="ลุงสิงห์ (Big Boss)"
+            role="ผู้บัญชาการ"
             avatar="/lottie/Lion - Breath.json"
-            ability="Command Center coordinating all agents and managing fraud defense strategy"
+            ability="ราชสีห์ผู้บัญชาการสูงสุด สั่งการทุกปฏิบัติการ ลุงเข้มแต่ใจดี ลูกน้องรักทุกคน"
           />
-          <AgentPreview 
-            name="Hawk Eye" 
-            role="Scanner" 
+          <AgentPreview
+            name="พี่เหยี่ยว (Hawk Eye)"
+            role="นักสืบ"
             avatar="/lottie/running pigeon.json"
-            ability="Detecting new scam patterns and analyzing fraud trends before they spread"
+            ability="นกพิราบสายลับตาเหยี่ยว สืบหากลโกงใหม่ทั่วเน็ต ดมกลิ่นมิจได้ก่อนลงมือ"
           />
-          <AgentPreview 
-            name="Memory Bank" 
-            role="Analyst" 
+          <AgentPreview
+            name="ป้าฮูก (Memory Bank)"
+            role="คลังความจำ"
             avatar="/lottie/Duo Attack.json"
-            ability="Knowledge base with scam fingerprinting and similarity matching"
+            ability="นกฮูกจอมจำ สมองกลของทีม ป้าจำทุกเคสกลโกง ใครถามอะไรป้าตอบได้หมด"
           />
-          <AgentPreview 
-            name="Guardian Angel" 
-            role="Protector" 
+          <AgentPreview
+            name="น้องฟ้า (Guardian Angel)"
+            role="เทวดาผู้คุ้มครอง"
             avatar="/lottie/Happy Unicorn Dog.json"
-            ability="Friendly AI assistant protecting citizens from SMS and call scams"
+            ability="ยูนิคอร์นใจดี คอยดูแลประชาชน ตรวจ SMS ปลอมและสายโทรต้องสงสัย น่ารักมาก"
           />
-          <AgentPreview 
-            name="Scam Trainer" 
-            role="Trainer" 
+          <AgentPreview
+            name="ครูหมี (Scam Trainer)"
+            role="ครูฝึกสอน"
             avatar="/lottie/Cute bear dancing.json"
-            ability="Creating scam simulations and educational videos for fraud awareness"
+            ability="หมีน้อยสุดครีเอทีฟ สร้างสื่อจำลองกลโกง วิดีโอเตือนภัย สอนสนุก เข้าใจง่าย"
           />
-          <AgentPreview 
-            name="Money Guard" 
-            role="Business Shield" 
+          <AgentPreview
+            name="จ.ส.ต.จิ้งจอก (Money Guard)"
+            role="ผู้พิทักษ์การเงิน"
             avatar="/lottie/happy fox.json"
-            ability="Protecting businesses from BEC scams and invoice fraud"
+            ability="เจ้าหน้าที่การเงินจมูกไว ดมกลิ่นใบแจ้งหนี้ปลอมและอีเมลหลอกลวงได้แม่นยำ"
           />
-          <AgentPreview 
-            name="Lightning Alert" 
-            role="Messenger" 
+          <AgentPreview
+            name="ผบ.มังกร (Lightning Alert)"
+            role="สายฟ้าแจ้งเตือน"
             avatar="/lottie/Dragon.json"
-            ability="Emergency broadcaster sending real-time fraud alerts via multiple channels"
+            ability="มังกรสายฟ้า เร็วที่สุดในทีม! ส่งเตือนภัยฉุกเฉินถึงประชาชนภายในเสี้ยววินาที"
           />
         </div>
 
         {/* Footer CTA */}
         <div className="my-16 text-center px-6 pb-20 max-w-7xl mx-auto">
           <div className="inline-block p-8 bg-black/40 rounded-xl backdrop-blur-sm border border-neon-green/20">
-            <h3 className="text-2xl font-bold mb-3 font-mono text-neon-green uppercase tracking-wider">Ready to Deploy?</h3>
+            <h3 className="text-2xl font-bold mb-3 font-mono text-neon-green uppercase tracking-wider">พร้อมเริ่มต้นหรือยัง?</h3>
             <p className="text-gray-400 mb-6 max-w-2xl mx-auto font-mono text-sm">
-              Experience AI-powered fraud protection for Thailand
+              สัมผัสระบบป้องกันการโกงขับเคลื่อนด้วย AI สำหรับประเทศไทย
             </p>
             <button
               onClick={onLaunchApp}
               className="px-8 py-3 bg-neon-green text-black rounded font-bold text-sm font-mono uppercase tracking-wider hover:shadow-[0_0_20px_rgba(67,255,77,0.5)] transition-all duration-300 flex items-center gap-2 mx-auto"
             >
-              <Zap size={16} /> Launch App Now
+              <Zap size={16} /> เปิดแอปเลย
             </button>
           </div>
         </div>

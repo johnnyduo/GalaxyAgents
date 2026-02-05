@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { AGENTS, INITIAL_LOGS } from './constants';
-import { LogMessage, AgentTaskResult, FraudScenario } from './types';
+import { LogMessage, AgentTaskResult, FraudScenario, AgentRole } from './types';
 import UserBar from './components/UserBar';
 import FlowCanvas from './components/FlowCanvas';
 import AgentCard from './components/AgentCard';
@@ -174,7 +174,7 @@ const App: React.FC = () => {
       simulation.loadAndPlay(pending.scenario);
       addLog('SIMULATION', `🎬 เริ่มจำลองสถานการณ์: ${pending.scenario.titleTh}`);
       addLog('SIMULATION', `👤 ${pending.name} | เงินในบัญชี: ฿${pending.money.toLocaleString()}`);
-      toast.warning(`Simulation: ${pending.scenario.titleEn}`);
+      toast.warning(`จำลอง: ${pending.scenario.titleTh}`);
     }
   }, [simulation, addLog]);
 
@@ -258,12 +258,12 @@ const App: React.FC = () => {
 
   // --- Initialization: Check API Status ---
   useEffect(() => {
-    addLog('SYSTEM', 'Galaxy Agents Defense Network Initializing...');
+    addLog('SYSTEM', 'Galaxy Agents ระบบป้องกันกำลังเริ่มต้น...');
 
     const timer = setTimeout(() => {
-      addLog('SYSTEM', 'Gemini AI: Ready for agent intelligence');
-      addLog('SYSTEM', 'Fraud Pattern Database: Ready for scam detection');
-      addLog('SYSTEM', 'Defense systems ready. Agents standing by.');
+      addLog('SYSTEM', 'Gemini AI: พร้อมให้บริการระบบอัจฉริยะ');
+      addLog('SYSTEM', 'ฐานข้อมูลรูปแบบกลโกง: พร้อมตรวจจับ');
+      addLog('SYSTEM', 'ระบบป้องกันพร้อมแล้ว Agent ทั้งหมดรอคำสั่ง');
     }, 1000);
 
     return () => clearTimeout(timer);
@@ -325,26 +325,26 @@ const App: React.FC = () => {
   // Activate agent
   const handleActivateAgent = useCallback((agentId: string) => {
     if (activeAgents.includes(agentId)) {
-      toast.info('Agent is already active');
+      toast.info('Agent นี้เปิดใช้งานอยู่แล้ว');
       return;
     }
 
     const agent = AGENTS.find(a => a.id === agentId);
     if (!agent) return;
 
-    addLog('SYSTEM', `Activating ${agent.name}...`);
+    addLog('SYSTEM', `กำลังเปิดใช้งาน ${agent.name}...`);
 
     setTimeout(() => {
       setActiveAgents(prev => [...prev, agentId]);
       setAgentStatuses(prev => ({ ...prev, [agentId]: 'idle' }));
-      addLog(agent.name, `${agent.name} is now online and ready!`);
+      addLog(agent.name, `${agent.name} ออนไลน์และพร้อมใช้งานแล้ว!`);
 
       if (agent.personality?.dialogues) {
         const randomDialogue = agent.personality.dialogues[Math.floor(Math.random() * agent.personality.dialogues.length)];
         setTimeout(() => addLog(agent.name, randomDialogue), 1000);
       }
 
-      toast.success(`${agent.name} activated!`);
+      toast.success(`${agent.name} เปิดใช้งานแล้ว!`);
     }, 1500);
   }, [activeAgents, addLog]);
 
@@ -353,7 +353,7 @@ const App: React.FC = () => {
     const agent = AGENTS.find(a => a.id === agentId);
     if (!agent) return;
 
-    addLog('SYSTEM', `Deactivating ${agent.name}...`);
+    addLog('SYSTEM', `กำลังปิดใช้งาน ${agent.name}...`);
 
     setTimeout(() => {
       setActiveAgents(prev => prev.filter(id => id !== agentId));
@@ -363,8 +363,8 @@ const App: React.FC = () => {
         return newStatuses;
       });
 
-      addLog(agent.name, `${agent.name} has gone offline.`);
-      toast.info(`${agent.name} deactivated`);
+      addLog(agent.name, `${agent.name} ออฟไลน์แล้ว`);
+      toast.info(`${agent.name} ปิดใช้งานแล้ว`);
     }, 1000);
   }, [addLog]);
 
@@ -373,7 +373,7 @@ const App: React.FC = () => {
     const agent = AGENTS.find(a => a.id === agentId);
     if (!agent) return;
 
-    addLog('SYSTEM', `Removing ${agent.name} from the network...`);
+    addLog('SYSTEM', `กำลังลบ ${agent.name} ออกจากเครือข่าย...`);
 
     setActiveAgents(prev => prev.filter(id => id !== agentId));
     setAgentStatuses(prev => {
@@ -393,8 +393,8 @@ const App: React.FC = () => {
       delete progressIntervalsRef.current[agentId];
     }
 
-    addLog('SYSTEM', `${agent.name} has been removed from the team.`);
-    toast.success(`${agent.name} deleted successfully`);
+    addLog('SYSTEM', `${agent.name} ถูกลบออกจากทีมแล้ว`);
+    toast.success(`ลบ ${agent.name} สำเร็จ`);
   }, [addLog]);
 
   // Execute agent task (AI-powered)
@@ -408,16 +408,16 @@ const App: React.FC = () => {
       [agentId]: {
         isActive: true,
         progress: 0,
-        task: taskDescription || `Executing ${agent.role}`,
+        task: taskDescription || `กำลังปฏิบัติหน้าที่ ${agent.role}`,
         startTime: Date.now()
       }
     }));
 
-    addLog(agent.name, `Starting task: ${taskDescription || agent.role}`);
+    addLog(agent.name, `เริ่มภารกิจ: ${taskDescription || agent.role}`);
 
     // Show dialogue
     const dialogues = agent.personality?.dialogues || [];
-    const dialogue = dialogues[Math.floor(Math.random() * dialogues.length)] || 'Processing...';
+    const dialogue = dialogues[Math.floor(Math.random() * dialogues.length)] || 'กำลังประมวลผล...';
     setActiveDialogue({ agentId, dialogue });
 
     // Simulate progress - store interval ref for cleanup
@@ -445,19 +445,19 @@ const App: React.FC = () => {
       let taskType: AgentTaskResult['taskType'] = 'custom_order';
       let summary = '';
 
-      if (agent.role === 'Navigator') {
+      if (agent.role === AgentRole.SCOUT) {
         const analysis = await geminiService.chat({
           prompt: `As Hawk Eye fraud detector, analyze emerging scam patterns. Provide a brief threat report focusing on: ${taskDescription || 'SMS phishing, fake banking alerts, and QR code scams in Thailand'}`
         });
         result = {
           type: 'fraud_detection',
-          patterns: ['SMS phishing +45%', 'Fake banking LINE accounts', 'QR code payment scams'],
-          threats: 'High',
+          patterns: ['SMS ฟิชชิง +45%', 'บัญชี LINE ธนาคารปลอม', 'กลโกง QR Code ชำระเงิน'],
+          threats: 'สูง',
           analysis: analysis.text
         };
         taskType = 'fraud_detection';
-        summary = `Detected 3 new scam patterns: ${taskDescription || 'SMS phishing surge, fake LINE banking, malicious QR codes'}`;
-      } else if (agent.role === 'Archivist') {
+        summary = `ตรวจพบรูปแบบกลโกงใหม่ 3 รูปแบบ: ${taskDescription || 'SMS ฟิชชิงพุ่งสูง, LINE ธนาคารปลอม, QR Code อันตราย'}`;
+      } else if (agent.role === AgentRole.MEMORY) {
         const analysis = await geminiService.chat({
           prompt: `As Memory Bank intelligence agent, search fraud database for patterns matching: ${taskDescription || 'suspicious SMS patterns from Bangkok region'}. Provide matching cases and similarity analysis.`
         });
@@ -466,70 +466,70 @@ const App: React.FC = () => {
           casesFound: 23,
           similarity: '87%',
           analysis: analysis.text,
-          matchedCases: ['Case #1847 Bangkok SMS', 'Case #2341 Invoice fraud', 'Case #3892 LINE impersonation']
+          matchedCases: ['เคส #1847 SMS กรุงเทพฯ', 'เคส #2341 ใบแจ้งหนี้ปลอม', 'เคส #3892 LINE แอบอ้าง']
         };
         taskType = 'pattern_analysis';
-        summary = `Matched ${taskDescription || 'suspicious pattern to 23 historical cases - 87% similarity to Bangkok SMS scam ring'}`;
-      } else if (agent.role === 'Oracle') {
+        summary = `จับคู่สำเร็จ: ${taskDescription || 'พบรูปแบบต้องสงสัยตรงกับ 23 เคสในอดีต — คล้าย 87% กับแก๊ง SMS กรุงเทพฯ'}`;
+      } else if (agent.role === AgentRole.FINANCE_GUARD) {
         const analysis = await geminiService.chat({
           prompt: `As Money Guard, analyze this business email/invoice for fraud indicators: ${taskDescription || 'invoice with changed bank account details'}`
         });
         result = {
           type: 'verification',
-          fraudScore: 'High Risk',
-          indicators: ['Account change', 'Domain mismatch', 'Urgent language'],
-          recommendation: 'BLOCK',
+          fraudScore: 'ความเสี่ยงสูง',
+          indicators: ['เปลี่ยนบัญชีปลายทาง', 'โดเมนอีเมลไม่ตรง', 'ใช้ภาษาเร่งด่วน'],
+          recommendation: 'บล็อก',
           analysis: analysis.text
         };
         taskType = 'verification';
-        summary = `ALERT: ${taskDescription || 'Invoice fraud detected - bank account changed, domain off by 1 letter - $2.3M saved'}`;
-      } else if (agent.role === 'Merchant') {
+        summary = `แจ้งเตือน: ${taskDescription || 'ตรวจพบใบแจ้งหนี้ปลอม — บัญชีถูกเปลี่ยน, โดเมนผิด 1 ตัวอักษร — ป้องกันเงิน ฿2.3 ล้าน'}`;
+      } else if (agent.role === AgentRole.GUARDIAN) {
         const analysis = await geminiService.chat({
           prompt: `As Guardian Angel, help a citizen verify if this is a scam: ${taskDescription || 'SMS claiming unpaid package delivery fee'}`
         });
         result = {
           type: 'user_assistance',
-          verdict: 'SCAM',
+          verdict: 'กลโกง!',
           confidence: '99%',
-          reason: 'Fake delivery company, suspicious link',
+          reason: 'บริษัทขนส่งปลอม, ลิงก์น่าสงสัย',
           analysis: analysis.text
         };
         taskType = 'user_assistance';
-        summary = `Protected citizen from ${taskDescription || 'fake delivery SMS scam - warned not to click link or send payment'}`;
-      } else if (agent.role === 'Sentinel') {
+        summary = `ปกป้องประชาชนจาก ${taskDescription || 'SMS ขนส่งปลอม — เตือนอย่ากดลิงก์หรือโอนเงิน'}`;
+      } else if (agent.role === AgentRole.TRAINER) {
         const analysis = await geminiService.chat({
           prompt: `As Scam Trainer, create educational content about: ${taskDescription || 'how to spot fake government SMS messages'}`
         });
         result = {
           type: 'education',
-          contentType: 'Interactive video + quiz',
-          topics: ['Verify sender', 'Check official channels', 'Never click links'],
-          reach: '15,000 views',
+          contentType: 'วิดีโอโต้ตอบ + แบบทดสอบ',
+          topics: ['ตรวจสอบผู้ส่ง', 'เช็คช่องทางทางการ', 'อย่ากดลิงก์เด็ดขาด'],
+          reach: '15,000 ครั้ง',
           analysis: analysis.text
         };
         taskType = 'education';
-        summary = `Created viral training: ${taskDescription || '"How to Spot Fake Government SMS" - 15K views, 94% quiz pass rate'}`;
-      } else if (agent.role === 'Glitch') {
+        summary = `สร้างสื่อสอนสำเร็จ: ${taskDescription || '"วิธีจับ SMS ราชการปลอม" — 15K วิว, ผ่านแบบทดสอบ 94%'}`;
+      } else if (agent.role === AgentRole.ALERT) {
         result = {
           type: 'alert_broadcast',
-          channels: ['SMS', 'LINE', 'Email', 'Push'],
+          channels: ['SMS', 'LINE', 'อีเมล', 'แจ้งเตือน'],
           recipients: 50000,
-          deliveryTime: '0.8 seconds',
-          alertLevel: 'URGENT'
+          deliveryTime: '0.8 วินาที',
+          alertLevel: 'ด่วนที่สุด'
         };
         taskType = 'alert_broadcast';
-        summary = `BROADCAST: ${taskDescription || 'New fake banking LINE scam - 50K users alerted in 0.8 seconds across all channels'}`;
+        summary = `ประกาศด่วน: ${taskDescription || 'กลโกง LINE ธนาคารปลอมตัวใหม่ — แจ้งเตือนผู้ใช้ 50,000 คนใน 0.8 วินาทีทุกช่องทาง'}`;
       } else {
         const analysis = await geminiService.chat({
           prompt: `As Big Boss commander, coordinate fraud defense strategy: ${taskDescription || 'prioritize threats and allocate team resources'}`
         });
         result = {
           type: 'strategic_command',
-          priority: 'High',
+          priority: 'สูง',
           teamAllocated: 6,
           strategy: analysis.text
         };
-        summary = `Strategic coordination: ${taskDescription || 'Deployed all 6 agents - prioritized SMS phishing threat - team synchronized'}`;
+        summary = `สั่งการเชิงกลยุทธ์: ${taskDescription || 'ส่ง Agent ทั้ง 6 ตัวเข้าประจำการ — จัดลำดับภัย SMS ฟิชชิง — ทีมประสานพร้อม'}`;
       }
 
       // Clear progress interval
@@ -558,14 +558,14 @@ const App: React.FC = () => {
 
       setTimeout(() => setActiveDialogue(null), 2000);
 
-      toast.success(`${agent.name}: Mission complete!`);
+      toast.success(`${agent.name}: ภารกิจสำเร็จ!`);
     } catch (error) {
       // Clean up progress interval on error
       clearInterval(progressInterval);
       delete progressIntervalsRef.current[agentId];
 
       console.error('Task execution error:', error);
-      addLog('SYSTEM', `${agent.name} task failed: ${error}`);
+      addLog('SYSTEM', `${agent.name} ภารกิจล้มเหลว: ${error}`);
 
       setAgentProgress(prev => {
         const newProgress = { ...prev };
@@ -573,45 +573,45 @@ const App: React.FC = () => {
         return newProgress;
       });
 
-      toast.error(`Task failed for ${agent.name}`);
+      toast.error(`งานล้มเหลวสำหรับ ${agent.name}`);
     }
   }, [addLog]);
 
   // Commander orchestration
   const handleCommanderAction = useCallback(async (customOrder?: string) => {
     if (operationMode !== 'auto') {
-      toast.info('Switch to AUTO mode for Big Boss orchestration');
+      toast.info('เปลี่ยนเป็นโหมดอัตโนมัติเพื่อให้ลุงสิงห์สั่งการ');
       return;
     }
 
     const commander = AGENTS.find(a => a.id === 'a0');
     if (!commander || !activeAgents.includes('a0')) {
-      toast.error('Commander must be active for orchestration');
+      toast.error('ต้องเปิดใช้งาน Commander ก่อนสั่งการ');
       return;
     }
 
-    addLog(commander.name, 'Initiating strategic fraud defense coordination...');
+    addLog(commander.name, 'เริ่มประสานงานป้องกันการโกงเชิงกลยุทธ์...');
 
-    const order = customOrder || 'Assess current fraud threats and deploy team resources optimally';
+    const order = customOrder || 'ประเมินภัยคุกคามปัจจุบันและจัดสรรทีมอย่างเหมาะสม';
     await executeAgentTask('a0', order);
 
     const otherAgents = activeAgents.filter(id => id !== 'a0');
     if (otherAgents.length > 0) {
-      addLog(commander.name, `Deploying ${otherAgents.length} specialized agents to defensive positions...`);
+      addLog(commander.name, `กำลังส่ง ${otherAgents.length} Agent เข้าประจำตำแหน่งป้องกัน...`);
 
       for (const agentId of otherAgents.slice(0, 3)) {
         const agent = AGENTS.find(a => a.id === agentId);
         if (agent) {
           const roleOrders: Record<string, string> = {
-            'Navigator': 'Scan for emerging scam patterns in social media and messaging apps',
-            'Archivist': 'Cross-reference recent reports with historical fraud database',
-            'Merchant': 'Analyze user-submitted suspicious SMS and calls for common citizens',
-            'Sentinel': 'Create educational content about latest fraud techniques',
-            'Oracle': 'Verify business emails and invoices for BEC scams',
-            'Glitch': 'Prepare emergency broadcast system for rapid alert deployment'
+            [AgentRole.SCOUT]: 'สแกนหารูปแบบกลโกงใหม่ในโซเชียลมีเดียและแอปแชท',
+            [AgentRole.MEMORY]: 'เปรียบเทียบรายงานล่าสุดกับฐานข้อมูลกลโกงในอดีต',
+            [AgentRole.GUARDIAN]: 'วิเคราะห์ SMS และสายโทรต้องสงสัยที่ประชาชนส่งมา',
+            [AgentRole.TRAINER]: 'สร้างสื่อการสอนเกี่ยวกับเทคนิคกลโกงล่าสุด',
+            [AgentRole.FINANCE_GUARD]: 'ตรวจสอบอีเมลธุรกิจและใบแจ้งหนี้เพื่อตรวจจับ BEC',
+            [AgentRole.ALERT]: 'เตรียมระบบประกาศฉุกเฉินเพื่อส่งแจ้งเตือนด่วน'
           };
           setTimeout(() => {
-            executeAgentTask(agentId, roleOrders[agent.role] || `Execute ${agent.role} defensive protocols`);
+            executeAgentTask(agentId, roleOrders[agent.role] || `ปฏิบัติหน้าที่ ${agent.role}`);
           }, Math.random() * 2000);
         }
       }
@@ -622,7 +622,7 @@ const App: React.FC = () => {
   const handleLogout = useCallback(() => {
     authService.loginAsGuest();
     setShowLanding(true);
-    toast.info('Logged out - new guest session created');
+    toast.info('ออกจากระบบแล้ว — สร้างเซสชันผู้เยี่ยมชมใหม่');
   }, []);
 
   const handleLaunchApp = useCallback(() => {
@@ -703,15 +703,15 @@ const App: React.FC = () => {
             <div className="p-4 border-t border-white/10">
               <div className="bg-gradient-to-r from-neon-green/10 via-blue-500/10 to-purple-500/10 border border-neon-green/30 rounded-lg p-3">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-mono text-neon-green uppercase tracking-wider">Operations</span>
-                  <span className="text-neon-green font-bold font-mono">{taskResults.length} tasks</span>
+                  <span className="text-xs font-mono text-neon-green uppercase tracking-wider">ปฏิบัติการ</span>
+                  <span className="text-neon-green font-bold font-mono">{taskResults.length} งาน</span>
                 </div>
                 <button
                   onClick={() => setShowOperationsDashboard(true)}
                   className="w-full bg-neon-green/10 hover:bg-neon-green/20 border border-neon-green/30 text-neon-green font-semibold py-2.5 px-4 rounded transition-all flex items-center justify-center gap-2 text-sm font-mono"
                 >
                   <Activity size={16} />
-                  VIEW DASHBOARD
+                  ดูแดชบอร์ด
                 </button>
               </div>
             </div>
@@ -871,10 +871,10 @@ const App: React.FC = () => {
             <button
               onClick={() => setShowOperationsDashboard(true)}
               className="group bg-gradient-to-r from-neon-green to-blue-500 hover:from-neon-green/90 hover:to-blue-500/90 text-black font-bold px-6 py-3 rounded-full shadow-2xl shadow-neon-green/50 transition-all hover:scale-105 flex items-center gap-2 font-mono"
-              title="View Operations Dashboard"
+              title="ดูแดชบอร์ดปฏิบัติการ"
             >
               <Activity size={20} className="animate-pulse" />
-              <span>OPERATIONS</span>
+              <span>ปฏิบัติการ</span>
               <span className="bg-black/30 text-white px-2 py-0.5 rounded-full text-xs">
                 {taskResults.length}
               </span>

@@ -41,7 +41,7 @@ export const romanceScamScenario: FraudScenario = {
       agentId: 'a3',
       alignment: 'transitioning',
       content: {
-        th: '⚠️ Guardian Angel กำลังแปลงร่างเป็น "น้องพลอย — ผู้จัดการแชทของแก๊ง"...',
+        th: '⚠️ น้องฟ้า กำลังแปลงร่างเป็น "น้องพลอย — ผู้จัดการแชทของแก๊ง"...',
         en: '⚠️ Guardian Angel is transforming into the scam gang chat manager...',
       },
       duration: 2500,
@@ -65,7 +65,7 @@ export const romanceScamScenario: FraudScenario = {
       agentId: 'a4',
       alignment: 'transitioning',
       content: {
-        th: '⚠️ Scam Trainer กำลังแปลงร่างเป็น "กูรูความรัก — ผู้ช่วยของ ดร.ไมเคิล"...',
+        th: '⚠️ ครูหมี กำลังแปลงร่างเป็น "อ.หมีโต้ง — ผู้ช่วยของ ดร.ไมเคิล"...',
         en: '⚠️ Scam Trainer is transforming into "Dr. Michael\'s assistant"...',
       },
       duration: 2500,

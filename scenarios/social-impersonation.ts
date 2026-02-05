@@ -41,7 +41,7 @@ export const socialImpersonationScenario: FraudScenario = {
       agentId: 'a6',
       alignment: 'transitioning',
       content: {
-        th: '⚠️ Lightning Alert กำลังแปลงร่างเป็น "SMS Bot — ส่งข้อความธนาคารปลอม"...',
+        th: '⚠️ ผบ.มังกร กำลังแปลงร่างเป็น "บอทมังกรดำ — ส่งข้อความธนาคารปลอม"...',
         en: '⚠️ Lightning Alert is transforming into fake bank notification bot...',
       },
       duration: 2500,
@@ -77,7 +77,7 @@ export const socialImpersonationScenario: FraudScenario = {
       agentId: 'a5',
       alignment: 'transitioning',
       content: {
-        th: '⚠️ Money Guard กำลังแปลงร่างเป็น "คุณสมคิด — แฮกเกอร์เข้าบัญชี"...',
+        th: '⚠️ จ.ส.ต.จิ้งจอก กำลังแปลงร่างเป็น "ผจก.สมคิด — แฮกเกอร์เข้าบัญชี"...',
         en: '⚠️ Money Guard is transforming into the account hacker...',
       },
       duration: 2500,

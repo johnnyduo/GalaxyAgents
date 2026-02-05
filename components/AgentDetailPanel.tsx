@@ -27,7 +27,7 @@ const AgentDetailPanel: React.FC<AgentDetailPanelProps> = ({
   if (!agent) return null;
 
   const handleDeleteAgent = () => {
-    if (window.confirm(`Are you sure you want to delete ${agent.name}? This action cannot be undone.`)) {
+    if (window.confirm(`คุณต้องการลบ ${agent.name} หรือไม่? การกระทำนี้ไม่สามารถย้อนกลับได้`)) {
       onDeleteAgent?.(agent.id);
       onClose();
     }
@@ -36,7 +36,7 @@ const AgentDetailPanel: React.FC<AgentDetailPanelProps> = ({
   return (
     <div className="absolute right-0 top-10 bottom-0 w-96 bg-black/95 border-l border-neon-green/30 backdrop-blur-xl shadow-2xl z-[60] transform transition-transform duration-300 flex flex-col">
       <div className="p-4 border-b border-white/10 flex items-center justify-between bg-neon-green/5">
-        <h2 className="text-neon-green font-bold font-mono">AGENT DETAILS</h2>
+        <h2 className="text-neon-green font-bold font-mono">รายละเอียด AGENT</h2>
         <button onClick={onClose} className="text-gray-400 hover:text-white transition-colors">
           <X size={18} />
         </button>
@@ -71,31 +71,31 @@ const AgentDetailPanel: React.FC<AgentDetailPanelProps> = ({
         {/* Identity Data */}
         <div className="space-y-6">
             <div className="space-y-2">
-                <label className="text-xs text-gray-500 font-mono uppercase">Description</label>
+                <label className="text-xs text-gray-500 font-mono uppercase">คำอธิบาย</label>
                 <p className="text-sm text-gray-300 leading-relaxed">{agent.description}</p>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
                 <div className="bg-white/5 p-3 rounded border border-white/10">
-                    <label className="text-[10px] text-gray-500 font-mono uppercase block mb-1">Agent ID</label>
+                    <label className="text-[10px] text-gray-500 font-mono uppercase block mb-1">รหัส Agent</label>
                     <div className="flex items-center gap-2">
                         <span className="text-lg font-mono text-white">#{agent.tokenId}</span>
                     </div>
                 </div>
                 <div className="bg-white/5 p-3 rounded border border-white/10">
-                    <label className="text-[10px] text-gray-500 font-mono uppercase block mb-1">Trust Score</label>
+                    <label className="text-[10px] text-gray-500 font-mono uppercase block mb-1">คะแนนความน่าเชื่อถือ</label>
                     <span className="text-lg font-mono text-neon-green">{agent.trustScore}/100</span>
                 </div>
             </div>
 
             {/* Agent Status */}
             <div className="space-y-2">
-                <label className="text-xs text-gray-500 font-mono uppercase">Agent Status</label>
+                <label className="text-xs text-gray-500 font-mono uppercase">สถานะ Agent</label>
                 <div className="bg-black p-3 rounded border border-white/10">
                   <div className="flex items-center gap-2">
                     <div className={`w-2 h-2 rounded-full ${isActive ? 'bg-green-500 animate-pulse' : 'bg-gray-500'}`}></div>
                     <span className="text-sm font-mono text-gray-300">
-                      {isActive ? 'Online & Ready' : 'Offline'}
+                      {isActive ? 'ออนไลน์ & พร้อมใช้งาน' : 'ออฟไลน์'}
                     </span>
                   </div>
                 </div>
@@ -110,14 +110,14 @@ const AgentDetailPanel: React.FC<AgentDetailPanelProps> = ({
                       className="w-full bg-neon-green hover:bg-white text-black font-semibold py-3 px-4 rounded transition-all flex items-center justify-center gap-2"
                     >
                       <Play size={16} />
-                      Execute Task
+                      สั่งงาน
                     </button>
                     <button
                       onClick={() => onDeactivate?.(agent.id)}
                       className="w-full bg-red-500/20 hover:bg-red-500/30 border border-red-500/30 text-red-400 font-semibold py-2 px-4 rounded transition-all flex items-center justify-center gap-2"
                     >
                       <Square size={16} />
-                      Deactivate Agent
+                      ปิดใช้งาน Agent
                     </button>
                   </>
                 ) : (
@@ -126,7 +126,7 @@ const AgentDetailPanel: React.FC<AgentDetailPanelProps> = ({
                     className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-semibold py-3 px-4 rounded transition-all flex items-center justify-center gap-2"
                   >
                     <Play size={16} />
-                    Activate Agent
+                    เปิดใช้งาน Agent
                   </button>
                 )}
                 
@@ -134,15 +134,15 @@ const AgentDetailPanel: React.FC<AgentDetailPanelProps> = ({
                 <button
                   onClick={handleDeleteAgent}
                   className="w-full bg-red-900/20 hover:bg-red-900/40 border border-red-500/50 text-red-400 hover:text-red-300 font-semibold py-2 px-4 rounded transition-all flex items-center justify-center gap-2 mt-2"
-                  title="Remove this agent from your team"
+                  title="ลบ Agent นี้ออกจากทีม"
                 >
                   <Trash2 size={14} />
-                  Delete Agent
+                  ลบ Agent
                 </button>
             </div>
 
             <div className="space-y-2">
-                <label className="text-xs text-gray-500 font-mono uppercase">Capabilities</label>
+                <label className="text-xs text-gray-500 font-mono uppercase">ความสามารถ</label>
                 <div className="flex flex-wrap gap-2">
                     {agent.capabilities.map(cap => (
                         <span key={cap} className="px-2 py-1 bg-white/5 border border-white/20 rounded text-xs text-gray-300 hover:border-neon-green/50 transition-colors cursor-help">
@@ -157,7 +157,7 @@ const AgentDetailPanel: React.FC<AgentDetailPanelProps> = ({
               <div className="space-y-2">
                 <label className="text-xs text-gray-500 font-mono uppercase flex items-center gap-2">
                   <Zap size={12} className="text-neon-green" />
-                  API Integrations
+                  การเชื่อมต่อ API
                 </label>
                 <div className="flex flex-wrap gap-2">
                   {AGENT_ABILITIES[agent.id as keyof typeof AGENT_ABILITIES].apis.map((api: string) => (

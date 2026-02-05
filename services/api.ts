@@ -228,52 +228,52 @@ export const geminiService = {
   async generateAgentDialogue(agentName: string, agentRole: string, context: string = ''): Promise<string> {
     if (!ai || !GEMINI_API_KEY) {
       // Fallback to rule-based responses
-      const ruleBased = {
-        'Big Boss': [
-          'All units report status. Defense network operational.',
-          'Analyzing threat patterns across all sectors.',
-          'Coordinating team response. Stay vigilant.',
-          'Strategic position secure. Maintaining watch.'
+      const ruleBased: Record<string, string[]> = {
+        'ลุงสิงห์ (Big Boss)': [
+          'ทุกหน่วยรายงานสถานะ! ระบบป้องกันพร้อม!',
+          'กำลังวิเคราะห์รูปแบบภัยคุกคามทุกภาคส่วน',
+          'ประสานทีมตอบโต้ เฝ้าระวังต่อเนื่อง!',
+          'ตำแหน่งเชิงกลยุทธ์มั่นคง รักษาการเฝ้าระวัง'
         ],
-        'Hawk Eye': [
-          'Scanning for new fraud patterns... Systems online.',
-          'Threat radar active. Monitoring suspicious activity.',
-          'Pattern analysis in progress. No major threats detected.',
-          'Eyes on the horizon. Defense perimeter secure.'
+        'พี่เหยี่ยว (Hawk Eye)': [
+          'กำลังสแกนรูปแบบกลโกงใหม่... ระบบออนไลน์',
+          'เรดาร์ภัยคุกคามทำงานอยู่ ตรวจจับกิจกรรมต้องสงสัย',
+          'วิเคราะห์รูปแบบอยู่ ยังไม่พบภัยคุกคามหลัก',
+          'จับตาขอบฟ้า ขอบเขตป้องกันมั่นคง'
         ],
-        'Memory Bank': [
-          'Cross-referencing scam database... Match probability: calculating.',
-          'Historical pattern analysis complete. Similarities found.',
-          'Knowledge vault updated with new threat signatures.',
-          'Archived cases reviewed. Intelligence ready.'
+        'ป้าฮูก (Memory Bank)': [
+          'กำลังเปรียบเทียบฐานข้อมูลกลโกง... คำนวณความน่าจะเป็น',
+          'วิเคราะห์รูปแบบอดีตเสร็จแล้ว พบความคล้ายจ้า',
+          'อัปเดตลายเซ็นภัยคุกคามใหม่ในคลังความรู้แล้ว',
+          'ทบทวนเคสเก่าเรียบร้อย ข่าวกรองพร้อมจ้า'
         ],
-        'Guardian Angel': [
-          'Personal protection active. How can I help you today?',
-          'Standing by to assist. Your safety is my priority.',
-          'Monitoring for suspicious messages and calls.',
-          'Ready to answer your fraud prevention questions.'
+        'น้องฟ้า (Guardian Angel)': [
+          'ระบบคุ้มครองส่วนตัวทำงานอยู่ค่ะ ช่วยอะไรได้บ้างคะ?',
+          'พร้อมช่วยเหลือค่ะ ความปลอดภัยของคุณสำคัญที่สุด!',
+          'กำลังเฝ้าระวังข้อความและสายโทรต้องสงสัยค่ะ',
+          'พร้อมตอบคำถามเรื่องป้องกันกลโกงค่ะ!'
         ],
-        'Scam Trainer': [
-          'Training simulation ready. Lets learn fraud tactics together.',
-          'Creating new awareness content for current threats.',
-          'Interactive defense drills available. Stay sharp!',
-          'Education modules updated with latest scam types.'
+        'ครูหมี (Scam Trainer)': [
+          'จำลองสถานการณ์พร้อม! มาเรียนรู้กลโกงด้วยกัน!',
+          'กำลังสร้างสื่อสร้างความตระหนักรู้เรื่องภัยคุกคามปัจจุบัน',
+          'แบบฝึกป้องกันแบบโต้ตอบพร้อมใช้แล้ว ตื่นตัวไว้นะ!',
+          'สื่อการสอนอัปเดตกลโกงประเภทล่าสุดแล้ว!'
         ],
-        'Money Guard': [
-          'Business transaction monitoring active.',
-          'Invoice verification systems running smoothly.',
-          'BEC defense protocols engaged. Your finances are protected.',
-          'SME shield operational. Zero tolerance for fraud.'
+        'จ.ส.ต.จิ้งจอก (Money Guard)': [
+          'ระบบตรวจสอบธุรกรรมธุรกิจทำงานอยู่ครับ',
+          'ระบบตรวจสอบใบแจ้งหนี้ทำงานปกติ',
+          'มาตรการป้องกัน BEC เปิดใช้งาน การเงินของคุณปลอดภัย!',
+          'ระบบปกป้อง SME ทำงาน ไม่ยอมให้กลโกงผ่าน!'
         ],
-        'Lightning Alert': [
-          'Alert system armed. Ready for rapid deployment.',
-          'Multi-channel broadcast systems tested and ready.',
-          'Emergency notification network: OPERATIONAL',
-          'Standing by for urgent threat warnings.'
+        'ผบ.มังกร (Lightning Alert)': [
+          'ระบบแจ้งเตือนพร้อมยิง รอส่งได้ทันที!',
+          'ระบบประกาศหลายช่องทางทดสอบแล้ว พร้อมใช้งาน!',
+          'เครือข่ายแจ้งเตือนฉุกเฉิน: พร้อมปฏิบัติการ!',
+          'รอคำสั่งเตือนภัยคุกคามเร่งด่วน!'
         ]
       };
 
-      const dialogues = ruleBased[agentName as keyof typeof ruleBased] || ['Agent ready and operational.'];
+      const dialogues = ruleBased[agentName] || ['Agent พร้อมปฏิบัติการ'];
       return dialogues[Math.floor(Math.random() * dialogues.length)];
     }
 
@@ -284,29 +284,29 @@ export const geminiService = {
 
     if (!rateLimiter.canMakeCall('gemini')) {
       // Return rule-based fallback when rate limited
-      const ruleBased = {
-        'Big Boss': 'Command center monitoring. All systems nominal.',
-        'Hawk Eye': 'Threat detection active. Scanning continues.',
-        'Memory Bank': 'Database analysis ongoing. Patterns logged.',
-        'Guardian Angel': 'Protection mode engaged. Standing by.',
-        'Scam Trainer': 'Training systems ready. Education continues.',
-        'Money Guard': 'Transaction watch active. Funds secured.',
-        'Lightning Alert': 'Alert systems primed. Ready to broadcast.'
+      const ruleBased: Record<string, string> = {
+        'ลุงสิงห์ (Big Boss)': 'ศูนย์บัญชาการเฝ้าระวัง ระบบทั้งหมดปกติ',
+        'พี่เหยี่ยว (Hawk Eye)': 'ตรวจจับภัยคุกคามทำงานอยู่ สแกนต่อเนื่อง',
+        'ป้าฮูก (Memory Bank)': 'วิเคราะห์ฐานข้อมูลอยู่ บันทึกรูปแบบแล้วจ้า',
+        'น้องฟ้า (Guardian Angel)': 'โหมดคุ้มครองเปิดอยู่ค่ะ พร้อมช่วยเหลือ',
+        'ครูหมี (Scam Trainer)': 'ระบบฝึกอบรมพร้อม สื่อการสอนต่อเนื่อง',
+        'จ.ส.ต.จิ้งจอก (Money Guard)': 'เฝ้าระวังธุรกรรมอยู่ เงินปลอดภัยครับ',
+        'ผบ.มังกร (Lightning Alert)': 'ระบบแจ้งเตือนเตรียมพร้อม รอส่งประกาศ'
       };
-      return ruleBased[agentName as keyof typeof ruleBased] || 'Agent operational.';
+      return ruleBased[agentName] || 'Agent พร้อมปฏิบัติการ';
     }
 
-    const roleContext = {
-      'Big Boss': 'strategic commander coordinating fraud defense',
-      'Hawk Eye': 'vigilant scanner detecting fraud patterns',
-      'Memory Bank': 'knowledge keeper of scam intelligence',
-      'Guardian Angel': 'friendly protector of citizens',
-      'Scam Trainer': 'educational expert on fraud awareness',
-      'Money Guard': 'business transaction guardian',
-      'Lightning Alert': 'rapid alert broadcaster'
+    const roleContext: Record<string, string> = {
+      'ลุงสิงห์ (Big Boss)': 'strategic commander coordinating fraud defense',
+      'พี่เหยี่ยว (Hawk Eye)': 'vigilant scanner detecting fraud patterns',
+      'ป้าฮูก (Memory Bank)': 'knowledge keeper of scam intelligence',
+      'น้องฟ้า (Guardian Angel)': 'friendly protector of citizens',
+      'ครูหมี (Scam Trainer)': 'educational expert on fraud awareness',
+      'จ.ส.ต.จิ้งจอก (Money Guard)': 'business transaction guardian',
+      'ผบ.มังกร (Lightning Alert)': 'rapid alert broadcaster'
     };
 
-    const prompt = `You are ${agentName}, a ${roleContext[agentName as keyof typeof roleContext] || agentRole} AI agent in a fraud defense network.
+    const prompt = `You are ${agentName}, a ${roleContext[agentName] || agentRole} AI agent in a fraud defense network.
 
 Context: ${context || 'normal operations'}
 

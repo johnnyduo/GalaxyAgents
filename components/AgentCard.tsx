@@ -13,7 +13,7 @@ interface AgentCardProps {
 
 const AgentCard: React.FC<AgentCardProps> = ({ agent, isActive, onToggle, onClick, status }) => {
   const currentStatus = status || agent.status;
-  const buttonText = isActive ? 'Deactivate' : 'Register';
+  const buttonText = isActive ? 'ปิดใช้งาน' : 'เปิดใช้งาน';
   
   const getStatusColor = () => {
     if (!isActive) return 'bg-gray-500';
@@ -40,7 +40,7 @@ const AgentCard: React.FC<AgentCardProps> = ({ agent, isActive, onToggle, onClic
       <div className="absolute top-3 right-3 flex items-center gap-2">
         <div className={`w-2 h-2 rounded-full ${getStatusColor()}`} />
         <span className="text-[10px] font-mono uppercase tracking-wider text-white/60">
-          {isActive ? currentStatus : 'offline'}
+          {isActive ? (currentStatus === 'streaming' ? 'กำลังทำงาน' : currentStatus === 'negotiating' ? 'กำลังเจรจา' : currentStatus === 'offline' ? 'ออฟไลน์' : 'พร้อมใช้งาน') : 'ออฟไลน์'}
         </span>
       </div>
       

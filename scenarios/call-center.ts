@@ -42,7 +42,7 @@ export const callCenterScenario: FraudScenario = {
       agentId: 'a0',
       alignment: 'transitioning',
       content: {
-        th: '⚠️ Big Boss กำลังแปลงร่างเป็น "พ.ต.อ.สมชาย"...',
+        th: '⚠️ ลุงสิงห์ กำลังแปลงร่างเป็น "พ.ต.อ.สมชาย"...',
         en: '⚠️ Big Boss is transforming into "Officer Somchai"...',
       },
       duration: 3000,
@@ -80,7 +80,7 @@ export const callCenterScenario: FraudScenario = {
       agentId: 'a1',
       alignment: 'transitioning',
       content: {
-        th: '⚠️ Hawk Eye กำลังแปลงร่างเป็น "เจ้าหน้าที่ธนาคาร"...',
+        th: '⚠️ พี่เหยี่ยว กำลังแปลงร่างเป็น "จนท.สมศรี"...',
         en: '⚠️ Hawk Eye is transforming into "Bank Officer"...',
       },
       duration: 2500,
@@ -127,7 +127,7 @@ export const callCenterScenario: FraudScenario = {
       edgeAnimation: { source: 'a3', target: 'a0', style: 'money_flow' },
     },
 
-    // === ACT 4: THE WARNING (Memory Bank stays good) ===
+    // === ACT 4: THE WARNING (ป้าฮูก stays good) ===
     {
       id: 'cc-09',
       order: 9,

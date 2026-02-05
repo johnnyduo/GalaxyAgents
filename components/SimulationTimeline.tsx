@@ -49,7 +49,7 @@ const SimulationTimeline: React.FC<SimulationTimelineProps> = ({
                 ${isCurrent ? stepTypeColors[step.type] : ''}
                 ${isFuture ? 'bg-gray-800 opacity-40' : ''}
               `}
-              title={`Step ${i + 1}: ${step.type} — ${step.content.th.substring(0, 40)}...`}
+              title={`ขั้นที่ ${i + 1}: ${step.type} — ${step.content.th.substring(0, 40)}...`}
             >
               {stepTypeIcons[step.type] || '•'}
 

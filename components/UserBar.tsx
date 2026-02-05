@@ -28,7 +28,7 @@ const UserBar: React.FC<UserBarProps> = ({ onLogoClick, onLogout }) => {
           </div>
           <div>
             <h1 className="text-white font-bold text-xl">Galaxy Agents</h1>
-            <p className="text-gray-400 text-xs">AI Fraud Defense Network</p>
+            <p className="text-gray-400 text-xs">เครือข่าย AI ป้องกันการโกง</p>
           </div>
         </button>
 
@@ -40,7 +40,7 @@ const UserBar: React.FC<UserBarProps> = ({ onLogoClick, onLogout }) => {
               <span className="text-white font-medium text-sm">{user.username}</span>
               {user.isGuest && (
                 <span className="text-xs bg-yellow-500/20 text-yellow-400 px-2 py-0.5 rounded">
-                  Guest
+                  ผู้เยี่ยมชม
                 </span>
               )}
             </div>
@@ -50,7 +50,7 @@ const UserBar: React.FC<UserBarProps> = ({ onLogoClick, onLogout }) => {
               className="flex items-center gap-2 bg-red-500/10 hover:bg-red-500/20 px-4 py-2 rounded border border-red-500/30 transition-colors"
             >
               <LogOut size={16} className="text-red-400" />
-              <span className="text-red-400 font-medium text-sm">Logout</span>
+              <span className="text-red-400 font-medium text-sm">ออกจากระบบ</span>
             </button>
           </div>
         )}
