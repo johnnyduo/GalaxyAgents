@@ -22,7 +22,7 @@ export const CaptainControlPanel: React.FC<CaptainControlPanelProps> = ({
         <button
           onClick={() => onModeChange('manual')}
           className={`
-            flex items-center gap-1.5 px-2 py-2 rounded text-[10px] font-bold font-mono transition-all flex-1 justify-center
+            flex items-center gap-1.5 px-2 py-2 rounded text-xs font-bold font-mono transition-all flex-1 justify-center
             ${mode === 'manual'
               ? 'bg-neon-green text-black shadow-sm'
               : 'text-white/50 hover:text-white/80'
@@ -36,7 +36,7 @@ export const CaptainControlPanel: React.FC<CaptainControlPanelProps> = ({
         <button
           onClick={() => onModeChange('auto')}
           className={`
-            flex items-center gap-1.5 px-2 py-2 rounded text-[10px] font-bold font-mono transition-all flex-1 justify-center
+            flex items-center gap-1.5 px-2 py-2 rounded text-xs font-bold font-mono transition-all flex-1 justify-center
             ${mode === 'auto'
               ? 'bg-neon-green text-black shadow-sm'
               : 'text-white/50 hover:text-white/80'
@@ -50,7 +50,7 @@ export const CaptainControlPanel: React.FC<CaptainControlPanelProps> = ({
         <button
           onClick={() => onModeChange('simulation')}
           className={`
-            flex items-center gap-1.5 px-2 py-2 rounded text-[10px] font-bold font-mono transition-all flex-1 justify-center
+            flex items-center gap-1.5 px-2 py-2 rounded text-xs font-bold font-mono transition-all flex-1 justify-center
             ${mode === 'simulation'
               ? 'bg-red-500 text-white shadow-sm shadow-red-500/50'
               : 'text-white/50 hover:text-red-400'

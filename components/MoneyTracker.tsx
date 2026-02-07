@@ -53,7 +53,7 @@ const MoneyTracker: React.FC<MoneyTrackerProps> = ({ total, remaining, className
       }}
     >
       {/* Label */}
-      <div className="text-[9px] font-mono text-gray-500 uppercase tracking-wider mb-1">
+      <div className="text-[11px] font-mono text-gray-400 uppercase tracking-wider mb-1">
         เงินในบัญชี
       </div>
 
@@ -84,7 +84,7 @@ const MoneyTracker: React.FC<MoneyTrackerProps> = ({ total, remaining, className
 
       {/* Lost amount */}
       {lost > 0 && (
-        <div className="text-[9px] font-mono text-red-500 mt-1">
+        <div className="text-[11px] font-mono text-red-500 mt-1">
           เสียไป ฿{lost.toLocaleString()} ({lostPercent.toFixed(0)}%)
         </div>
       )}

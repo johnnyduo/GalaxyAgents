@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { AGENTS, INITIAL_LOGS } from './constants';
-import { LogMessage, AgentTaskResult, FraudScenario, AgentRole } from './types';
+import { LogMessage, AgentTaskResult, FraudScenario, AgentRole, SimulationRecord } from './types';
 import UserBar from './components/UserBar';
 import FlowCanvas from './components/FlowCanvas';
 import AgentCard from './components/AgentCard';
@@ -21,6 +21,14 @@ import { geminiService } from './services/api';
 import { testAPIs } from './testAPIs';
 import { authService } from './services/auth';
 import { useSimulation } from './hooks/useSimulation';
+import {
+  migrateFromLocalStorage,
+  saveTaskResult,
+  getTaskResults,
+  saveSimulationRecord,
+  saveAppState,
+  getAppState,
+} from './services/storage';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './toast-custom.css';
@@ -44,24 +52,31 @@ const App: React.FC = () => {
     }
   }, []);
 
+  // Load persisted data from IndexedDB (with localStorage migration)
+  useEffect(() => {
+    (async () => {
+      await migrateFromLocalStorage();
+      const [savedAgents, savedEdges, savedMode, savedResults] = await Promise.all([
+        getAppState<string[]>('activeAgents'),
+        getAppState<Array<{source: string, target: string}>>('agentConnections'),
+        getAppState<string>('operationMode'),
+        getTaskResults(50),
+      ]);
+      if (savedAgents?.length) setActiveAgents(savedAgents);
+      if (savedEdges?.length) setPersistentEdges(savedEdges);
+      if (savedMode === 'auto' || savedMode === 'manual') setOperationMode(savedMode);
+      if (savedResults?.length) setTaskResults(savedResults);
+    })();
+  }, []);
+
   const [showLanding, setShowLanding] = useState<boolean>(true);
 
   // --- State ---
-  const [activeAgents, setActiveAgents] = useState<string[]>(() => {
-    try {
-      const stored = localStorage.getItem('activeAgents');
-      return stored ? JSON.parse(stored) : [];
-    } catch { return []; }
-  });
+  const [activeAgents, setActiveAgents] = useState<string[]>([]);
   const [selectedAgentId, setSelectedAgentId] = useState<string | null>(null);
   const [logs, setLogs] = useState<LogMessage[]>(INITIAL_LOGS);
   const [streamingEdges] = useState<string[]>([]);
-  const [persistentEdges, setPersistentEdges] = useState<Array<{source: string, target: string}>>(() => {
-    try {
-      const saved = localStorage.getItem('agentConnections');
-      return saved ? JSON.parse(saved) : [];
-    } catch { return []; }
-  });
+  const [persistentEdges, setPersistentEdges] = useState<Array<{source: string, target: string}>>([]);
   const [agentStatuses, setAgentStatuses] = useState<Record<string, 'idle' | 'negotiating' | 'streaming' | 'offline'>>({});
   const [activeDialogue, setActiveDialogue] = useState<{
     agentId: string;
@@ -74,12 +89,7 @@ const App: React.FC = () => {
     timestamp: number;
   }>>({});
 
-  const [taskResults, setTaskResults] = useState<AgentTaskResult[]>(() => {
-    try {
-      const stored = localStorage.getItem('taskResults');
-      return stored ? JSON.parse(stored) : [];
-    } catch { return []; }
-  });
+  const [taskResults, setTaskResults] = useState<AgentTaskResult[]>([]);
   const [showOperationsDashboard, setShowOperationsDashboard] = useState(false);
 
   // --- Simulation Engine ---
@@ -89,10 +99,7 @@ const App: React.FC = () => {
   const [overlayMode, setOverlayMode] = useState<'intro' | 'reveal' | 'completed' | null>(null);
 
   // --- Mode Control State ---
-  const [operationMode, setOperationMode] = useState<OperationMode>(() => {
-    const saved = localStorage.getItem('operationMode');
-    return (saved === 'auto' || saved === 'manual') ? saved : 'manual';
-  });
+  const [operationMode, setOperationMode] = useState<OperationMode>('manual');
 
   // Handle mode changes — enter/exit simulation
   const handleModeChange = useCallback((mode: OperationMode) => {
@@ -108,7 +115,7 @@ const App: React.FC = () => {
   // Persist operation mode (only auto/manual, not simulation)
   useEffect(() => {
     if (operationMode !== 'simulation') {
-      localStorage.setItem('operationMode', operationMode);
+      saveAppState('operationMode', operationMode);
     }
   }, [operationMode]);
 
@@ -123,10 +130,7 @@ const App: React.FC = () => {
   // Track active progress intervals for cleanup
   const progressIntervalsRef = useRef<Record<string, ReturnType<typeof setInterval>>>({});
 
-  // --- Persist taskResults to localStorage ---
-  useEffect(() => {
-    localStorage.setItem('taskResults', JSON.stringify(taskResults));
-  }, [taskResults]);
+  // --- Persist taskResults to IndexedDB (individual saves happen in executeAgentTask) ---
 
   // Log helper (defined early for simulation + defense use)
   const addLog = useCallback((agent: string, message: string) => {
@@ -224,8 +228,29 @@ const App: React.FC = () => {
       setActiveDialogue(null);
       if (isLastStep) {
         simulation.complete();
-        addLog('SCAM_ALERT', `🏁 จบการจำลอง — เสียเงินทั้งหมด ฿${(simulation.state.userProfile.money - simulation.state.userProfile.moneyRemaining).toLocaleString()}`);
+        const moneyLost = simulation.state.userProfile.money - simulation.state.userProfile.moneyRemaining;
+        addLog('SCAM_ALERT', `🏁 จบการจำลอง — เสียเงินทั้งหมด ฿${moneyLost.toLocaleString()}`);
         setOverlayMode('completed');
+
+        // Save simulation record to IndexedDB
+        if (scenario) {
+          const record: SimulationRecord = {
+            id: `sim-${scenario.id}-${Date.now()}`,
+            scenarioId: scenario.id,
+            scenarioTitleTh: scenario.titleTh,
+            scenarioTitleEn: scenario.titleEn,
+            category: scenario.category,
+            difficulty: scenario.difficulty,
+            userProfile: { ...simulation.state.userProfile },
+            timeline: [...simulation.state.timeline],
+            startedAt: simulation.state.startedAt || Date.now(),
+            completedAt: Date.now(),
+            moneyLost,
+            totalSteps: scenario.steps.length,
+            evilAgents: scenario.evilAgents,
+          };
+          saveSimulationRecord(record).catch(err => console.warn('IndexedDB sim save failed:', err));
+        }
       } else {
         simulation.advanceStep();
       }
@@ -253,7 +278,7 @@ const App: React.FC = () => {
 
   const handleEdgesChange = useCallback((edges: any[]) => {
     setPersistentEdges(edges);
-    localStorage.setItem('agentConnections', JSON.stringify(edges));
+    saveAppState('agentConnections', edges);
   }, []);
 
   // --- Initialization: Check API Status ---
@@ -272,7 +297,7 @@ const App: React.FC = () => {
 
   // Persist active agents
   useEffect(() => {
-    localStorage.setItem('activeAgents', JSON.stringify(activeAgents));
+    saveAppState('activeAgents', activeAgents);
   }, [activeAgents]);
 
   // Random dialogue generator - uses recursive setTimeout for truly random intervals
@@ -554,6 +579,7 @@ const App: React.FC = () => {
       };
 
       setTaskResults(prev => [taskResult, ...prev].slice(0, 50));
+      saveTaskResult(taskResult).catch(err => console.warn('IndexedDB save failed:', err));
       addLog(agent.name, `${summary}`);
 
       setTimeout(() => setActiveDialogue(null), 2000);
@@ -659,10 +685,12 @@ const App: React.FC = () => {
 
           {/* Left Sidebar Content: SimulationSetup or Agent Cards */}
           {operationMode === 'simulation' && simulation.state.status === 'setup' ? (
-            <SimulationSetup
-              onStart={handleSimulationStart}
-              onCancel={() => handleModeChange('manual')}
-            />
+            <div className="flex-1 min-h-0 overflow-hidden">
+              <SimulationSetup
+                onStart={handleSimulationStart}
+                onCancel={() => handleModeChange('manual')}
+              />
+            </div>
           ) : (
             <div className="flex-1 overflow-y-auto p-4 space-y-3">
               {displayAgents.map((agent) => {
@@ -698,8 +726,8 @@ const App: React.FC = () => {
             </div>
           )}
 
-          {/* Operations Dashboard */}
-          {taskResults.length > 0 && (
+          {/* Operations Dashboard — hidden during simulation setup to preserve space */}
+          {taskResults.length > 0 && !(operationMode === 'simulation' && simulation.state.status === 'setup') && (
             <div className="p-4 border-t border-white/10">
               <div className="bg-gradient-to-r from-neon-green/10 via-blue-500/10 to-purple-500/10 border border-neon-green/30 rounded-lg p-3">
                 <div className="flex items-center justify-between mb-2">
@@ -736,6 +764,7 @@ const App: React.FC = () => {
               randomDialogues={randomDialogues}
               agentAlignments={simulation.state.agentAlignments}
               isSimulationActive={simulation.isActive || simulation.state.status === 'completed'}
+              transformingAgentId={simulation.state.transformingAgentId}
             />
 
             {activeDialogue && operationMode !== 'simulation' && (

@@ -134,6 +134,26 @@ export interface SimulationEvent {
   moneyChange?: number;
 }
 
+export interface SimulationRecord {
+  id: string;
+  scenarioId: string;
+  scenarioTitleTh: string;
+  scenarioTitleEn: string;
+  category: FraudCategory;
+  difficulty: 'beginner' | 'intermediate' | 'advanced';
+  userProfile: {
+    name: string;
+    money: number;
+    moneyRemaining: number;
+  };
+  timeline: SimulationEvent[];
+  startedAt: number;
+  completedAt: number;
+  moneyLost: number;
+  totalSteps: number;
+  evilAgents: string[];
+}
+
 export interface SimulationState {
   status: 'idle' | 'setup' | 'playing' | 'paused' | 'completed' | 'reviewing';
   currentScenario: FraudScenario | null;
@@ -148,5 +168,6 @@ export interface SimulationState {
   startedAt: number | null;
   completedAt: number | null;
   speed: number;
+  transformingAgentId: string | null;
 }
 

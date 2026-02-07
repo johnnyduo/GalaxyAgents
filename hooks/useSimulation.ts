@@ -37,6 +37,7 @@ const initialState: SimulationState = {
   startedAt: null,
   completedAt: null,
   speed: 1,
+  transformingAgentId: null,
 };
 
 function simulationReducer(state: SimulationState, action: SimAction): SimulationState {
@@ -90,6 +91,7 @@ function simulationReducer(state: SimulationState, action: SimAction): Simulatio
           ...state.agentAlignments,
           [action.agentId]: action.alignment,
         },
+        transformingAgentId: action.alignment === 'transitioning' ? action.agentId : null,
       };
 
     case 'MONEY_CHANGE': {

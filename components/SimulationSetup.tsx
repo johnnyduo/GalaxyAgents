@@ -44,10 +44,10 @@ const SimulationSetup: React.FC<SimulationSetupProps> = ({ onStart, onCancel }) 
       {/* Header */}
       <div className="p-4 border-b border-red-500/30 bg-red-500/5">
         <div className="flex items-center gap-2 mb-1">
-          <AlertTriangle size={16} className="text-red-400" />
-          <h2 className="text-red-400 font-bold font-mono text-sm">จำลองสถานการณ์โกง</h2>
+          <AlertTriangle size={18} className="text-red-400" />
+          <h2 className="text-red-400 font-bold font-mono text-base">จำลองสถานการณ์โกง</h2>
         </div>
-        <p className="text-gray-500 text-[10px] font-mono">
+        <p className="text-gray-500 text-xs font-mono">
           เรียนรู้กลโกงจริงๆ ผ่านการจำลอง เพื่อป้องกันตัวเอง
         </p>
       </div>
@@ -55,8 +55,8 @@ const SimulationSetup: React.FC<SimulationSetupProps> = ({ onStart, onCancel }) 
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {/* User Profile */}
         <div className="space-y-3">
-          <label className="text-xs text-gray-500 font-mono uppercase flex items-center gap-1">
-            <Users size={10} />
+          <label className="text-sm text-gray-400 font-mono uppercase flex items-center gap-1.5">
+            <Users size={12} />
             ข้อมูลเหยื่อ (จำลอง)
           </label>
           <input
@@ -64,11 +64,11 @@ const SimulationSetup: React.FC<SimulationSetupProps> = ({ onStart, onCancel }) 
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="ชื่อของคุณ"
-            className="w-full px-3 py-2 text-sm bg-black/40 border border-white/20 rounded-lg text-white placeholder-white/40 focus:border-red-400 focus:outline-none font-mono"
+            className="w-full px-3 py-2.5 text-sm bg-black/40 border border-white/20 rounded-lg text-white placeholder-white/40 focus:border-red-400 focus:outline-none font-mono"
           />
           <div>
-            <div className="flex justify-between text-[10px] font-mono mb-1">
-              <span className="text-gray-500">เงินในบัญชี</span>
+            <div className="flex justify-between text-xs font-mono mb-1">
+              <span className="text-gray-400">เงินในบัญชี</span>
               <span className="text-neon-green font-bold">฿{money.toLocaleString()}</span>
             </div>
             <input
@@ -80,7 +80,7 @@ const SimulationSetup: React.FC<SimulationSetupProps> = ({ onStart, onCancel }) 
               onChange={(e) => setMoney(Number(e.target.value))}
               className="w-full accent-red-500"
             />
-            <div className="flex justify-between text-[8px] font-mono text-gray-600">
+            <div className="flex justify-between text-[10px] font-mono text-gray-500">
               <span>฿10,000</span>
               <span>฿1,000,000</span>
             </div>
@@ -89,8 +89,8 @@ const SimulationSetup: React.FC<SimulationSetupProps> = ({ onStart, onCancel }) 
 
         {/* Scenario Selection */}
         <div className="space-y-2">
-          <label className="text-xs text-gray-500 font-mono uppercase flex items-center gap-1">
-            <Shield size={10} />
+          <label className="text-sm text-gray-400 font-mono uppercase flex items-center gap-1.5">
+            <Shield size={12} />
             เลือกสถานการณ์
           </label>
           {FRAUD_SCENARIOS.map((scenario) => (
@@ -107,23 +107,23 @@ const SimulationSetup: React.FC<SimulationSetupProps> = ({ onStart, onCancel }) 
                 <span className="text-lg">{categoryIcons[scenario.category] || '⚠️'}</span>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-0.5">
-                    <span className="text-white font-bold text-xs font-mono truncate">
+                    <span className="text-white font-bold text-sm font-mono truncate">
                       {scenario.titleTh}
                     </span>
-                    <span className={`text-[8px] px-1.5 py-0.5 rounded border font-mono ${difficultyColors[scenario.difficulty]}`}>
+                    <span className={`text-[10px] px-1.5 py-0.5 rounded border font-mono ${difficultyColors[scenario.difficulty]}`}>
                       {scenario.difficulty === 'beginner' ? 'ง่าย' : scenario.difficulty === 'intermediate' ? 'ปานกลาง' : 'ยาก'}
                     </span>
                   </div>
-                  <p className="text-gray-500 text-[10px] leading-relaxed line-clamp-2">
+                  <p className="text-gray-400 text-xs leading-relaxed line-clamp-2">
                     {scenario.description.th}
                   </p>
-                  <div className="flex items-center gap-3 mt-1.5 text-[9px] font-mono text-gray-600">
+                  <div className="flex items-center gap-3 mt-1.5 text-[11px] font-mono text-gray-500">
                     <span className="flex items-center gap-0.5">
-                      <Clock size={8} />
+                      <Clock size={10} />
                       ~{Math.round(scenario.estimatedDuration / 60)} นาที
                     </span>
                     <span className="flex items-center gap-0.5">
-                      <Users size={8} />
+                      <Users size={10} />
                       {scenario.involvedAgents.length} ตัว
                     </span>
                     <span className="text-red-400 font-bold">
@@ -136,7 +136,7 @@ const SimulationSetup: React.FC<SimulationSetupProps> = ({ onStart, onCancel }) 
           ))}
 
           {FRAUD_SCENARIOS.length === 0 && (
-            <div className="text-center py-8 text-gray-600 text-xs font-mono">
+            <div className="text-center py-8 text-gray-500 text-sm font-mono">
               ยังไม่มีสถานการณ์ให้เลือก
             </div>
           )}
@@ -144,18 +144,18 @@ const SimulationSetup: React.FC<SimulationSetupProps> = ({ onStart, onCancel }) 
       </div>
 
       {/* Action Buttons */}
-      <div className="p-4 border-t border-white/10 space-y-2">
+      <div className="p-3 border-t border-white/10 space-y-2 flex-shrink-0">
         <button
           onClick={handleStart}
           disabled={!selectedScenario}
-          className="w-full bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 disabled:from-gray-700 disabled:to-gray-600 disabled:cursor-not-allowed text-white font-bold py-3 px-4 rounded-lg transition-all flex items-center justify-center gap-2 font-mono text-sm shadow-lg shadow-red-500/20"
+          className="w-full bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 disabled:from-gray-700 disabled:to-gray-600 disabled:cursor-not-allowed text-white font-bold py-3 rounded-lg transition-all flex items-center justify-center gap-2 font-mono text-base shadow-lg shadow-red-500/20"
         >
-          <Play size={16} />
+          <Play size={18} />
           เริ่มจำลอง
         </button>
         <button
           onClick={onCancel}
-          className="w-full bg-white/5 hover:bg-white/10 border border-white/10 text-gray-400 font-mono text-xs py-2 px-4 rounded-lg transition-all"
+          className="w-full bg-white/5 hover:bg-white/10 border border-white/10 text-gray-400 font-mono text-sm py-2 rounded-lg transition-all"
         >
           ยกเลิก
         </button>

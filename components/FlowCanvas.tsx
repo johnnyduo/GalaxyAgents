@@ -11,10 +11,12 @@ import ReactFlow, {
   useEdgesState,
   BackgroundVariant,
   MarkerType,
+  ReactFlowInstance,
 } from 'reactflow';
 import { AgentMetadata, AgentAlignment } from '../types';
 import LottieAvatar from './LottieAvatar';
 import gsap from 'gsap';
+import { saveAppState, getAppState } from '../services/storage';
 
 // --- Custom Agent Node Component ---
 const AgentNode = React.memo(({ data }: NodeProps) => {
@@ -220,6 +222,7 @@ interface FlowCanvasProps {
   randomDialogues?: Record<string, { dialogue: string; timestamp: number }>;
   agentAlignments?: Record<string, AgentAlignment>;
   isSimulationActive?: boolean;
+  transformingAgentId?: string | null;
 }
 
 const FlowCanvas: React.FC<FlowCanvasProps> = ({
@@ -234,11 +237,21 @@ const FlowCanvas: React.FC<FlowCanvasProps> = ({
   randomDialogues = {},
   agentAlignments = {},
   isSimulationActive = false,
+  transformingAgentId = null,
 }) => {
   const prevActiveAgentsRef = useRef<string[]>([]);
+  const reactFlowRef = useRef<ReactFlowInstance | null>(null);
+  const cachedPositionsRef = useRef<Record<string, { x: number; y: number }>>({});
 
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+
+  // Load saved positions from IndexedDB on mount
+  React.useEffect(() => {
+    getAppState<Record<string, { x: number; y: number }>>('nodePositions').then(pos => {
+      if (pos) cachedPositionsRef.current = pos;
+    });
+  }, []);
 
   // Debounced position save
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -255,7 +268,8 @@ const FlowCanvas: React.FC<FlowCanvasProps> = ({
           positions[node.id] = { x: node.position.x, y: node.position.y };
         }
       });
-      localStorage.setItem('nodePositions', JSON.stringify(positions));
+      cachedPositionsRef.current = positions;
+      saveAppState('nodePositions', positions);
       onNodePositionsChange?.(positions);
     }, 300);
 
@@ -272,8 +286,7 @@ const FlowCanvas: React.FC<FlowCanvasProps> = ({
     if (!changed && prev.length > 0) return;
     prevActiveAgentsRef.current = activeAgents;
 
-    const savedPos = localStorage.getItem('nodePositions');
-    const positions = savedPos ? JSON.parse(savedPos) : {};
+    const positions = cachedPositionsRef.current;
 
     setNodes(currentNodes => {
       return activeAgents.map((id, index) => {
@@ -321,6 +334,25 @@ const FlowCanvas: React.FC<FlowCanvasProps> = ({
       })
     );
   }, [agentAlignments, agents, setNodes]);
+
+  // Zoom in/out on transforming agent
+  useEffect(() => {
+    const rf = reactFlowRef.current;
+    if (!rf) return;
+
+    if (transformingAgentId) {
+      const node = rf.getNode(transformingAgentId);
+      if (node) {
+        rf.setCenter(
+          node.position.x + 64,
+          node.position.y + 70,
+          { zoom: 1.8, duration: 600 }
+        );
+      }
+    } else if (isSimulationActive) {
+      rf.fitView({ duration: 800, padding: 0.2 });
+    }
+  }, [transformingAgentId, isSimulationActive]);
 
   // Update dialogue overlays (both active and random)
   React.useEffect(() => {
@@ -416,6 +448,7 @@ const FlowCanvas: React.FC<FlowCanvasProps> = ({
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
+        onInit={(instance) => { reactFlowRef.current = instance; }}
         fitView
         className="bg-black"
         proOptions={proOptions}

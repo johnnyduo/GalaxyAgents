@@ -39,7 +39,7 @@ const AgentCard: React.FC<AgentCardProps> = ({ agent, isActive, onToggle, onClic
       {/* Status Indicator */}
       <div className="absolute top-3 right-3 flex items-center gap-2">
         <div className={`w-2 h-2 rounded-full ${getStatusColor()}`} />
-        <span className="text-[10px] font-mono uppercase tracking-wider text-white/60">
+        <span className="text-[11px] font-mono uppercase tracking-wider text-white/60">
           {isActive ? (currentStatus === 'streaming' ? 'กำลังทำงาน' : currentStatus === 'negotiating' ? 'กำลังเจรจา' : currentStatus === 'offline' ? 'ออฟไลน์' : 'พร้อมใช้งาน') : 'ออฟไลน์'}
         </span>
       </div>
@@ -66,9 +66,9 @@ const AgentCard: React.FC<AgentCardProps> = ({ agent, isActive, onToggle, onClic
         </div>
 
         <h3 className="text-white font-bold font-mono tracking-tight">{agent.name}</h3>
-        <p className="text-neon-green text-xs mb-3">{agent.role}</p>
-        
-        <div className="w-full grid grid-cols-2 gap-2 text-[10px] text-gray-400 font-mono mb-4">
+        <p className="text-neon-green text-sm mb-3">{agent.role}</p>
+
+        <div className="w-full grid grid-cols-2 gap-2 text-[11px] text-gray-400 font-mono mb-4">
           <div className="flex items-center gap-1 bg-black/30 p-1 rounded justify-center">
             <Shield size={10} className="text-neon-green" />
             <span>TS: {agent.trustScore}</span>
@@ -83,7 +83,7 @@ const AgentCard: React.FC<AgentCardProps> = ({ agent, isActive, onToggle, onClic
            <button
             onClick={(e) => { e.stopPropagation(); onToggle(); }}
             className={`
-              flex-1 py-1 px-2 rounded text-[10px] font-bold font-mono uppercase tracking-wider border transition-all
+              flex-1 py-1.5 px-2 rounded text-xs font-bold font-mono uppercase tracking-wider border transition-all
               ${isActive
                 ? 'border-neon-green bg-neon-green text-black hover:bg-white hover:border-white'
                 : 'border-white/20 text-white/60 hover:border-white hover:text-white'}

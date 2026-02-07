@@ -61,10 +61,10 @@ const SimulationControls: React.FC<SimulationControlsProps> = ({
           />
         </div>
         <div className="flex justify-between mt-0.5">
-          <span className="text-[9px] font-mono text-gray-600">
+          <span className="text-[11px] font-mono text-gray-500">
             ขั้นที่ {currentStepIndex + 1}/{totalSteps}
           </span>
-          <span className="text-[9px] font-mono text-gray-600">
+          <span className="text-[11px] font-mono text-gray-500">
             {status === 'completed' ? 'จบแล้ว' : status === 'playing' ? 'กำลังเล่น' : status === 'paused' ? 'หยุดชั่วคราว' : status.toUpperCase()}
           </span>
         </div>
@@ -72,12 +72,12 @@ const SimulationControls: React.FC<SimulationControlsProps> = ({
 
       {/* Speed Controls */}
       <div className="flex items-center gap-1">
-        <Zap size={10} className="text-gray-600" />
+        <Zap size={12} className="text-gray-500" />
         {[0.5, 1, 2].map((s) => (
           <button
             key={s}
             onClick={() => onSpeedChange(s)}
-            className={`px-1.5 py-0.5 rounded text-[9px] font-mono font-bold transition-all ${
+            className={`px-2 py-0.5 rounded text-[11px] font-mono font-bold transition-all ${
               speed === s
                 ? 'bg-red-500/20 text-red-400 border border-red-500/50'
                 : 'text-gray-600 hover:text-gray-400'
@@ -98,7 +98,7 @@ const SimulationControls: React.FC<SimulationControlsProps> = ({
           ฿{userProfile.moneyRemaining.toLocaleString()}
         </div>
         {userProfile.moneyRemaining < userProfile.money && (
-          <div className="text-[8px] font-mono text-red-500">
+          <div className="text-[10px] font-mono text-red-500">
             -{((userProfile.money - userProfile.moneyRemaining) / userProfile.money * 100).toFixed(0)}%
           </div>
         )}
