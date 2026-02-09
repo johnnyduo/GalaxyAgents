@@ -1,0 +1,229 @@
+{
+  "generatedAt": "2026-02-09T16:01:56.549Z",
+  "model": "gemini-3-pro-image-preview",
+  "totalImages": 35,
+  "scenarios": [
+    "sms-phishing-001",
+    "call-center-001",
+    "romance-scam-001",
+    "social-impersonation-001",
+    "ponzi-scheme-001",
+    "fake-investment-001",
+    "job-scam-001",
+    "loan-app-001",
+    "qr-scam-001",
+    "sim-swap-001"
+  ],
+  "images": [
+    {
+      "scenario": "sms-phishing-001",
+      "step": "sms-03",
+      "path": "/scenario-images/sms-phishing-001/sms-03.png",
+      "style": "phone_screen"
+    },
+    {
+      "scenario": "sms-phishing-001",
+      "step": "sms-04",
+      "path": "/scenario-images/sms-phishing-001/sms-04.png",
+      "style": "phone_screen"
+    },
+    {
+      "scenario": "sms-phishing-001",
+      "step": "sms-07",
+      "path": "/scenario-images/sms-phishing-001/sms-07.png",
+      "style": "scene"
+    },
+    {
+      "scenario": "sms-phishing-001",
+      "step": "sms-11",
+      "path": "/scenario-images/sms-phishing-001/sms-11.png",
+      "style": "warning"
+    },
+    {
+      "scenario": "call-center-001",
+      "step": "cc-02",
+      "path": "/scenario-images/call-center-001/cc-02.png",
+      "style": "phone_screen"
+    },
+    {
+      "scenario": "call-center-001",
+      "step": "cc-05",
+      "path": "/scenario-images/call-center-001/cc-05.png",
+      "style": "document"
+    },
+    {
+      "scenario": "call-center-001",
+      "step": "cc-08",
+      "path": "/scenario-images/call-center-001/cc-08.png",
+      "style": "scene"
+    },
+    {
+      "scenario": "call-center-001",
+      "step": "cc-12",
+      "path": "/scenario-images/call-center-001/cc-12.png",
+      "style": "warning"
+    },
+    {
+      "scenario": "romance-scam-001",
+      "step": "rs-02",
+      "path": "/scenario-images/romance-scam-001/rs-02.png",
+      "style": "phone_screen"
+    },
+    {
+      "scenario": "romance-scam-001",
+      "step": "rs-05",
+      "path": "/scenario-images/romance-scam-001/rs-05.png",
+      "style": "phone_screen"
+    },
+    {
+      "scenario": "romance-scam-001",
+      "step": "rs-08",
+      "path": "/scenario-images/romance-scam-001/rs-08.png",
+      "style": "scene"
+    },
+    {
+      "scenario": "romance-scam-001",
+      "step": "rs-11",
+      "path": "/scenario-images/romance-scam-001/rs-11.png",
+      "style": "warning"
+    },
+    {
+      "scenario": "social-impersonation-001",
+      "step": "si-02",
+      "path": "/scenario-images/social-impersonation-001/si-02.png",
+      "style": "phone_screen"
+    },
+    {
+      "scenario": "social-impersonation-001",
+      "step": "si-05",
+      "path": "/scenario-images/social-impersonation-001/si-05.png",
+      "style": "warning"
+    },
+    {
+      "scenario": "social-impersonation-001",
+      "step": "si-08",
+      "path": "/scenario-images/social-impersonation-001/si-08.png",
+      "style": "phone_screen"
+    },
+    {
+      "scenario": "ponzi-scheme-001",
+      "step": "ps-02",
+      "path": "/scenario-images/ponzi-scheme-001/ps-02.png",
+      "style": "phone_screen"
+    },
+    {
+      "scenario": "ponzi-scheme-001",
+      "step": "ps-05",
+      "path": "/scenario-images/ponzi-scheme-001/ps-05.png",
+      "style": "phone_screen"
+    },
+    {
+      "scenario": "ponzi-scheme-001",
+      "step": "ps-08",
+      "path": "/scenario-images/ponzi-scheme-001/ps-08.png",
+      "style": "warning"
+    },
+    {
+      "scenario": "fake-investment-001",
+      "step": "fi-02",
+      "path": "/scenario-images/fake-investment-001/fi-02.png",
+      "style": "phone_screen"
+    },
+    {
+      "scenario": "fake-investment-001",
+      "step": "fi-05",
+      "path": "/scenario-images/fake-investment-001/fi-05.png",
+      "style": "phone_screen"
+    },
+    {
+      "scenario": "fake-investment-001",
+      "step": "fi-08",
+      "path": "/scenario-images/fake-investment-001/fi-08.png",
+      "style": "warning"
+    },
+    {
+      "scenario": "job-scam-001",
+      "step": "js-02",
+      "path": "/scenario-images/job-scam-001/js-02.png",
+      "style": "phone_screen"
+    },
+    {
+      "scenario": "job-scam-001",
+      "step": "js-05",
+      "path": "/scenario-images/job-scam-001/js-05.png",
+      "style": "phone_screen"
+    },
+    {
+      "scenario": "job-scam-001",
+      "step": "js-08",
+      "path": "/scenario-images/job-scam-001/js-08.png",
+      "style": "warning"
+    },
+    {
+      "scenario": "loan-app-001",
+      "step": "la-02",
+      "path": "/scenario-images/loan-app-001/la-02.png",
+      "style": "phone_screen"
+    },
+    {
+      "scenario": "loan-app-001",
+      "step": "la-05",
+      "path": "/scenario-images/loan-app-001/la-05.png",
+      "style": "phone_screen"
+    },
+    {
+      "scenario": "loan-app-001",
+      "step": "la-08",
+      "path": "/scenario-images/loan-app-001/la-08.png",
+      "style": "phone_screen"
+    },
+    {
+      "scenario": "loan-app-001",
+      "step": "la-11",
+      "path": "/scenario-images/loan-app-001/la-11.png",
+      "style": "warning"
+    },
+    {
+      "scenario": "qr-scam-001",
+      "step": "qr-02",
+      "path": "/scenario-images/qr-scam-001/qr-02.png",
+      "style": "scene"
+    },
+    {
+      "scenario": "qr-scam-001",
+      "step": "qr-05",
+      "path": "/scenario-images/qr-scam-001/qr-05.png",
+      "style": "phone_screen"
+    },
+    {
+      "scenario": "qr-scam-001",
+      "step": "qr-08",
+      "path": "/scenario-images/qr-scam-001/qr-08.png",
+      "style": "warning"
+    },
+    {
+      "scenario": "sim-swap-001",
+      "step": "ss-02",
+      "path": "/scenario-images/sim-swap-001/ss-02.png",
+      "style": "phone_screen"
+    },
+    {
+      "scenario": "sim-swap-001",
+      "step": "ss-05",
+      "path": "/scenario-images/sim-swap-001/ss-05.png",
+      "style": "scene"
+    },
+    {
+      "scenario": "sim-swap-001",
+      "step": "ss-08",
+      "path": "/scenario-images/sim-swap-001/ss-08.png",
+      "style": "phone_screen"
+    },
+    {
+      "scenario": "sim-swap-001",
+      "step": "ss-11",
+      "path": "/scenario-images/sim-swap-001/ss-11.png",
+      "style": "warning"
+    }
+  ]
+}

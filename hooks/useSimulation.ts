@@ -8,6 +8,7 @@ import {
   ScenarioStep,
 } from '../types';
 import { AGENTS, EVIL_VARIANTS } from '../constants';
+import { playSoundForStep, speakStepContent } from '../services/soundService';
 
 // ===========================
 // REDUCER
@@ -179,6 +180,12 @@ export function useSimulation() {
   }, []);
 
   const processStep = useCallback((step: ScenarioStep): void => {
+    // Play sound effect for step type
+    playSoundForStep(step.type, step.alignment);
+
+    // Optionally speak the content (TTS)
+    speakStepContent(step.content.th, step.type);
+
     // Log event
     dispatch({
       type: 'LOG_EVENT',

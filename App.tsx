@@ -15,7 +15,10 @@ import SimulationControls from './components/SimulationControls';
 import MoneyTracker from './components/MoneyTracker';
 import ScenarioOverlay from './components/ScenarioOverlay';
 import SimulationTimeline from './components/SimulationTimeline';
+import ScenarioMedia from './components/ScenarioMedia';
+import ScenarioVideoPlayer from './components/ScenarioVideoPlayer';
 import LandingPage from './components/LandingPage';
+import { initSoundService } from './services/soundService';
 import { Activity } from 'lucide-react';
 import { geminiService } from './services/api';
 import { testAPIs } from './testAPIs';
@@ -50,6 +53,8 @@ const App: React.FC = () => {
     if (!authService.isAuthenticated()) {
       authService.loginAsGuest();
     }
+    // Initialize audio service
+    initSoundService();
   }, []);
 
   // Load persisted data from IndexedDB (with localStorage migration)
@@ -97,6 +102,10 @@ const App: React.FC = () => {
 
   // --- Simulation Overlay State ---
   const [overlayMode, setOverlayMode] = useState<'intro' | 'reveal' | 'completed' | null>(null);
+
+  // --- Video Preview State ---
+  const [showVideoPreview, setShowVideoPreview] = useState(false);
+  const [previewScenario, setPreviewScenario] = useState<FraudScenario | null>(null);
 
   // --- Mode Control State ---
   const [operationMode, setOperationMode] = useState<OperationMode>('manual');
@@ -689,6 +698,10 @@ const App: React.FC = () => {
               <SimulationSetup
                 onStart={handleSimulationStart}
                 onCancel={() => handleModeChange('manual')}
+                onPreviewVideo={(scenario) => {
+                  setPreviewScenario(scenario);
+                  setShowVideoPreview(true);
+                }}
               />
             </div>
           ) : (
@@ -785,6 +798,15 @@ const App: React.FC = () => {
                   remaining={simulation.state.userProfile.moneyRemaining}
                 />
               </div>
+            )}
+
+            {/* Scenario Media (AI-generated images during simulation) */}
+            {simulation.isActive && simulation.state.currentScenario && (
+              <ScenarioMedia
+                scenarioId={simulation.state.currentScenario.id}
+                currentStep={simulation.state.currentScenario.steps[simulation.state.currentStepIndex] || null}
+                isPlaying={simulation.state.status === 'playing'}
+              />
             )}
 
             {/* Scenario Overlay (intro / reveal / completed) */}
@@ -936,6 +958,28 @@ const App: React.FC = () => {
         pauseOnHover
         theme="dark"
       />
+
+      {/* Video Preview Modal */}
+      {showVideoPreview && previewScenario && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-sm"
+          onClick={() => setShowVideoPreview(false)}
+        >
+          <div
+            className="w-full max-w-4xl mx-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <ScenarioVideoPlayer
+              scenario={previewScenario}
+              autoPlay={true}
+              onComplete={() => {
+                // Optional: auto-close after complete
+              }}
+              onClose={() => setShowVideoPreview(false)}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

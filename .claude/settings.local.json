@@ -17,7 +17,12 @@
       "Bash(npx tsc:*)",
       "Bash(npm install:*)",
       "Bash(ls:*)",
-      "Bash(npx tsx:*)"
+      "Bash(npx tsx:*)",
+      "Bash(GEMINI_API_KEY=AIzaSyBAvCAX6cw2DtC-s8VNG2pU7woJxRW8ZHQ npx ts-node:*)",
+      "Bash(node scripts/generate-scenario-images.cjs:*)",
+      "Bash(GEMINI_API_KEY=AIzaSyBAvCAX6cw2DtC-s8VNG2pU7woJxRW8ZHQ node:*)",
+      "Bash(pkill:*)",
+      "Bash(curl:*)"
     ],
     "deny": [
       "Bash(sudo *)",

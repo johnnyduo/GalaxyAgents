@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { FraudScenario } from '../types';
 import { FRAUD_SCENARIOS } from '../scenarios';
-import { Play, Shield, Users, Clock, AlertTriangle } from 'lucide-react';
+import { Play, Shield, Users, Clock, AlertTriangle, Film } from 'lucide-react';
 
 interface SimulationSetupProps {
   onStart: (scenario: FraudScenario, name: string, money: number) => void;
   onCancel: () => void;
+  onPreviewVideo?: (scenario: FraudScenario) => void;
 }
 
 const difficultyColors = {
@@ -27,7 +28,7 @@ const categoryIcons: Record<string, string> = {
   sim_swap: '📶',
 };
 
-const SimulationSetup: React.FC<SimulationSetupProps> = ({ onStart, onCancel }) => {
+const SimulationSetup: React.FC<SimulationSetupProps> = ({ onStart, onCancel, onPreviewVideo }) => {
   const [name, setName] = useState('คุณสมชาย');
   const [money, setMoney] = useState(500000);
   const [selectedScenario, setSelectedScenario] = useState<FraudScenario | null>(
@@ -129,6 +130,18 @@ const SimulationSetup: React.FC<SimulationSetupProps> = ({ onStart, onCancel }) 
                     <span className="text-red-400 font-bold">
                       เสี่ยง ฿{scenario.moneyLost.toLocaleString()}
                     </span>
+                    {onPreviewVideo && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onPreviewVideo(scenario);
+                        }}
+                        className="ml-auto flex items-center gap-1 px-2 py-0.5 rounded bg-neon-green/20 text-neon-green hover:bg-neon-green/30 transition-colors"
+                      >
+                        <Film size={10} />
+                        ดูวิดีโอ
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
