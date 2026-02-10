@@ -1,0 +1,42 @@
+═══════════════════════════════════════════════════════
+🚨 URGENT: API KEY SECURITY BREACH DETECTED 🚨
+═══════════════════════════════════════════════════════
+
+Your Google API key was accidentally committed to git!
+
+IMMEDIATE ACTION REQUIRED (DO THIS NOW!):
+═══════════════════════════════════════════════════════
+
+1. REVOKE OLD KEY
+   → Go to: https://console.cloud.google.com/apis/credentials
+   → Find key: AIzaSyBAvCAX6cw2DtC-s8VNG2pU7woJxRW8ZHQ
+   → DELETE it immediately!
+
+2. GENERATE NEW KEY
+   → Click "Create Credentials" → "API Key"
+   → Copy your new key
+
+3. UPDATE .env FILE
+   → Edit: /Library/WebServer/Documents/GalaxyAgent/.env
+   → Replace: VITE_GEMINI_API_KEY=YOUR_NEW_KEY_HERE
+
+4. TEST YOUR APP
+   → Run: npm run dev
+   → Verify agents still work
+
+═══════════════════════════════════════════════════════
+TIME ESTIMATE: 5 minutes
+PRIORITY: CRITICAL (do before pushing to remote!)
+═══════════════════════════════════════════════════════
+
+For detailed instructions, see: ROTATE_KEY.md
+For incident details, see: SECURITY_INCIDENT.md
+
+═══════════════════════════════════════════════════════
+✅ PROTECTIVE MEASURES ALREADY TAKEN:
+   - .claude/ added to .gitignore
+   - Exposed file removed from tracking
+   - Security commit created
+═══════════════════════════════════════════════════════
+
+DELETE THIS FILE AFTER COMPLETING THE STEPS ABOVE
