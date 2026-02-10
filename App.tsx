@@ -56,24 +56,22 @@ const App: React.FC = () => {
     // Initialize audio service
     initSoundService();
 
-    // Show browser recommendation toast (only Chrome on macOS has TTS issues)
+    // Show browser recommendation toast (once per session on Chrome macOS)
     const isChrome = /Chrome/.test(navigator.userAgent) && !/Edg/.test(navigator.userAgent);
     const isMac = /Mac/.test(navigator.platform);
-    const hasSeenBrowserWarning = localStorage.getItem('galaxy_browser_warning_seen');
+    const hasSeenThisSession = sessionStorage.getItem('galaxy_browser_warning_seen');
 
-    if (isChrome && isMac && !hasSeenBrowserWarning) {
+    if (isChrome && isMac && !hasSeenThisSession) {
+      sessionStorage.setItem('galaxy_browser_warning_seen', 'true');
       setTimeout(() => {
-        toast.info(
-          '🌐 แนะนำ: ใช้ Safari เพื่อประสบการณ์เสียงพากย์ที่ดีที่สุด (Chrome บน macOS มีปัญหาเสียงบางครั้ง)',
+        toast.warn(
+          '🌐 แนะนำ: ใช้ Safari เพื่อประสบการณ์เสียงพากย์ที่ดีที่สุด — Chrome บน macOS อาจไม่มีเสียงพากย์ไทย',
           {
-            autoClose: 10000,
+            autoClose: 12000,
             position: 'top-center',
-            onClose: () => {
-              localStorage.setItem('galaxy_browser_warning_seen', 'true');
-            }
           }
         );
-      }, 2000); // Delay 2s so user sees landing page first
+      }, 2000);
     }
   }, []);
 
