@@ -576,7 +576,7 @@ function createSlide05_KeyFeatures(presentation) {
     },
     {
       title: 'Interactive Fraud Simulations',
-      desc: '10 realistic scenarios teaching users how scammers think. Evil agent transformation shows attack patterns.',
+      desc: '10 cinematic scenarios with Thai voice narration. Users experience scams like watching a short film, making them permanently more vigilant.',
       icon: '🎮',
       color: PITCH_CONFIG.COLORS.DANGER_RED
     },
@@ -745,7 +745,7 @@ function createSlide06_UserInsight(presentation) {
     align: 'left'
   });
 
-  addTextBox(slide, 'Users don\'t just need protection — they need EDUCATION. Our simulation system teaches users how scammers think, making them permanently more vigilant. This creates lasting behavioral change, not just momentary alerts.', 45, 308, 630, 40, {
+  addTextBox(slide, 'Users don\'t just need protection — they need EDUCATION. Our cinematic simulations with Thai voice narration teach users how scammers think, like watching a short film. This creates lasting behavioral change, not just momentary alerts.', 45, 308, 630, 40, {
     fontFamily: PITCH_CONFIG.FONTS.BODY,
     fontSize: 12,
     color: PITCH_CONFIG.COLORS.WHITE,
@@ -2262,14 +2262,14 @@ function createSlide18_Demo(presentation) {
 
   const features = [
     '• 7 AI Agent characters',
-    '• Interactive simulation engine',
-    '• 10 fraud scenario playbacks',
+    '• Cinematic simulation engine',
+    '• 10 short-film style scenarios',
+    '• Thai voice narration (TTS)',
     '• Evil transformation animation',
     '• Thai-localized UI',
     '• Real-time agent coordination',
     '• Money tracker visualization',
     '• Operation mode switching',
-    '• IndexedDB persistence',
     '• Responsive design'
   ];
 
