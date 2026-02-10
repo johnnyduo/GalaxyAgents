@@ -63,15 +63,14 @@ export const ScenarioVideoPlayer: React.FC<ScenarioVideoPlayerProps> = ({
   const currentSceneRef = useRef(0);
   const voiceQueueRef = useRef<Promise<void>>(Promise.resolve());
   const isUnmountedRef = useRef(false);
+  const currentTTSPromiseRef = useRef<Promise<void> | null>(null);
 
-  // Detect Chrome on macOS
+  // Detect Chrome on macOS (show warning but keep TTS enabled - fixed with keepalive workaround)
   useEffect(() => {
     const isChrome = /Chrome/.test(navigator.userAgent) && !/Edg/.test(navigator.userAgent);
     const isMac = /Mac/.test(navigator.platform);
     if (isChrome && isMac) {
       setShowBrowserWarning(true);
-      // Auto-disable TTS on Chrome/macOS (doesn't work anyway)
-      setTTSEnabled(false);
     }
   }, []);
 
@@ -210,92 +209,33 @@ export const ScenarioVideoPlayer: React.FC<ScenarioVideoPlayerProps> = ({
     return () => clearInterval(interval);
   }, [showText, currentIndex, getCinematicNarrative]);
 
-  // Auto-advance slides with voice narration - FIXED: Voice plays independently of useEffect lifecycle
+  // Auto-advance slides with voice narration
   useEffect(() => {
     if (!isPlaying || totalImages === 0) return;
 
     // Update current scene ref
     currentSceneRef.current = currentIndex;
 
+    // CRITICAL: Cancel previous scene's speech immediately and break the queue chain
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
+    voiceQueueRef.current = Promise.resolve();
+    setIsSpeaking(false);
+
     // Delay for first scene: 600ms to ensure opening cleanup is complete
-    // Other scenes: 0ms for smooth transitions
     const delay = currentIndex === 0 ? 600 : 0;
+    const sceneNumber = currentIndex;
 
     const textTimer = setTimeout(() => {
-      // Show text immediately
       setShowText(true);
 
-      // Get narrative content
-      const narratives: Record<string, Record<string, string>> = {
-        'sms-phishing-001': {
-          'sms-03': 'วันหนึ่ง คุณได้รับ SMS จากธนาคาร บอกว่าบัญชีถูกระงับ',
-          'sms-04': 'ข้อความบอกให้คลิกลิงก์ด่วน มิฉะนั้นจะโดนปิดบัญชี',
-          'sms-07': 'คุณตกใจ คลิกลิงก์ไป กรอกข้อมูลส่วนตัวและรหัสผ่าน',
-          'sms-11': 'วินาทีต่อมา เงินในบัญชีหายไป แก๊งกลโกงโอนเงินออกหมด',
-        },
-        'call-center-001': {
-          'cc-02': 'โทรศัพท์ดัง ฝ่ายตำรวจโทรมา บอกว่าคุณมีหมายจับ',
-          'cc-05': 'พวกเขาบอกให้โอนเงินเพื่อพิสูจน์ตัวตน ไม่งั้นจะถูกจับ',
-          'cc-08': 'คุณกลัว รีบโอนเงินไปตามที่สั่ง หวังว่าจะพ้นเรื่อง',
-          'cc-12': 'แต่นั่นคือกลโกง ไม่มีหมายจับจริง เงินของคุณหายไปแล้ว',
-        },
-        'romance-scam-001': {
-          'rs-02': 'คุณพบรักออนไลน์ คุยกันดีมาก เขาดูใจดีมาก',
-          'rs-05': 'เขาบอกว่ามีปัญหาเรื่องเงิน ขอให้ช่วยเหลือหน่อย',
-          'rs-08': 'คุณโอนเงินไปช่วย เชื่อว่าจะได้พบกันจริงสักวัน',
-          'rs-11': 'แต่หลังได้เงินไป เขาหายตัว ไม่มีใครตอบเลย',
-        },
-        'social-impersonation-001': {
-          'si-02': 'LINE จากเพื่อน บอกว่ามีเหตุฉุกเฉิน ต้องการเงินด่วน',
-          'si-05': 'เพื่อนร้องขอให้โอนเงิน สัญญาว่าจะคืนพรุ่งนี้',
-          'si-08': 'คุณโอนไป คิดว่าช่วยเพื่อน แต่นั่นคือบัญชีปลอม',
-        },
-        'ponzi-scheme-001': {
-          'ps-02': 'เพื่อนชวนลงทุน สัญญาผลตอบแทนสูง 30% ต่อเดือน',
-          'ps-05': 'คุณลงทุนไป ได้กำไรเดือนแรกจริงๆ คิดว่าโชคดี',
-          'ps-08': 'แต่หลังจากนั้น ระบบล่ม เงินหายหมด ไม่มีใครรับผิดชอบ',
-        },
-        'fake-investment-001': {
-          'fi-02': 'โฆษณาสุดปัง ลงทุนหุ้นต่างประเทศ รับรองกำไร',
-          'fi-05': 'คุณลงทุน แอปบอกว่ากำไรพุ่ง แต่ถอนเงินไม่ได้',
-          'fi-08': 'พอถามเรื่องถอน บริษัทหายตัว เว็บปิดไปแล้ว',
-        },
-        'job-scam-001': {
-          'js-02': 'ประกาศรับสมัครงาน เงินเดือนสูง ไม่ต้องมีประสบการณ์',
-          'js-05': 'แต่ต้องโอนค่าฝึกอบรมก่อน สัญญาว่าจะคืนให้',
-          'js-08': 'คุณโอนไป แต่หลังจากนั้น ไม่มีงาน ไม่มีใครติดต่อกลับ',
-        },
-        'loan-app-001': {
-          'la-02': 'แอปกู้เงินง่ายๆ ไม่ต้องค้ำประกัน อนุมัติเร็ว',
-          'la-05': 'คุณกู้ไป แต่ดอกเบี้ยโหด เพิ่มขึ้นทุกวัน',
-          'la-08': 'ไม่จ่าย ก็โดนขู่ ครอบครัวถูกรบกวน',
-          'la-11': 'ท้ายที่สุด เงินที่คืนมากกว่าที่กู้หลายเท่า',
-        },
-        'qr-scam-001': {
-          'qr-02': 'คุณซื้อของออนไลน์ ร้านส่ง QR Code มาให้สแกน',
-          'qr-05': 'คุณสแกนจ่ายเงิน แต่ของไม่มาส่ง',
-          'qr-08': 'พอติดตาม ร้านบอกว่าไม่ได้รับเงิน QR Code นั้นเป็นของคนอื่น',
-        },
-        'sim-swap-001': {
-          'ss-02': 'ซิมการ์ดคุณใช้ไม่ได้ทันใด โทรออกไม่ได้',
-          'ss-05': 'มีคนแอบทำซิมใหม่ด้วยข้อมูลคุณ ยึดเบอร์ไป',
-          'ss-08': 'พวกเขาเข้าถึงบัญชีธนาคารผ่าน OTP',
-          'ss-11': 'ภายในชั่วโมง เงินในบัญชีถูกโอนหมด',
-        },
-      };
-
-      const stepId = images[currentIndex];
-      const scenarioNarratives = narratives[scenario.id] || {};
-      const content = scenarioNarratives[stepId] || scenario.steps.find(s => s.id === stepId)?.content.th || '';
+      const content = getCinematicNarrative();
       const settings = getSoundSettings();
-      const sceneNumber = currentIndex; // Capture scene number for this playback
 
-      // Queue voice playback - this runs INDEPENDENTLY of useEffect cleanup!
-      voiceQueueRef.current = voiceQueueRef.current.then(async () => {
-        // CRITICAL: Check if component was unmounted
+      // Start voice playback directly (no chaining — previous chain was reset above)
+      voiceQueueRef.current = (async () => {
         if (isUnmountedRef.current) return;
-
-        // Only play if we're still on the same scene
         if (currentSceneRef.current !== sceneNumber) return;
 
         if (content && settings.ttsEnabled) {
@@ -305,40 +245,27 @@ export const ScenarioVideoPlayer: React.FC<ScenarioVideoPlayerProps> = ({
               .replace(/\[.*?\]/g, '')
               .trim();
 
-            if (isUnmountedRef.current) return;
+            if (isUnmountedRef.current || currentSceneRef.current !== sceneNumber) return;
 
             setIsSpeaking(true);
-
-            // Voice plays to completion - but checks unmounted flag
             await speak(cleanText, 'th-TH');
 
-            if (isUnmountedRef.current) {
-              setIsSpeaking(false);
-              return;
-            }
-
-            // Check if still on same scene after voice completes
-            if (currentSceneRef.current !== sceneNumber) {
+            if (isUnmountedRef.current || currentSceneRef.current !== sceneNumber) {
               setIsSpeaking(false);
               return;
             }
 
             setIsSpeaking(false);
 
-            // Dramatic pause
+            // Dramatic pause after voice completes
             await new Promise(resolve => setTimeout(resolve, 1200));
 
-            if (isUnmountedRef.current) return;
+            if (isUnmountedRef.current || currentSceneRef.current !== sceneNumber) return;
 
-            // Final check before advancing
-            if (currentSceneRef.current !== sceneNumber) return;
-
-            // Advance to next slide
             advanceToNextSlide();
           } catch (err) {
             if (!isUnmountedRef.current) {
               setIsSpeaking(false);
-              // On error, advance after 2s
               await new Promise(resolve => setTimeout(resolve, 2000));
               if (!isUnmountedRef.current && currentSceneRef.current === sceneNumber) {
                 advanceToNextSlide();
@@ -346,13 +273,13 @@ export const ScenarioVideoPlayer: React.FC<ScenarioVideoPlayerProps> = ({
             }
           }
         } else {
-          // TTS disabled, advance after 4s
+          // TTS disabled — advance after 4s
           await new Promise(resolve => setTimeout(resolve, 4000));
           if (!isUnmountedRef.current && currentSceneRef.current === sceneNumber) {
             advanceToNextSlide();
           }
         }
-      });
+      })();
     }, delay);
 
     const advanceToNextSlide = () => {
@@ -380,9 +307,13 @@ export const ScenarioVideoPlayer: React.FC<ScenarioVideoPlayerProps> = ({
 
     return () => {
       clearTimeout(textTimer);
-      // DON'T stop voice here - it's in the queue and manages itself
+      // Cancel speech on cleanup (scene change, pause, unmount)
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+      setIsSpeaking(false);
     };
-  }, [isPlaying, currentIndex, totalImages, onComplete, images, scenario.id, scenario.steps]);
+  }, [isPlaying, currentIndex, totalImages, onComplete, images, scenario.id, scenario.steps, getCinematicNarrative]);
 
   // Note: delay variable is defined inside useEffect, so no dependency needed
 

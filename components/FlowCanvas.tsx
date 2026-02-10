@@ -102,8 +102,8 @@ const AgentNode = React.memo(({ data }: NodeProps) => {
         ${data.isStreaming && !isEvil ? 'filter drop-shadow-[0_0_10px_#43FF4D]' : ''}
       `}
       style={{
-        borderColor: isEvil ? borderColor : 'transparent',
-        boxShadow: isEvil ? `0 0 20px ${glowColor}` : 'none',
+        borderColor: isEvilish ? borderColor : 'transparent',
+        boxShadow: isEvilish ? `0 0 20px ${glowColor}` : 'none',
       }}
     >
       {/* COMPROMISED badge */}
@@ -111,7 +111,7 @@ const AgentNode = React.memo(({ data }: NodeProps) => {
         ref={badgeRef}
         className="absolute -top-3 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded text-[7px] font-bold font-mono whitespace-nowrap z-10"
         style={{
-          opacity: isEvil ? 1 : 0,
+          opacity: isEvilish ? 1 : 0,
           background: colorTheme?.primary || '#FF4444',
           color: '#fff',
           boxShadow: `0 0 10px ${colorTheme?.glow || 'rgba(255,68,68,0.5)'}`,

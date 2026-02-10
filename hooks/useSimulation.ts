@@ -8,7 +8,7 @@ import {
   ScenarioStep,
 } from '../types';
 import { AGENTS, EVIL_VARIANTS } from '../constants';
-import { playSoundForStep, speakStepContent } from '../services/soundService';
+import { playSoundForStep, speakStepContent, stopAllSounds } from '../services/soundService';
 
 // ===========================
 // REDUCER
@@ -179,12 +179,16 @@ export function useSimulation() {
     dispatch({ type: 'SET_SPEED', speed });
   }, []);
 
-  const processStep = useCallback((step: ScenarioStep): void => {
+  const processStep = useCallback((step: ScenarioStep, speed: number = 1): Promise<void> => {
+    // Cancel any ongoing TTS before starting new step's speech
+    stopAllSounds();
+
     // Play sound effect for step type
     playSoundForStep(step.type, step.alignment);
 
-    // Optionally speak the content (TTS)
-    speakStepContent(step.content.th, step.type);
+    // Start TTS and capture the promise (resolves when speech finishes)
+    // Pass speed to adjust TTS rate
+    const ttsPromise = speakStepContent(step.content.th, step.type, speed);
 
     // Log event
     dispatch({
@@ -239,6 +243,9 @@ export function useSimulation() {
         agentId: step.agentId,
       });
     }
+
+    // Return TTS promise so caller can wait for speech to finish
+    return ttsPromise;
   }, []);
 
   const advanceStep = useCallback(() => {

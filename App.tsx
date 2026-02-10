@@ -55,6 +55,26 @@ const App: React.FC = () => {
     }
     // Initialize audio service
     initSoundService();
+
+    // Show browser recommendation toast (only Chrome on macOS has TTS issues)
+    const isChrome = /Chrome/.test(navigator.userAgent) && !/Edg/.test(navigator.userAgent);
+    const isMac = /Mac/.test(navigator.platform);
+    const hasSeenBrowserWarning = localStorage.getItem('galaxy_browser_warning_seen');
+
+    if (isChrome && isMac && !hasSeenBrowserWarning) {
+      setTimeout(() => {
+        toast.info(
+          '🌐 แนะนำ: ใช้ Safari เพื่อประสบการณ์เสียงพากย์ที่ดีที่สุด (Chrome บน macOS มีปัญหาเสียงบางครั้ง)',
+          {
+            autoClose: 10000,
+            position: 'top-center',
+            onClose: () => {
+              localStorage.setItem('galaxy_browser_warning_seen', 'true');
+            }
+          }
+        );
+      }, 2000); // Delay 2s so user sees landing page first
+    }
   }, []);
 
   // Load persisted data from IndexedDB (with localStorage migration)
@@ -195,6 +215,9 @@ const App: React.FC = () => {
   // Track which step has been processed to prevent re-processing on speed/pause changes
   const lastProcessedStepRef = useRef(-1);
 
+  const ttsPromiseRef = useRef<Promise<void>>(Promise.resolve());
+  const cancelledRef = useRef(false);
+
   useEffect(() => {
     if (simulation.state.status !== 'playing' || !simulation.currentStep) return;
 
@@ -203,12 +226,15 @@ const App: React.FC = () => {
     if (!scenario) return;
 
     const stepIndex = simulation.state.currentStepIndex;
+    cancelledRef.current = false;
 
     // Only process the step once (skip on speed change / resume)
     if (lastProcessedStepRef.current !== stepIndex) {
       lastProcessedStepRef.current = stepIndex;
 
-      simulation.processStep(step);
+      // processStep now returns a Promise that resolves when TTS finishes
+      // Pass current speed so TTS rate adjusts accordingly
+      ttsPromiseRef.current = simulation.processStep(step, simulation.state.speed);
 
       // Log the step to console
       const agent = AGENTS.find(a => a.id === step.agentId);
@@ -229,11 +255,22 @@ const App: React.FC = () => {
       }
     }
 
-    // Schedule next step (also runs on speed change to update timer)
-    const delay = step.duration / simulation.state.speed;
+    // Wait for BOTH step.duration AND TTS completion before advancing (whichever takes longer)
+    const minDelay = step.duration / simulation.state.speed;
     const isLastStep = stepIndex >= scenario.steps.length - 1;
 
-    simulation.playbackTimer.current = setTimeout(() => {
+    const advanceWhenReady = async () => {
+      // Create a timer promise for the visual duration
+      const timerPromise = new Promise<void>(resolve => {
+        simulation.playbackTimer.current = setTimeout(resolve, minDelay);
+      });
+
+      // Wait for BOTH timer AND TTS to complete (Promise.all waits for all)
+      // This ensures we wait for whichever takes longer
+      await Promise.all([timerPromise, ttsPromiseRef.current]);
+
+      if (cancelledRef.current) return;
+
       setActiveDialogue(null);
       if (isLastStep) {
         simulation.complete();
@@ -263,9 +300,14 @@ const App: React.FC = () => {
       } else {
         simulation.advanceStep();
       }
-    }, delay);
+    };
 
-    return () => simulation.clearTimer();
+    advanceWhenReady();
+
+    return () => {
+      cancelledRef.current = true;
+      simulation.clearTimer();
+    };
   }, [simulation.state.status, simulation.state.currentStepIndex, simulation.state.speed, simulation, addLog]);
 
   // --- Compute display agents (swap identity when evil) ---
@@ -274,7 +316,7 @@ const App: React.FC = () => {
       return AGENTS;
     }
     return AGENTS.map(agent => simulation.getAgentDisplayData(agent));
-  }, [operationMode, simulation.state.status, simulation.state.agentAlignments, simulation]);
+  }, [operationMode, simulation.state.status, simulation.state.agentAlignments, simulation.getAgentDisplayData]);
 
   // --- Memoized callbacks ---
   const handleCloseDialogue = useCallback(() => {
@@ -865,7 +907,7 @@ const App: React.FC = () => {
                 // Pause auto-play first to prevent race condition
                 simulation.pause();
                 const step = simulation.currentStep;
-                simulation.processStep(step);
+                simulation.processStep(step, simulation.state.speed);
                 lastProcessedStepRef.current = simulation.state.currentStepIndex;
 
                 const agent = AGENTS.find(a => a.id === step.agentId);
