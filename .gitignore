@@ -63,3 +63,7 @@ Thumbs.db
 tmp/
 temp/
 *.tmp
+
+# Claude Code Settings (contains API keys!)
+.claude/
+.claude/**/*
