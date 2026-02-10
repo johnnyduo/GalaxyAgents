@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UAT Test - Video Voice Narration</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      max-width: 900px;
+      margin: 20px auto;
+      padding: 20px;
+      background: #1a1a1a;
+      color: #fff;
+    }
+    h1 {
+      color: #43ff4d;
+      border-bottom: 2px solid #43ff4d;
+      padding-bottom: 10px;
+    }
+    .test-section {
+      background: #2a2a2a;
+      border: 1px solid #43ff4d;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 20px 0;
+    }
+    .scene {
+      background: #333;
+      border-left: 4px solid #43ff4d;
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 4px;
+    }
+    .scene-num {
+      color: #43ff4d;
+      font-weight: bold;
+      font-size: 18px;
+    }
+    .scene-text {
+      margin: 10px 0;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+    button {
+      background: #43ff4d;
+      color: #000;
+      border: none;
+      padding: 12px 24px;
+      font-size: 16px;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover {
+      background: #3ee046;
+    }
+    button:disabled {
+      background: #666;
+      cursor: not-allowed;
+    }
+    .status {
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+    .status.running {
+      background: #ff9800;
+      color: #000;
+    }
+    .status.success {
+      background: #4caf50;
+      color: #fff;
+    }
+    .status.error {
+      background: #f44336;
+      color: #fff;
+    }
+    .log {
+      background: #1a1a1a;
+      border: 1px solid #555;
+      padding: 15px;
+      margin: 15px 0;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    .log-entry {
+      margin: 3px 0;
+      padding: 2px 0;
+    }
+    .log-entry.speaking {
+      color: #43ff4d;
+    }
+    .log-entry.complete {
+      color: #2196f3;
+    }
+    .log-entry.error {
+      color: #f44336;
+    }
+    .progress {
+      background: #333;
+      height: 6px;
+      border-radius: 3px;
+      margin: 15px 0;
+      overflow: hidden;
+    }
+    .progress-bar {
+      background: linear-gradient(90deg, #43ff4d, #2196f3);
+      height: 100%;
+      width: 0%;
+      transition: width 0.3s;
+    }
+    .timer {
+      font-family: 'Courier New', monospace;
+      font-size: 24px;
+      color: #43ff4d;
+      text-align: center;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>🧪 UAT Test - Video Voice Narration</h1>
+
+  <div class="test-section">
+    <h2>📋 Test Scenario: call-center-001</h2>
+    <p>ทดสอบเสียงพากย์ไทยทั้ง 4 scenes แบบต่อเนื่อง โดยเสียงต้องพูดจบทุกประโยคก่อนเปลี่ยน scene</p>
+
+    <div class="scene">
+      <div class="scene-num">Scene 1</div>
+      <div class="scene-text">โทรศัพท์ดัง ฝ่ายตำรวจโทรมา บอกว่าคุณมีหมายจับ</div>
+    </div>
+
+    <div class="scene">
+      <div class="scene-num">Scene 2</div>
+      <div class="scene-text">พวกเขาบอกให้โอนเงินเพื่อพิสูจน์ตัวตน ไม่งั้นจะถูกจับ</div>
+    </div>
+
+    <div class="scene">
+      <div class="scene-num">Scene 3</div>
+      <div class="scene-text">คุณกลัว รีบโอนเงินไปตามที่สั่ง หวังว่าจะพ้นเรื่อง</div>
+    </div>
+
+    <div class="scene">
+      <div class="scene-num">Scene 4</div>
+      <div class="scene-text">แต่นั่นคือกลโกง ไม่มีหมายจับจริง เงินของคุณหายไปแล้ว</div>
+    </div>
+  </div>
+
+  <div class="test-section">
+    <button id="startBtn" onclick="startTest()">▶️ Start Test</button>
+    <button id="stopBtn" onclick="stopTest()" disabled>⏹️ Stop</button>
+
+    <div id="status" class="status" style="display: none;"></div>
+
+    <div class="timer" id="timer">00:00</div>
+
+    <div class="progress">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <div class="log" id="log"></div>
+  </div>
+
+  <div class="test-section">
+    <h3>✅ Pass Criteria:</h3>
+    <ul>
+      <li>แต่ละ scene เสียงต้องพูดจบทุกคำ (ไม่ตัดกลางประโยค)</li>
+      <li>Scene ต่อ scene ต้องลื่นไหล ไม่มีเสียงทับซ้อนกัน</li>
+      <li>ระยะเวลาแต่ละ scene ประมาณ 5-7 วินาที (เสียง + pause)</li>
+      <li>รวมทั้งหมดประมาณ 20-28 วินาที</li>
+    </ul>
+
+    <h3>❌ Fail Criteria:</h3>
+    <ul>
+      <li>เสียงถูกตัดกลางคำ (เช่น "ตำ" แทนที่จะเป็น "ตำรวจ")</li>
+      <li>เสียง scene ใหม่เริ่มก่อนเสียงเก่าจบ (overlap)</li>
+      <li>Scene เปลี่ยนเร็วเกินไป (&lt;3 วินาที)</li>
+    </ul>
+  </div>
+
+  <script>
+    const scenes = [
+      'โทรศัพท์ดัง ฝ่ายตำรวจโทรมา บอกว่าคุณมีหมายจับ',
+      'พวกเขาบอกให้โอนเงินเพื่อพิสูจน์ตัวตน ไม่งั้นจะถูกจับ',
+      'คุณกลัว รีบโอนเงินไปตามที่สั่ง หวังว่าจะพ้นเรื่อง',
+      'แต่นั่นคือกลโกง ไม่มีหมายจับจริง เงินของคุณหายไปแล้ว'
+    ];
+
+    let isRunning = false;
+    let startTime = 0;
+    let timerInterval = null;
+    let sceneTimes = [];
+
+    function log(message, type = '') {
+      const logDiv = document.getElementById('log');
+      const entry = document.createElement('div');
+      entry.className = `log-entry ${type}`;
+      const timestamp = new Date().toLocaleTimeString('th-TH', { hour12: false, fractionalSecondDigits: 3 });
+      entry.textContent = `[${timestamp}] ${message}`;
+      logDiv.appendChild(entry);
+      logDiv.scrollTop = logDiv.scrollHeight;
+    }
+
+    function updateStatus(text, type) {
+      const statusDiv = document.getElementById('status');
+      statusDiv.textContent = text;
+      statusDiv.className = `status ${type}`;
+      statusDiv.style.display = 'block';
+    }
+
+    function updateProgress(percent) {
+      document.getElementById('progressBar').style.width = percent + '%';
+    }
+
+    function updateTimer() {
+      const elapsed = (Date.now() - startTime) / 1000;
+      const minutes = Math.floor(elapsed / 60);
+      const seconds = Math.floor(elapsed % 60);
+      document.getElementById('timer').textContent =
+        `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }
+
+    function speak(text) {
+      return new Promise((resolve, reject) => {
+        if (!('speechSynthesis' in window)) {
+          reject(new Error('Speech API not supported'));
+          return;
+        }
+
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'th-TH';
+        utterance.rate = 0.9;
+        utterance.pitch = 1;
+        utterance.volume = 1;
+
+        let hasEnded = false;
+
+        const voices = window.speechSynthesis.getVoices();
+        const thaiVoice = voices.find(v => v.lang.startsWith('th'));
+        if (thaiVoice) {
+          utterance.voice = thaiVoice;
+        }
+
+        utterance.onend = () => {
+          if (!hasEnded) {
+            hasEnded = true;
+            resolve();
+          }
+        };
+
+        utterance.onerror = (event) => {
+          if (!hasEnded) {
+            hasEnded = true;
+            reject(event.error);
+          }
+        };
+
+        window.speechSynthesis.speak(utterance);
+
+        // Timeout fallback
+        setTimeout(() => {
+          if (!hasEnded) {
+            hasEnded = true;
+            window.speechSynthesis.cancel();
+            reject(new Error('Speech timeout'));
+          }
+        }, 15000);
+      });
+    }
+
+    async function startTest() {
+      if (isRunning) return;
+
+      isRunning = true;
+      document.getElementById('startBtn').disabled = true;
+      document.getElementById('stopBtn').disabled = false;
+      document.getElementById('log').innerHTML = '';
+      sceneTimes = [];
+      startTime = Date.now();
+
+      timerInterval = setInterval(updateTimer, 100);
+
+      updateStatus('🏃 Running test...', 'running');
+      log('Test started', 'speaking');
+
+      try {
+        // Ensure clean slate
+        window.speechSynthesis.cancel();
+        await new Promise(resolve => setTimeout(resolve, 200));
+
+        for (let i = 0; i < scenes.length; i++) {
+          if (!isRunning) break;
+
+          const sceneStartTime = Date.now();
+          const sceneNum = i + 1;
+          const text = scenes[i];
+
+          log(`Scene ${sceneNum} starting: "${text}"`, 'speaking');
+          updateProgress((i / scenes.length) * 100);
+
+          // Speak
+          await speak(text);
+
+          const sceneDuration = (Date.now() - sceneStartTime) / 1000;
+          sceneTimes.push(sceneDuration);
+
+          log(`Scene ${sceneNum} complete in ${sceneDuration.toFixed(2)}s`, 'complete');
+
+          // Dramatic pause
+          await new Promise(resolve => setTimeout(resolve, 1200));
+
+          if (!isRunning) break;
+        }
+
+        updateProgress(100);
+
+        // Calculate results
+        const totalTime = (Date.now() - startTime) / 1000;
+        const avgSceneTime = sceneTimes.reduce((a, b) => a + b, 0) / sceneTimes.length;
+        const minTime = Math.min(...sceneTimes);
+        const maxTime = Math.max(...sceneTimes);
+
+        log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', '');
+        log(`✅ Test COMPLETED in ${totalTime.toFixed(2)}s`, 'complete');
+        log(`Average scene time: ${avgSceneTime.toFixed(2)}s`, 'complete');
+        log(`Min scene time: ${minTime.toFixed(2)}s`, 'complete');
+        log(`Max scene time: ${maxTime.toFixed(2)}s`, 'complete');
+
+        // Validate
+        let passed = true;
+        let failReasons = [];
+
+        if (totalTime < 20) {
+          passed = false;
+          failReasons.push('Total time too short - voices may be cutting');
+        }
+
+        if (totalTime > 35) {
+          passed = false;
+          failReasons.push('Total time too long - check for delays');
+        }
+
+        if (minTime < 3) {
+          passed = false;
+          failReasons.push('Scene time too short - voice likely cut off');
+        }
+
+        if (passed) {
+          updateStatus(`✅ TEST PASSED - All voices complete! (${totalTime.toFixed(1)}s)`, 'success');
+          log('✅ All pass criteria met', 'complete');
+        } else {
+          updateStatus(`❌ TEST FAILED - ${failReasons.join(', ')}`, 'error');
+          failReasons.forEach(reason => log(`❌ ${reason}`, 'error'));
+        }
+
+      } catch (error) {
+        log(`❌ Error: ${error.message}`, 'error');
+        updateStatus('❌ TEST FAILED - Error occurred', 'error');
+      } finally {
+        clearInterval(timerInterval);
+        document.getElementById('startBtn').disabled = false;
+        document.getElementById('stopBtn').disabled = true;
+        isRunning = false;
+      }
+    }
+
+    function stopTest() {
+      isRunning = false;
+      window.speechSynthesis.cancel();
+      clearInterval(timerInterval);
+      updateStatus('⏹️ Test stopped by user', 'error');
+      log('Test stopped', 'error');
+      document.getElementById('startBtn').disabled = false;
+      document.getElementById('stopBtn').disabled = true;
+    }
+
+    // Load voices on page load
+    window.speechSynthesis.getVoices();
+    window.addEventListener('load', () => {
+      log('Page loaded. Click "Start Test" to begin.', 'speaking');
+      const voices = window.speechSynthesis.getVoices();
+      const thaiVoice = voices.find(v => v.lang.startsWith('th'));
+      if (thaiVoice) {
+        log(`Thai voice found: ${thaiVoice.name}`, 'complete');
+      } else {
+        log('⚠️ No Thai voice found - will use default', 'error');
+      }
+    });
+  </script>
+</body>
+</html>

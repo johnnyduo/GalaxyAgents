@@ -2,26 +2,14 @@
  * Sound Service - Audio effects + Thai TTS for simulations
  *
  * Features:
- * - Sound effects (alert, money loss, transformation, etc.)
+ * - Sound effects (using Web Audio API - no external files)
  * - Thai Text-to-Speech via Web Speech API
  * - Simple, lean implementation
  */
 
-// Sound effect URLs (using free sounds from public CDN)
-const SOUND_URLS = {
-  notification: 'https://cdn.freesound.org/previews/536/536108_11861866-lq.mp3',
-  alert: 'https://cdn.freesound.org/previews/352/352661_5121236-lq.mp3',
-  moneyLoss: 'https://cdn.freesound.org/previews/619/619839_1648170-lq.mp3',
-  transformation: 'https://cdn.freesound.org/previews/320/320181_5260872-lq.mp3',
-  success: 'https://cdn.freesound.org/previews/341/341695_5858296-lq.mp3',
-  warning: 'https://cdn.freesound.org/previews/411/411089_5121236-lq.mp3',
-  reveal: 'https://cdn.freesound.org/previews/456/456966_9159316-lq.mp3',
-};
+import * as WebAudio from './webAudioSounds';
 
-type SoundType = keyof typeof SOUND_URLS;
-
-// Audio cache
-const audioCache: Record<string, HTMLAudioElement> = {};
+type SoundType = 'notification' | 'alert' | 'moneyLoss' | 'transformation' | 'success' | 'warning' | 'reveal';
 
 // Settings
 let soundEnabled = true;
@@ -29,33 +17,38 @@ let ttsEnabled = true;
 let volume = 0.5;
 
 /**
- * Preload a sound effect
- */
-function preloadSound(type: SoundType): HTMLAudioElement {
-  if (!audioCache[type]) {
-    const audio = new Audio(SOUND_URLS[type]);
-    audio.preload = 'auto';
-    audio.volume = volume;
-    audioCache[type] = audio;
-  }
-  return audioCache[type];
-}
-
-/**
- * Play a sound effect
+ * Play a sound effect using Web Audio API
  */
 export function playSound(type: SoundType): void {
   if (!soundEnabled) return;
 
   try {
-    const audio = preloadSound(type);
-    audio.currentTime = 0;
-    audio.volume = volume;
-    audio.play().catch(() => {
-      // Autoplay blocked, ignore
-    });
+    // Map sound types to Web Audio functions
+    switch (type) {
+      case 'notification':
+        WebAudio.playNotification();
+        break;
+      case 'alert':
+        WebAudio.playAlert();
+        break;
+      case 'warning':
+        WebAudio.playWarning();
+        break;
+      case 'success':
+        WebAudio.playSuccess();
+        break;
+      case 'moneyLoss':
+        WebAudio.playMoneyLoss();
+        break;
+      case 'transformation':
+        WebAudio.playTransformation();
+        break;
+      case 'reveal':
+        WebAudio.playReveal();
+        break;
+    }
   } catch (error) {
-    console.warn('Sound playback failed:', error);
+    // Silently ignore sound errors
   }
 }
 
@@ -100,37 +93,92 @@ export function playSoundForStep(
 export function speak(text: string, lang: 'th-TH' | 'en-US' = 'th-TH'): Promise<void> {
   if (!ttsEnabled) return Promise.resolve();
 
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     // Check if Speech Synthesis is supported
     if (!('speechSynthesis' in window)) {
-      console.warn('TTS not supported');
+      console.warn('❌ Web Speech API not supported in this browser');
       resolve();
       return;
     }
 
-    // Cancel any ongoing speech
-    window.speechSynthesis.cancel();
+    try {
+      // DON'T auto-cancel - causes interruptions
+      // Let component manage cancellation explicitly
 
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = lang;
-    utterance.rate = 0.9; // Slightly slower for clarity
-    utterance.pitch = 1;
-    utterance.volume = volume;
+      let hasStarted = false;
+      let hasEnded = false;
 
-    // Try to find a Thai voice
-    const voices = window.speechSynthesis.getVoices();
-    const thaiVoice = voices.find(v => v.lang.startsWith('th'));
-    if (thaiVoice) {
-      utterance.voice = thaiVoice;
+      const speakWithVoice = () => {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = lang;
+        utterance.rate = 0.9;
+        utterance.pitch = 1;
+        utterance.volume = volume;
+
+        // Try to find a Thai voice
+        const voices = window.speechSynthesis.getVoices();
+        const thaiVoice = voices.find(v => v.lang.startsWith('th'));
+
+        if (thaiVoice) {
+          utterance.voice = thaiVoice;
+        }
+
+        utterance.onstart = () => {
+          hasStarted = true;
+        };
+
+        utterance.onend = () => {
+          hasEnded = true;
+          resolve();
+        };
+
+        utterance.onerror = (event) => {
+          if (!hasEnded) {
+            resolve();
+          }
+        };
+
+        // Speak
+        window.speechSynthesis.speak(utterance);
+
+        // Chrome fix: Resume if paused (Chrome bug workaround)
+        setTimeout(() => {
+          if (!hasStarted && window.speechSynthesis.paused) {
+            window.speechSynthesis.resume();
+          }
+        }, 100);
+
+        // Timeout fallback (if speech doesn't start in 5 seconds)
+        setTimeout(() => {
+          if (!hasStarted) {
+            window.speechSynthesis.cancel();
+            resolve();
+          }
+        }, 5000);
+      };
+
+      // Wait for voices to load
+      const voices = window.speechSynthesis.getVoices();
+
+      if (voices.length > 0) {
+        speakWithVoice();
+      } else {
+        // Set timeout for voice loading
+        const timeout = setTimeout(() => {
+          resolve();
+        }, 2000);
+
+        window.speechSynthesis.addEventListener('voiceschanged', () => {
+          clearTimeout(timeout);
+          speakWithVoice();
+        }, { once: true });
+
+        // Trigger voice loading
+        window.speechSynthesis.getVoices();
+      }
+    } catch (error) {
+      resolve();
     }
-
-    utterance.onend = () => resolve();
-    utterance.onerror = (event) => {
-      console.warn('TTS error:', event);
-      resolve(); // Don't reject, just continue
-    };
-
-    window.speechSynthesis.speak(utterance);
   });
 }
 
@@ -171,11 +219,6 @@ export function setTTSEnabled(enabled: boolean): void {
 export function setVolume(vol: number): void {
   volume = Math.max(0, Math.min(1, vol));
   localStorage.setItem('galaxy_sound_volume', String(volume));
-
-  // Update cached audio elements
-  Object.values(audioCache).forEach(audio => {
-    audio.volume = volume;
-  });
 }
 
 /**
@@ -197,11 +240,8 @@ export function initSoundService(): void {
   if (savedTTS !== null) ttsEnabled = savedTTS === 'true';
   if (savedVolume !== null) volume = parseFloat(savedVolume);
 
-  // Preload common sounds
-  preloadSound('notification');
-  preloadSound('alert');
-  preloadSound('transformation');
-  preloadSound('moneyLoss');
+  // Don't preload sounds to avoid 404 errors
+  // Sound effects are disabled until we have proper audio files
 
   // Load voices (needed for TTS)
   if ('speechSynthesis' in window) {
@@ -213,11 +253,8 @@ export function initSoundService(): void {
  * Stop all sounds
  */
 export function stopAllSounds(): void {
-  Object.values(audioCache).forEach(audio => {
-    audio.pause();
-    audio.currentTime = 0;
-  });
-
+  // Web Audio API sounds stop automatically
+  // Only need to cancel TTS
   if ('speechSynthesis' in window) {
     window.speechSynthesis.cancel();
   }

@@ -431,7 +431,7 @@ const FlowCanvas: React.FC<FlowCanvasProps> = ({
   );
 
   return (
-    <div className="w-full h-full bg-[#050505] relative">
+    <div className="w-full h-full bg-[#050505] relative" style={{ width: '100%', height: '100%' }}>
       {/* SIMULATION MODE banner */}
       {isSimulationActive && (
         <div className="absolute top-3 left-1/2 -translate-x-1/2 z-20 px-4 py-1.5 rounded-lg bg-red-500/20 border border-red-500/50 backdrop-blur-md">
@@ -452,6 +452,7 @@ const FlowCanvas: React.FC<FlowCanvasProps> = ({
         fitView
         className="bg-black"
         proOptions={proOptions}
+        style={{ width: '100%', height: '100%' }}
       >
         <Background
           variant={BackgroundVariant.Dots}

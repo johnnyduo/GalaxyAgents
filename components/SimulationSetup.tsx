@@ -95,10 +95,10 @@ const SimulationSetup: React.FC<SimulationSetupProps> = ({ onStart, onCancel, on
             เลือกสถานการณ์
           </label>
           {FRAUD_SCENARIOS.map((scenario) => (
-            <button
+            <div
               key={scenario.id}
               onClick={() => setSelectedScenario(scenario)}
-              className={`w-full text-left p-3 rounded-lg border transition-all ${
+              className={`w-full text-left p-3 rounded-lg border transition-all cursor-pointer ${
                 selectedScenario?.id === scenario.id
                   ? 'border-red-500 bg-red-500/10 shadow-[0_0_10px_rgba(255,68,68,0.2)]'
                   : 'border-white/10 bg-black/30 hover:border-white/30'
@@ -145,7 +145,7 @@ const SimulationSetup: React.FC<SimulationSetupProps> = ({ onStart, onCancel, on
                   )}
                 </div>
               </div>
-            </button>
+            </div>
           ))}
 
           {FRAUD_SCENARIOS.length === 0 && (

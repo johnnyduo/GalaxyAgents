@@ -10,7 +10,7 @@
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { FraudScenario, ScenarioStep } from '../types';
-import { playSound, speak, stopAllSounds, getSoundSettings } from '../services/soundService';
+import { playSound, speak, stopAllSounds, getSoundSettings, setTTSEnabled, setVolume, setSoundEnabled } from '../services/soundService';
 
 interface ScenarioVideoPlayerProps {
   scenario: FraudScenario;
@@ -57,26 +57,146 @@ export const ScenarioVideoPlayer: React.FC<ScenarioVideoPlayerProps> = ({
   const [videoStarted, setVideoStarted] = useState(false);
   const [showEndCredits, setShowEndCredits] = useState(false);
   const [playbackQuality, setPlaybackQuality] = useState<'normal' | 'smooth' | 'cinematic'>('cinematic');
+  const [showBrowserWarning, setShowBrowserWarning] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const isPlayingVoiceRef = useRef(false);
+  const currentSceneRef = useRef(0);
+  const voiceQueueRef = useRef<Promise<void>>(Promise.resolve());
+  const isUnmountedRef = useRef(false);
+
+  // Detect Chrome on macOS
+  useEffect(() => {
+    const isChrome = /Chrome/.test(navigator.userAgent) && !/Edg/.test(navigator.userAgent);
+    const isMac = /Mac/.test(navigator.platform);
+    if (isChrome && isMac) {
+      setShowBrowserWarning(true);
+      // Auto-disable TTS on Chrome/macOS (doesn't work anyway)
+      setTTSEnabled(false);
+    }
+  }, []);
 
   const images = SCENARIO_IMAGES[scenario.id] || [];
   const totalImages = images.length;
 
-  // Get step content for current image
-  const getCurrentStepContent = useCallback(() => {
+  // Ensure TTS is enabled and clean slate when video player opens
+  useEffect(() => {
+    // Mark as mounted
+    isUnmountedRef.current = false;
+
+    // CRITICAL: Cancel any existing TTS to prevent overlap!
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
+
+    // Reset voice queue to break any ongoing Promise chains
+    voiceQueueRef.current = Promise.resolve();
+
+    const settings = getSoundSettings();
+    if (!settings.ttsEnabled) {
+      console.log('🔊 Enabling TTS for video player');
+      setTTSEnabled(true);
+    }
+    if (settings.volume < 0.3) {
+      console.log('🔊 Setting volume to 50% for better voice clarity');
+      setVolume(0.5);
+    }
+
+    // Enable sound effects for cinematic experience
+    setSoundEnabled(true);
+
+    return () => {
+      // Mark as unmounted - this stops all ongoing voice playback
+      isUnmountedRef.current = true;
+
+      // Clean up on unmount - stop all voices
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+      voiceQueueRef.current = Promise.resolve();
+    };
+  }, []);
+
+  // Cinematic narrative subtitles for the short film
+  const getCinematicNarrative = useCallback(() => {
+    const narratives: Record<string, Record<string, string>> = {
+      'sms-phishing-001': {
+        'sms-03': 'วันหนึ่ง คุณได้รับ SMS จากธนาคาร บอกว่าบัญชีถูกระงับ',
+        'sms-04': 'ข้อความบอกให้คลิกลิงก์ด่วน มิฉะนั้นจะโดนปิดบัญชี',
+        'sms-07': 'คุณตกใจ คลิกลิงก์ไป กรอกข้อมูลส่วนตัวและรหัสผ่าน',
+        'sms-11': 'วินาทีต่อมา เงินในบัญชีหายไป แก๊งกลโกงโอนเงินออกหมด',
+      },
+      'call-center-001': {
+        'cc-02': 'โทรศัพท์ดัง ฝ่ายตำรวจโทรมา บอกว่าคุณมีหมายจับ',
+        'cc-05': 'พวกเขาบอกให้โอนเงินเพื่อพิสูจน์ตัวตน ไม่งั้นจะถูกจับ',
+        'cc-08': 'คุณกลัว รีบโอนเงินไปตามที่สั่ง หวังว่าจะพ้นเรื่อง',
+        'cc-12': 'แต่นั่นคือกลโกง ไม่มีหมายจับจริง เงินของคุณหายไปแล้ว',
+      },
+      'romance-scam-001': {
+        'rs-02': 'คุณพบรักออนไลน์ คุยกันดีมาก เขาดูใจดีมาก',
+        'rs-05': 'เขาบอกว่ามีปัญหาเรื่องเงิน ขอให้ช่วยเหลือหน่อย',
+        'rs-08': 'คุณโอนเงินไปช่วย เชื่อว่าจะได้พบกันจริงสักวัน',
+        'rs-11': 'แต่หลังได้เงินไป เขาหายตัว ไม่มีใครตอบเลย',
+      },
+      'social-impersonation-001': {
+        'si-02': 'LINE จากเพื่อน บอกว่ามีเหตุฉุกเฉิน ต้องการเงินด่วน',
+        'si-05': 'เพื่อนร้องขอให้โอนเงิน สัญญาว่าจะคืนพรุ่งนี้',
+        'si-08': 'คุณโอนไป คิดว่าช่วยเพื่อน แต่นั่นคือบัญชีปลอม',
+      },
+      'ponzi-scheme-001': {
+        'ps-02': 'เพื่อนชวนลงทุน สัญญาผลตอบแทนสูง 30% ต่อเดือน',
+        'ps-05': 'คุณลงทุนไป ได้กำไรเดือนแรกจริงๆ คิดว่าโชคดี',
+        'ps-08': 'แต่หลังจากนั้น ระบบล่ม เงินหายหมด ไม่มีใครรับผิดชอบ',
+      },
+      'fake-investment-001': {
+        'fi-02': 'โฆษณาสุดปัง ลงทุนหุ้นต่างประเทศ รับรองกำไร',
+        'fi-05': 'คุณลงทุน แอปบอกว่ากำไรพุ่ง แต่ถอนเงินไม่ได้',
+        'fi-08': 'พอถามเรื่องถอน บริษัทหายตัว เว็บปิดไปแล้ว',
+      },
+      'job-scam-001': {
+        'js-02': 'ประกาศรับสมัครงาน เงินเดือนสูง ไม่ต้องมีประสบการณ์',
+        'js-05': 'แต่ต้องโอนค่าฝึกอบรมก่อน สัญญาว่าจะคืนให้',
+        'js-08': 'คุณโอนไป แต่หลังจากนั้น ไม่มีงาน ไม่มีใครติดต่อกลับ',
+      },
+      'loan-app-001': {
+        'la-02': 'แอปกู้เงินง่ายๆ ไม่ต้องค้ำประกัน อนุมัติเร็ว',
+        'la-05': 'คุณกู้ไป แต่ดอกเบี้ยโหด เพิ่มขึ้นทุกวัน',
+        'la-08': 'ไม่จ่าย ก็โดนขู่ ครอบครัวถูกรบกวน',
+        'la-11': 'ท้ายที่สุด เงินที่คืนมากกว่าที่กู้หลายเท่า',
+      },
+      'qr-scam-001': {
+        'qr-02': 'คุณซื้อของออนไลน์ ร้านส่ง QR Code มาให้สแกน',
+        'qr-05': 'คุณสแกนจ่ายเงิน แต่ของไม่มาส่ง',
+        'qr-08': 'พอติดตาม ร้านบอกว่าไม่ได้รับเงิน QR Code นั้นเป็นของคนอื่น',
+      },
+      'sim-swap-001': {
+        'ss-02': 'ซิมการ์ดคุณใช้ไม่ได้ทันใด โทรออกไม่ได้',
+        'ss-05': 'มีคนแอบทำซิมใหม่ด้วยข้อมูลคุณ ยึดเบอร์ไป',
+        'ss-08': 'พวกเขาเข้าถึงบัญชีธนาคารผ่าน OTP',
+        'ss-11': 'ภายในชั่วโมง เงินในบัญชีถูกโอนหมด',
+      },
+    };
+
     const stepId = images[currentIndex];
+    const scenarioNarratives = narratives[scenario.id] || {};
+
+    // If narrative exists, use it. Otherwise fall back to step content
+    if (scenarioNarratives[stepId]) {
+      return scenarioNarratives[stepId];
+    }
+
+    // Fallback to step content
     const step = scenario.steps.find(s => s.id === stepId);
     return step?.content.th || '';
-  }, [currentIndex, images, scenario.steps]);
+  }, [currentIndex, images, scenario.id, scenario.steps]);
 
-  // Typewriter effect
+  // Typewriter effect (faster for shorter text)
   useEffect(() => {
     if (!showText) {
       setDisplayedText('');
       return;
     }
 
-    const fullText = getCurrentStepContent();
+    const fullText = getCinematicNarrative();
     let index = 0;
     const interval = setInterval(() => {
       if (index <= fullText.length) {
@@ -85,108 +205,207 @@ export const ScenarioVideoPlayer: React.FC<ScenarioVideoPlayerProps> = ({
       } else {
         clearInterval(interval);
       }
-    }, 30);
+    }, 20); // Faster typewriter (20ms instead of 30ms)
 
     return () => clearInterval(interval);
-  }, [showText, currentIndex, getCurrentStepContent]);
+  }, [showText, currentIndex, getCinematicNarrative]);
 
-  // Auto-advance slides with voice narration
+  // Auto-advance slides with voice narration - FIXED: Voice plays independently of useEffect lifecycle
   useEffect(() => {
     if (!isPlaying || totalImages === 0) return;
 
-    let voiceCompleted = false;
-    let slideTimeout: NodeJS.Timeout;
+    // Update current scene ref
+    currentSceneRef.current = currentIndex;
 
-    // Show text after 0.5s
-    const textTimer = setTimeout(async () => {
+    // Delay for first scene: 600ms to ensure opening cleanup is complete
+    // Other scenes: 0ms for smooth transitions
+    const delay = currentIndex === 0 ? 600 : 0;
+
+    const textTimer = setTimeout(() => {
+      // Show text immediately
       setShowText(true);
 
-      // Speak the text content with Thai TTS
-      const content = getCurrentStepContent();
-      if (content && getSoundSettings().ttsEnabled) {
-        try {
-          // Clean text for better TTS
-          const cleanText = content
-            .replace(/[📱💳💸🔗🚨🔍📚🛡️⚠️🎬💔👤📷📈💰💼🏦📶]/g, '')
-            .replace(/\[.*?\]/g, '')
-            .trim();
+      // Get narrative content
+      const narratives: Record<string, Record<string, string>> = {
+        'sms-phishing-001': {
+          'sms-03': 'วันหนึ่ง คุณได้รับ SMS จากธนาคาร บอกว่าบัญชีถูกระงับ',
+          'sms-04': 'ข้อความบอกให้คลิกลิงก์ด่วน มิฉะนั้นจะโดนปิดบัญชี',
+          'sms-07': 'คุณตกใจ คลิกลิงก์ไป กรอกข้อมูลส่วนตัวและรหัสผ่าน',
+          'sms-11': 'วินาทีต่อมา เงินในบัญชีหายไป แก๊งกลโกงโอนเงินออกหมด',
+        },
+        'call-center-001': {
+          'cc-02': 'โทรศัพท์ดัง ฝ่ายตำรวจโทรมา บอกว่าคุณมีหมายจับ',
+          'cc-05': 'พวกเขาบอกให้โอนเงินเพื่อพิสูจน์ตัวตน ไม่งั้นจะถูกจับ',
+          'cc-08': 'คุณกลัว รีบโอนเงินไปตามที่สั่ง หวังว่าจะพ้นเรื่อง',
+          'cc-12': 'แต่นั่นคือกลโกง ไม่มีหมายจับจริง เงินของคุณหายไปแล้ว',
+        },
+        'romance-scam-001': {
+          'rs-02': 'คุณพบรักออนไลน์ คุยกันดีมาก เขาดูใจดีมาก',
+          'rs-05': 'เขาบอกว่ามีปัญหาเรื่องเงิน ขอให้ช่วยเหลือหน่อย',
+          'rs-08': 'คุณโอนเงินไปช่วย เชื่อว่าจะได้พบกันจริงสักวัน',
+          'rs-11': 'แต่หลังได้เงินไป เขาหายตัว ไม่มีใครตอบเลย',
+        },
+        'social-impersonation-001': {
+          'si-02': 'LINE จากเพื่อน บอกว่ามีเหตุฉุกเฉิน ต้องการเงินด่วน',
+          'si-05': 'เพื่อนร้องขอให้โอนเงิน สัญญาว่าจะคืนพรุ่งนี้',
+          'si-08': 'คุณโอนไป คิดว่าช่วยเพื่อน แต่นั่นคือบัญชีปลอม',
+        },
+        'ponzi-scheme-001': {
+          'ps-02': 'เพื่อนชวนลงทุน สัญญาผลตอบแทนสูง 30% ต่อเดือน',
+          'ps-05': 'คุณลงทุนไป ได้กำไรเดือนแรกจริงๆ คิดว่าโชคดี',
+          'ps-08': 'แต่หลังจากนั้น ระบบล่ม เงินหายหมด ไม่มีใครรับผิดชอบ',
+        },
+        'fake-investment-001': {
+          'fi-02': 'โฆษณาสุดปัง ลงทุนหุ้นต่างประเทศ รับรองกำไร',
+          'fi-05': 'คุณลงทุน แอปบอกว่ากำไรพุ่ง แต่ถอนเงินไม่ได้',
+          'fi-08': 'พอถามเรื่องถอน บริษัทหายตัว เว็บปิดไปแล้ว',
+        },
+        'job-scam-001': {
+          'js-02': 'ประกาศรับสมัครงาน เงินเดือนสูง ไม่ต้องมีประสบการณ์',
+          'js-05': 'แต่ต้องโอนค่าฝึกอบรมก่อน สัญญาว่าจะคืนให้',
+          'js-08': 'คุณโอนไป แต่หลังจากนั้น ไม่มีงาน ไม่มีใครติดต่อกลับ',
+        },
+        'loan-app-001': {
+          'la-02': 'แอปกู้เงินง่ายๆ ไม่ต้องค้ำประกัน อนุมัติเร็ว',
+          'la-05': 'คุณกู้ไป แต่ดอกเบี้ยโหด เพิ่มขึ้นทุกวัน',
+          'la-08': 'ไม่จ่าย ก็โดนขู่ ครอบครัวถูกรบกวน',
+          'la-11': 'ท้ายที่สุด เงินที่คืนมากกว่าที่กู้หลายเท่า',
+        },
+        'qr-scam-001': {
+          'qr-02': 'คุณซื้อของออนไลน์ ร้านส่ง QR Code มาให้สแกน',
+          'qr-05': 'คุณสแกนจ่ายเงิน แต่ของไม่มาส่ง',
+          'qr-08': 'พอติดตาม ร้านบอกว่าไม่ได้รับเงิน QR Code นั้นเป็นของคนอื่น',
+        },
+        'sim-swap-001': {
+          'ss-02': 'ซิมการ์ดคุณใช้ไม่ได้ทันใด โทรออกไม่ได้',
+          'ss-05': 'มีคนแอบทำซิมใหม่ด้วยข้อมูลคุณ ยึดเบอร์ไป',
+          'ss-08': 'พวกเขาเข้าถึงบัญชีธนาคารผ่าน OTP',
+          'ss-11': 'ภายในชั่วโมง เงินในบัญชีถูกโอนหมด',
+        },
+      };
 
-          setIsSpeaking(true);
-          await speak(cleanText, 'th-TH');
-          setIsSpeaking(false);
-          voiceCompleted = true;
-        } catch (err) {
-          console.warn('TTS failed:', err);
-          setIsSpeaking(false);
-          voiceCompleted = true;
+      const stepId = images[currentIndex];
+      const scenarioNarratives = narratives[scenario.id] || {};
+      const content = scenarioNarratives[stepId] || scenario.steps.find(s => s.id === stepId)?.content.th || '';
+      const settings = getSoundSettings();
+      const sceneNumber = currentIndex; // Capture scene number for this playback
+
+      // Queue voice playback - this runs INDEPENDENTLY of useEffect cleanup!
+      voiceQueueRef.current = voiceQueueRef.current.then(async () => {
+        // CRITICAL: Check if component was unmounted
+        if (isUnmountedRef.current) return;
+
+        // Only play if we're still on the same scene
+        if (currentSceneRef.current !== sceneNumber) return;
+
+        if (content && settings.ttsEnabled) {
+          try {
+            const cleanText = content
+              .replace(/[📱💳💸🔗🚨🔍📚🛡️⚠️🎬💔👤📷📈💰💼🏦📶]/g, '')
+              .replace(/\[.*?\]/g, '')
+              .trim();
+
+            if (isUnmountedRef.current) return;
+
+            setIsSpeaking(true);
+
+            // Voice plays to completion - but checks unmounted flag
+            await speak(cleanText, 'th-TH');
+
+            if (isUnmountedRef.current) {
+              setIsSpeaking(false);
+              return;
+            }
+
+            // Check if still on same scene after voice completes
+            if (currentSceneRef.current !== sceneNumber) {
+              setIsSpeaking(false);
+              return;
+            }
+
+            setIsSpeaking(false);
+
+            // Dramatic pause
+            await new Promise(resolve => setTimeout(resolve, 1200));
+
+            if (isUnmountedRef.current) return;
+
+            // Final check before advancing
+            if (currentSceneRef.current !== sceneNumber) return;
+
+            // Advance to next slide
+            advanceToNextSlide();
+          } catch (err) {
+            if (!isUnmountedRef.current) {
+              setIsSpeaking(false);
+              // On error, advance after 2s
+              await new Promise(resolve => setTimeout(resolve, 2000));
+              if (!isUnmountedRef.current && currentSceneRef.current === sceneNumber) {
+                advanceToNextSlide();
+              }
+            }
+          }
+        } else {
+          // TTS disabled, advance after 4s
+          await new Promise(resolve => setTimeout(resolve, 4000));
+          if (!isUnmountedRef.current && currentSceneRef.current === sceneNumber) {
+            advanceToNextSlide();
+          }
         }
-      } else {
-        voiceCompleted = true;
-      }
-    }, 500);
+      });
+    }, delay);
 
-    // Advance to next slide (either after voice completes or 6s max)
-    slideTimeout = setTimeout(() => {
+    const advanceToNextSlide = () => {
       setShowText(false);
 
-      if (currentIndex < totalImages - 1) {
-        setTimeout(() => {
-          setCurrentIndex(prev => prev + 1);
-          playSound('notification');
-        }, 500);
-      } else {
-        // Completed - show end credits
-        setIsPlaying(false);
-        setShowEndCredits(true);
-        playSound('success');
+      setTimeout(() => {
+        if (currentIndex < totalImages - 1) {
+          setTimeout(() => {
+            setCurrentIndex(prev => prev + 1);
+          }, 200);
+        } else {
+          setIsPlaying(false);
+          setShowEndCredits(true);
 
-        // Speak completion message
-        setTimeout(() => {
-          speak('จบวิดีโอจำลองสถานการณ์ ขอบคุณที่รับชม', 'th-TH').catch(() => {});
-        }, 500);
+          setTimeout(() => {
+            speak('จบวิดีโอจำลองสถานการณ์ ขอบคุณที่รับชม', 'th-TH').catch(() => {});
+          }, 500);
 
-        setTimeout(() => {
-          onComplete?.();
-        }, 3000);
-      }
-    }, playbackQuality === 'cinematic' ? 7000 : playbackQuality === 'smooth' ? 5000 : 4000);
+          setTimeout(() => {
+            onComplete?.();
+          }, 3000);
+        }
+      }, 100);
+    };
 
     return () => {
       clearTimeout(textTimer);
-      clearTimeout(slideTimeout);
-      // Cancel ongoing speech when unmounting or changing slides
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-      }
+      // DON'T stop voice here - it's in the queue and manages itself
     };
-  }, [isPlaying, currentIndex, totalImages, onComplete, getCurrentStepContent]);
+  }, [isPlaying, currentIndex, totalImages, onComplete, images, scenario.id, scenario.steps]);
+
+  // Note: delay variable is defined inside useEffect, so no dependency needed
 
   // Play opening sound and announce title with cinematic intro
   useEffect(() => {
-    if (autoPlay) {
-      playSound('alert');
+    if (!autoPlay) return;
 
-      // Show opening title card for 2 seconds
-      setTimeout(() => {
-        // Announce video title in Thai
-        const announcement = `วิดีโอจำลองสถานการณ์ ${scenario.titleTh}`;
-        speak(announcement, 'th-TH').catch(() => {
-          // Ignore TTS errors
-        });
-      }, 500);
+    const playOpening = async () => {
+      // Show title for 2 seconds (NO sound at opening - Safari blocks it)
+      await new Promise(resolve => setTimeout(resolve, 2000));
 
-      // Hide opening title and start video
-      setTimeout(() => {
-        setShowOpeningTitle(false);
-        setVideoStarted(true);
-      }, 3000);
-    }
+      // DON'T cancel here - init useEffect already cleaned everything
+      // Canceling here causes race condition with scene 1 voice!
 
-    return () => {
-      // Clean up on unmount
-      stopAllSounds();
+      // Start actual video - scene 1 will have its own voice
+      setShowOpeningTitle(false);
+      setVideoStarted(true);
     };
-  }, [autoPlay, scenario.titleTh]);
+
+    playOpening();
+
+    // No cleanup needed - let scenes handle their own voice lifecycle
+  }, [autoPlay]);
 
   const handlePlayPause = () => {
     if (isPlaying) {
@@ -205,7 +424,7 @@ export const ScenarioVideoPlayer: React.FC<ScenarioVideoPlayerProps> = ({
         window.speechSynthesis.cancel();
       }
       setShowText(false);
-      playSound('notification');
+      // NO sound - cleaner UX
       setTimeout(() => setCurrentIndex(prev => prev + 1), 300);
     }
   };
@@ -217,7 +436,7 @@ export const ScenarioVideoPlayer: React.FC<ScenarioVideoPlayerProps> = ({
         window.speechSynthesis.cancel();
       }
       setShowText(false);
-      playSound('notification');
+      // NO sound - cleaner UX
       setTimeout(() => setCurrentIndex(prev => prev - 1), 300);
     }
   };
@@ -233,13 +452,14 @@ export const ScenarioVideoPlayer: React.FC<ScenarioVideoPlayerProps> = ({
   const currentVariant = kenBurnsVariants[currentIndex % kenBurnsVariants.length];
 
   return (
-    <div
-      ref={containerRef}
-      className="relative w-full aspect-video bg-black rounded-xl overflow-hidden shadow-2xl"
-      style={{
-        boxShadow: '0 0 60px rgba(67, 255, 77, 0.2)',
-      }}
-    >
+    <div className="space-y-3">
+      <div
+        ref={containerRef}
+        className="relative w-full aspect-video bg-black rounded-xl overflow-hidden shadow-2xl"
+        style={{
+          boxShadow: '0 0 60px rgba(67, 255, 77, 0.2)',
+        }}
+      >
       {/* Opening Title Card - Cinematic */}
       {showOpeningTitle && (
         <div className="absolute inset-0 z-50 bg-black flex flex-col items-center justify-center animate-fade-in">
@@ -303,9 +523,9 @@ export const ScenarioVideoPlayer: React.FC<ScenarioVideoPlayerProps> = ({
         </div>
       ))}
 
-      {/* Cinematic bars - smaller on mobile */}
+      {/* Cinematic bars - smaller bottom (no subtitle inside) */}
       <div className="absolute inset-x-0 top-0 h-8 sm:h-12 bg-black z-20" />
-      <div className="absolute inset-x-0 bottom-0 h-16 sm:h-20 bg-black z-20" />
+      <div className="absolute inset-x-0 bottom-0 h-16 sm:h-20 bg-gradient-to-t from-black via-black/95 to-transparent z-20" />
 
       {/* Title - responsive sizing */}
       <div className="absolute top-10 sm:top-16 left-3 sm:left-6 right-12 z-30">
@@ -317,97 +537,74 @@ export const ScenarioVideoPlayer: React.FC<ScenarioVideoPlayerProps> = ({
         </p>
       </div>
 
-      {/* Text overlay with typewriter - responsive with subtitle styling */}
-      <div
-        className="absolute bottom-20 sm:bottom-24 left-3 sm:left-6 right-3 sm:right-6 z-30 transition-all duration-500"
-        style={{
-          opacity: showText ? 1 : 0,
-          transform: showText ? 'translateY(0)' : 'translateY(10px)',
-        }}
-      >
-        <div className="relative bg-gradient-to-r from-black/90 via-black/85 to-black/90 backdrop-blur-md rounded-xl p-3 sm:p-5 border-2 border-neon-green/40 shadow-2xl">
-          {/* Glow effect */}
-          <div className="absolute inset-0 bg-gradient-to-r from-neon-green/5 via-transparent to-neon-green/5 rounded-xl pointer-events-none" />
-
-          {/* Voice wave indicator */}
-          {isSpeaking && (
-            <div className="absolute -top-2 left-1/2 -translate-x-1/2 flex gap-1">
-              {[...Array(5)].map((_, i) => (
+      {/* Bottom control panel - compact, no subtitle */}
+      <div className="absolute bottom-0 left-0 right-0 z-30">
+        {/* Progress bar */}
+        <div className="px-3 sm:px-6 pb-1.5">
+          <div className="flex gap-2">
+            {images.map((_, index) => (
+              <div
+                key={index}
+                className="flex-1 h-1 rounded-full overflow-hidden bg-white/20"
+              >
                 <div
-                  key={i}
-                  className="w-1 bg-neon-green rounded-full"
+                  className="h-full bg-neon-green transition-all duration-300"
                   style={{
-                    height: '12px',
-                    animation: `voice-wave 0.8s ease-in-out infinite`,
-                    animationDelay: `${i * 0.1}s`,
+                    width: index < currentIndex ? '100%' : index === currentIndex && isPlaying ? '100%' : '0%',
+                    transition: index === currentIndex ? 'width 4s linear' : 'width 0.3s',
                   }}
                 />
-              ))}
-            </div>
-          )}
-
-          <p className="relative text-white text-sm sm:text-lg leading-relaxed min-h-[2rem] sm:min-h-[3rem] font-medium drop-shadow-lg">
-            {displayedText}
-            {showText && displayedText.length < getCurrentStepContent().length && (
-              <span className="animate-pulse text-neon-green font-bold">|</span>
-            )}
-          </p>
-
-          {/* Subtitle badge */}
-          <div className="absolute -bottom-1 -right-1 bg-neon-green/20 backdrop-blur-sm border border-neon-green/50 px-2 py-0.5 rounded-tl-lg rounded-br-lg">
-            <span className="text-[10px] font-mono text-neon-green uppercase tracking-wider">ภาษาไทย</span>
+              </div>
+            ))}
           </div>
         </div>
-      </div>
 
-      {/* Progress bar - responsive */}
-      <div className="absolute bottom-6 sm:bottom-8 left-3 sm:left-6 right-3 sm:right-6 z-30">
-        <div className="flex gap-2">
-          {images.map((_, index) => (
-            <div
-              key={index}
-              className="flex-1 h-1 rounded-full overflow-hidden bg-white/20"
+        {/* Controls row */}
+        <div className="px-3 sm:px-6 pb-2 flex items-center justify-between">
+          {/* Left: Play controls */}
+          <div className="flex items-center gap-2 sm:gap-3">
+            <button
+              onClick={handlePrev}
+              disabled={currentIndex === 0}
+              className="text-white/60 hover:text-white disabled:opacity-30 transition p-1"
+              title="ก่อนหน้า"
             >
-              <div
-                className="h-full bg-neon-green transition-all duration-300"
-                style={{
-                  width: index < currentIndex ? '100%' : index === currentIndex && isPlaying ? '100%' : '0%',
-                  transition: index === currentIndex ? 'width 4s linear' : 'width 0.3s',
-                }}
-              />
-            </div>
-          ))}
-        </div>
-      </div>
+              ◀
+            </button>
+            <button
+              onClick={handlePlayPause}
+              className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-neon-green/20 border border-neon-green/50 flex items-center justify-center text-neon-green hover:bg-neon-green/30 transition text-sm sm:text-base"
+              title={isPlaying ? 'หยุด' : 'เล่น'}
+            >
+              {isPlaying ? '⏸' : '▶'}
+            </button>
+            <button
+              onClick={handleNext}
+              disabled={currentIndex === totalImages - 1}
+              className="text-white/60 hover:text-white disabled:opacity-30 transition p-1"
+              title="ถัดไป"
+            >
+              ▶
+            </button>
 
-      {/* Controls - responsive */}
-      <div className="absolute bottom-1 sm:bottom-2 right-3 sm:right-6 z-30 flex items-center gap-2 sm:gap-3">
-        <button
-          onClick={handlePrev}
-          disabled={currentIndex === 0}
-          className="text-white/60 hover:text-white disabled:opacity-30 transition p-1"
-          title="ก่อนหน้า"
-        >
-          ◀
-        </button>
-        <button
-          onClick={handlePlayPause}
-          className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-neon-green/20 border border-neon-green/50 flex items-center justify-center text-neon-green hover:bg-neon-green/30 transition text-sm sm:text-base"
-          title={isPlaying ? 'หยุด' : 'เล่น'}
-        >
-          {isPlaying ? '⏸' : '▶'}
-        </button>
-        <button
-          onClick={handleNext}
-          disabled={currentIndex === totalImages - 1}
-          className="text-white/60 hover:text-white disabled:opacity-30 transition p-1"
-          title="ถัดไป"
-        >
-          ▶
-        </button>
+            {/* Slide counter */}
+            {isSpeaking && (
+              <div className="hidden sm:flex items-center gap-1.5 bg-black/70 backdrop-blur-sm px-2.5 py-1 rounded-full border border-neon-green/40">
+                <span className="text-neon-green text-xs">🔊</span>
+                <span className="text-neon-green text-xs font-mono animate-pulse">พากย์</span>
+              </div>
+            )}
+          </div>
 
-        {/* Volume/TTS Toggle */}
-        <div className="relative ml-1">
+          {/* Right: Settings + Close */}
+          <div className="flex items-center gap-2 sm:gap-3">
+            {/* Scene counter */}
+            <span className="text-white/60 text-xs sm:text-sm font-mono">
+              {currentIndex + 1} / {totalImages}
+            </span>
+
+            {/* Volume/TTS Toggle */}
+            <div className="relative">
           <button
             onClick={() => setShowVolumeControl(!showVolumeControl)}
             className={`text-sm sm:text-base transition p-1 ${getSoundSettings().ttsEnabled ? 'text-neon-green' : 'text-white/40'}`}
@@ -425,7 +622,6 @@ export const ScenarioVideoPlayer: React.FC<ScenarioVideoPlayerProps> = ({
                     type="checkbox"
                     checked={getSoundSettings().ttsEnabled}
                     onChange={(e) => {
-                      const { setTTSEnabled } = require('../services/soundService');
                       setTTSEnabled(e.target.checked);
                     }}
                     className="w-4 h-4 accent-neon-green"
@@ -442,7 +638,6 @@ export const ScenarioVideoPlayer: React.FC<ScenarioVideoPlayerProps> = ({
                     max="100"
                     value={getSoundSettings().volume * 100}
                     onChange={(e) => {
-                      const { setVolume } = require('../services/soundService');
                       setVolume(Number(e.target.value) / 100);
                     }}
                     className="w-full accent-neon-green"
@@ -478,32 +673,46 @@ export const ScenarioVideoPlayer: React.FC<ScenarioVideoPlayerProps> = ({
           )}
         </div>
 
-        {onClose && (
-          <button
-            onClick={() => {
-              stopAllSounds();
-              onClose();
-            }}
-            className="ml-1 sm:ml-2 text-white/60 hover:text-white transition p-1"
-            title="ปิด"
-          >
-            ✕
-          </button>
-        )}
+            {onClose && (
+              <button
+                onClick={() => {
+                  stopAllSounds();
+                  onClose();
+                }}
+                className="text-white/60 hover:text-white transition p-1"
+                title="ปิด"
+              >
+                ✕
+              </button>
+            )}
+          </div>
+        </div>
       </div>
 
-      {/* Slide counter & Voice indicator */}
-      <div className="absolute top-16 right-6 z-30 flex items-center gap-3">
-        {isSpeaking && (
-          <div className="flex items-center gap-1.5 bg-black/70 backdrop-blur-sm px-2.5 py-1 rounded-full border border-neon-green/40">
-            <span className="text-neon-green text-xs">🔊</span>
-            <span className="text-neon-green text-xs font-mono animate-pulse">พากย์เสียง</span>
+      {/* Browser Warning - Chrome on macOS */}
+      {showBrowserWarning && (
+        <div className="absolute top-16 left-4 right-4 bg-yellow-500/10 border border-yellow-500/50 rounded-lg p-3 backdrop-blur-md z-30">
+          <div className="flex items-start gap-2">
+            <span className="text-yellow-400 text-lg">⚠️</span>
+            <div className="flex-1">
+              <p className="text-yellow-400 font-medium text-sm mb-1">
+                เสียงพากย์อาจไม่ทำงานใน Chrome บน macOS
+              </p>
+              <p className="text-yellow-200/80 text-xs mb-2">
+                Chrome มี bug กับ Web Speech API แนะนำให้ใช้ Safari แทน
+              </p>
+              <button
+                onClick={() => setShowBrowserWarning(false)}
+                className="text-yellow-300 hover:text-yellow-100 text-xs underline"
+              >
+                ปิดข้อความนี้
+              </button>
+            </div>
           </div>
-        )}
-        <span className="text-white/60 text-sm font-mono">
-          {currentIndex + 1} / {totalImages}
-        </span>
-      </div>
+        </div>
+      )}
+
+
 
       {/* End Credits */}
       {showEndCredits && (
@@ -649,6 +858,44 @@ export const ScenarioVideoPlayer: React.FC<ScenarioVideoPlayerProps> = ({
           animation: fade-in-delay 1.5s ease-out;
         }
       `}</style>
+      </div>
+
+      {/* External Subtitle - below player */}
+      <div
+        className="transition-all duration-300 min-h-[3rem] flex items-center justify-center"
+        style={{
+          opacity: showText ? 1 : 0,
+          transform: showText ? 'translateY(0)' : 'translateY(-5px)',
+        }}
+      >
+        {showText && (
+          <div className="relative bg-black/90 backdrop-blur-sm rounded-lg px-6 py-3 border border-neon-green/30 max-w-4xl">
+            {/* Voice indicator */}
+            {isSpeaking && (
+              <div className="absolute -top-2 left-4 flex gap-0.5">
+                {[...Array(3)].map((_, i) => (
+                  <div
+                    key={i}
+                    className="w-0.5 bg-neon-green rounded-full"
+                    style={{
+                      height: '6px',
+                      animation: `voice-wave 0.8s ease-in-out infinite`,
+                      animationDelay: `${i * 0.1}s`,
+                    }}
+                  />
+                ))}
+              </div>
+            )}
+
+            <p className="relative text-white text-sm sm:text-base leading-relaxed font-medium drop-shadow text-center">
+              {displayedText}
+              {displayedText.length < getCinematicNarrative().length && (
+                <span className="animate-pulse text-neon-green font-bold ml-1">|</span>
+              )}
+            </p>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
