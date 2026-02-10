@@ -29,6 +29,9 @@ const PITCH_CONFIG_TH = {
   WIDTH: 720,
   HEIGHT: 405,
 
+  // Base URL for assets hosted on Vercel
+  BASE_URL: 'https://galaxy-agents.vercel.app',
+
   COLORS: {
     BLACK: '000000',
     DARK_BG: '0A0F1A',
@@ -50,6 +53,17 @@ const PITCH_CONFIG_TH = {
     TITLE: 'Kanit',
     BODY: 'Sarabun',
     MONO: 'IBM Plex Mono',
+  },
+
+  // Agent avatar image filenames (hosted at BASE_URL/avatars/)
+  AGENT_AVATARS: {
+    ASLAN: 'aslan.png',       // ลุงสิงห์ (Big Boss) - Lion
+    EAGLETON: 'eagleton.png', // พี่เหยี่ยว (Hawk Eye) - Pigeon/Eagle
+    ATHENA: 'athena.png',     // ป้าฮูก (Memory Bank) - Owl
+    LUNA: 'luna.png',         // น้องฟ้า (Guardian) - Unicorn Dog
+    URSUS: 'ursus.png',       // ครูหมี (Trainer) - Bear
+    REYNARD: 'reynard.png',   // จ.ส.ต.จิ้งจอก (Money Guard) - Fox
+    CORVUS: 'corvus.png',     // ผบ.มังกร (Alert) - Dragon
   },
 };
 
@@ -151,6 +165,18 @@ function addShape(slide, shapeType, left, top, width, height, fillColor, borderC
   return shape;
 }
 
+function addImageFromUrl(slide, imageUrl, left, top, width, height) {
+  try {
+    const blob = UrlFetchApp.fetch(imageUrl).getBlob();
+    const image = slide.insertImage(blob, left, top, width, height);
+    return image;
+  } catch (e) {
+    Logger.log('ไม่สามารถโหลดรูป: ' + imageUrl + ' - ' + e.message);
+    // Fallback: วาด placeholder shape แทน
+    return addShape(slide, SlidesApp.ShapeType.ELLIPSE, left, top, width, height, PITCH_CONFIG_TH.COLORS.DARK_CARD, PITCH_CONFIG_TH.COLORS.GRAY_500);
+  }
+}
+
 // ============================================
 // SLIDE 1: หน้าปก
 // ============================================
@@ -162,7 +188,9 @@ function createSlide01_Cover_TH(presentation) {
   addShape(slide, SlidesApp.ShapeType.RECTANGLE, 0, 0, 720, 405, PITCH_CONFIG_TH.COLORS.DARK_BG);
   addShape(slide, SlidesApp.ShapeType.RECTANGLE, 0, 0, 720, 4, PITCH_CONFIG_TH.COLORS.NEON_GREEN);
 
-  const logoCircle = addShape(slide, SlidesApp.ShapeType.ELLIPSE, 310, 60, 100, 100, PITCH_CONFIG_TH.COLORS.DARK_CARD, PITCH_CONFIG_TH.COLORS.NEON_GREEN);
+  // Logo from web app
+  addShape(slide, SlidesApp.ShapeType.ELLIPSE, 310, 55, 100, 100, PITCH_CONFIG_TH.COLORS.DARK_CARD, PITCH_CONFIG_TH.COLORS.NEON_GREEN);
+  addImageFromUrl(slide, PITCH_CONFIG_TH.BASE_URL + '/favicon.png', 320, 65, 80, 80);
 
   addTextBox(slide, 'GALAXY AGENTS', 60, 180, 600, 60, {
     fontFamily: PITCH_CONFIG_TH.FONTS.TITLE,
@@ -418,13 +446,13 @@ function createSlide04_Solution_TH(presentation) {
   });
 
   const agents = [
-    { name: 'ลุงสิงห์', role: 'Big Boss', icon: '🦁', desc: 'ผู้บัญชาการ', color: PITCH_CONFIG_TH.COLORS.WARNING_ORANGE },
-    { name: 'พี่เหยี่ยว', role: 'Hawk Eye', icon: '🦅', desc: 'นักสืบ', color: PITCH_CONFIG_TH.COLORS.TEAL },
-    { name: 'ป้าฮูก', role: 'Memory Bank', icon: '🦉', desc: 'คลังข้อมูล', color: PITCH_CONFIG_TH.COLORS.PURPLE },
-    { name: 'น้องฟ้า', role: 'Guardian', icon: '🦄', desc: 'ผู้คุ้มครอง', color: PITCH_CONFIG_TH.COLORS.BLUE },
-    { name: 'ครูหมี', role: 'Trainer', icon: '🐻', desc: 'ครูฝึกสอน', color: PITCH_CONFIG_TH.COLORS.NEON_GREEN },
-    { name: 'จ.ส.ต.จิ้งจอก', role: 'Money Guard', icon: '🦊', desc: 'ผู้พิทักษ์เงิน', color: PITCH_CONFIG_TH.COLORS.WARNING_ORANGE },
-    { name: 'ผบ.มังกร', role: 'Alert', icon: '🐉', desc: 'สายฟ้าแจ้งเตือน', color: PITCH_CONFIG_TH.COLORS.DANGER_RED },
+    { name: 'ลุงสิงห์', role: 'Big Boss', icon: '🦁', desc: 'ผู้บัญชาการ', color: PITCH_CONFIG_TH.COLORS.WARNING_ORANGE, avatar: PITCH_CONFIG_TH.AGENT_AVATARS.ASLAN },
+    { name: 'พี่เหยี่ยว', role: 'Hawk Eye', icon: '🦅', desc: 'นักสืบ', color: PITCH_CONFIG_TH.COLORS.TEAL, avatar: PITCH_CONFIG_TH.AGENT_AVATARS.EAGLETON },
+    { name: 'ป้าฮูก', role: 'Memory Bank', icon: '🦉', desc: 'คลังข้อมูล', color: PITCH_CONFIG_TH.COLORS.PURPLE, avatar: PITCH_CONFIG_TH.AGENT_AVATARS.ATHENA },
+    { name: 'น้องฟ้า', role: 'Guardian', icon: '🦄', desc: 'ผู้คุ้มครอง', color: PITCH_CONFIG_TH.COLORS.BLUE, avatar: PITCH_CONFIG_TH.AGENT_AVATARS.LUNA },
+    { name: 'ครูหมี', role: 'Trainer', icon: '🐻', desc: 'ครูฝึกสอน', color: PITCH_CONFIG_TH.COLORS.NEON_GREEN, avatar: PITCH_CONFIG_TH.AGENT_AVATARS.URSUS },
+    { name: 'จ.ส.ต.จิ้งจอก', role: 'Money Guard', icon: '🦊', desc: 'ผู้พิทักษ์เงิน', color: PITCH_CONFIG_TH.COLORS.WARNING_ORANGE, avatar: PITCH_CONFIG_TH.AGENT_AVATARS.REYNARD },
+    { name: 'ผบ.มังกร', role: 'Alert', icon: '🐉', desc: 'สายฟ้าแจ้งเตือน', color: PITCH_CONFIG_TH.COLORS.DANGER_RED, avatar: PITCH_CONFIG_TH.AGENT_AVATARS.CORVUS },
   ];
 
   agents.forEach((agent, i) => {
@@ -435,7 +463,10 @@ function createSlide04_Solution_TH(presentation) {
 
     addShape(slide, SlidesApp.ShapeType.RECTANGLE, x, y, 160, 85, PITCH_CONFIG_TH.COLORS.DARK_CARD, agent.color);
 
-    addTextBox(slide, agent.icon + ' ' + agent.name, x + 10, y + 10, 140, 25, {
+    // Agent avatar image from web app
+    addImageFromUrl(slide, PITCH_CONFIG_TH.BASE_URL + '/avatars/' + agent.avatar, x + 110, y + 8, 42, 42);
+
+    addTextBox(slide, agent.name, x + 10, y + 10, 100, 25, {
       fontFamily: PITCH_CONFIG_TH.FONTS.TITLE,
       fontSize: 14,
       bold: true,
@@ -2097,12 +2128,46 @@ function createSlide18_Demo_TH(presentation) {
 
   // Demo area
   addShape(slide, SlidesApp.ShapeType.RECTANGLE, 30, 100, 400, 225, PITCH_CONFIG_TH.COLORS.DARK_CARD, PITCH_CONFIG_TH.COLORS.NEON_GREEN);
-  addTextBox(slide, '📱 LIVE DEMO\n\n[ใส่ภาพหน้าจอแอปที่นี่]\n\nหรือเยี่ยมชม:\ngalaxyagents.vercel.app', 50, 140, 360, 160, {
+
+  addTextBox(slide, '📱 LIVE DEMO', 50, 108, 360, 25, {
     fontFamily: PITCH_CONFIG_TH.FONTS.MONO,
-    fontSize: 14,
+    fontSize: 16,
+    bold: true,
+    color: PITCH_CONFIG_TH.COLORS.WHITE,
+    align: 'center'
+  });
+
+  // Agent avatars showcase row
+  const demoAvatars = ['aslan', 'eagleton', 'athena', 'luna', 'ursus', 'reynard', 'corvus'];
+  demoAvatars.forEach((name, i) => {
+    const ax = 62 + (i * 46);
+    addImageFromUrl(slide, PITCH_CONFIG_TH.BASE_URL + '/avatars/' + name + '.png', ax, 140, 40, 40);
+  });
+
+  addTextBox(slide, 'ทีม AI Agent 7 ตัว พร้อม Lottie Animation', 50, 185, 360, 20, {
+    fontFamily: PITCH_CONFIG_TH.FONTS.BODY,
+    fontSize: 10,
+    color: PITCH_CONFIG_TH.COLORS.GRAY_500,
+    align: 'center'
+  });
+
+  addTextBox(slide, '🌐 เยี่ยมชม:', 50, 215, 360, 20, {
+    fontFamily: PITCH_CONFIG_TH.FONTS.BODY,
+    fontSize: 12,
     color: PITCH_CONFIG_TH.COLORS.GRAY_400,
     align: 'center'
   });
+
+  addTextBox(slide, 'galaxy-agents.vercel.app', 50, 240, 360, 25, {
+    fontFamily: PITCH_CONFIG_TH.FONTS.MONO,
+    fontSize: 16,
+    bold: true,
+    color: PITCH_CONFIG_TH.COLORS.NEON_GREEN,
+    align: 'center'
+  });
+
+  // Logo
+  addImageFromUrl(slide, PITCH_CONFIG_TH.BASE_URL + '/favicon.png', 195, 270, 50, 50);
 
   // Features
   addShape(slide, SlidesApp.ShapeType.RECTANGLE, 450, 100, 240, 225, PITCH_CONFIG_TH.COLORS.DARK_CARD, PITCH_CONFIG_TH.COLORS.PURPLE);
@@ -2175,11 +2240,9 @@ function createSlide19_CallToAction_TH(presentation) {
 
   addShape(slide, SlidesApp.ShapeType.RECTANGLE, 0, 0, 720, 4, PITCH_CONFIG_TH.COLORS.NEON_GREEN);
 
+  // Logo from web app
   addShape(slide, SlidesApp.ShapeType.ELLIPSE, 285, 50, 150, 150, PITCH_CONFIG_TH.COLORS.DARK_CARD, PITCH_CONFIG_TH.COLORS.NEON_GREEN);
-  addTextBox(slide, '🌟', 325, 95, 70, 60, {
-    fontSize: 48,
-    align: 'center'
-  });
+  addImageFromUrl(slide, PITCH_CONFIG_TH.BASE_URL + '/favicon.png', 310, 75, 100, 100);
 
   addTextBox(slide, 'GALAXY AGENTS', 60, 210, 600, 50, {
     fontFamily: PITCH_CONFIG_TH.FONTS.TITLE,
@@ -2212,7 +2275,7 @@ function createSlide19_CallToAction_TH(presentation) {
     align: 'center'
   });
 
-  addTextBox(slide, 'galaxyagents.vercel.app', 60, 385, 600, 20, {
+  addTextBox(slide, 'galaxy-agents.vercel.app', 60, 385, 600, 20, {
     fontFamily: PITCH_CONFIG_TH.FONTS.MONO,
     fontSize: 12,
     color: PITCH_CONFIG_TH.COLORS.NEON_GREEN,
