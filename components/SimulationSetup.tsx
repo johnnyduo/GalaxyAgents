@@ -107,18 +107,18 @@ const SimulationSetup: React.FC<SimulationSetupProps> = ({ onStart, onCancel, on
               <div className="flex items-start gap-2">
                 <span className="text-lg">{categoryIcons[scenario.category] || '⚠️'}</span>
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-0.5">
-                    <span className="text-white font-bold text-sm font-mono truncate">
+                  <div className="flex flex-wrap items-center gap-1.5 mb-0.5">
+                    <span className="text-white font-bold text-sm font-mono">
                       {scenario.titleTh}
                     </span>
-                    <span className={`text-[10px] px-1.5 py-0.5 rounded border font-mono ${difficultyColors[scenario.difficulty]}`}>
+                    <span className={`text-[10px] px-1.5 py-0.5 rounded border font-mono shrink-0 ${difficultyColors[scenario.difficulty]}`}>
                       {scenario.difficulty === 'beginner' ? 'ง่าย' : scenario.difficulty === 'intermediate' ? 'ปานกลาง' : 'ยาก'}
                     </span>
                   </div>
                   <p className="text-gray-400 text-xs leading-relaxed line-clamp-2">
                     {scenario.description.th}
                   </p>
-                  <div className="flex items-center gap-3 mt-1.5 text-[11px] font-mono text-gray-500">
+                  <div className="flex flex-wrap items-center gap-2 mt-1.5 text-[11px] font-mono text-gray-500">
                     <span className="flex items-center gap-0.5">
                       <Clock size={10} />
                       ~{Math.round(scenario.estimatedDuration / 60)} นาที
@@ -128,21 +128,21 @@ const SimulationSetup: React.FC<SimulationSetupProps> = ({ onStart, onCancel, on
                       {scenario.involvedAgents.length} ตัว
                     </span>
                     <span className="text-red-400 font-bold">
-                      เสี่ยง ฿{scenario.moneyLost.toLocaleString()}
+                      ฿{scenario.moneyLost.toLocaleString()}
                     </span>
-                    {onPreviewVideo && (
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onPreviewVideo(scenario);
-                        }}
-                        className="ml-auto flex items-center gap-1 px-2 py-0.5 rounded bg-neon-green/20 text-neon-green hover:bg-neon-green/30 transition-colors"
-                      >
-                        <Film size={10} />
-                        ดูวิดีโอ
-                      </button>
-                    )}
                   </div>
+                  {onPreviewVideo && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onPreviewVideo(scenario);
+                      }}
+                      className="mt-2 w-full flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md bg-neon-green/10 border border-neon-green/30 text-neon-green text-xs font-mono hover:bg-neon-green/20 transition-colors"
+                    >
+                      <Film size={12} />
+                      ดูวิดีโอตัวอย่าง
+                    </button>
+                  )}
                 </div>
               </div>
             </button>

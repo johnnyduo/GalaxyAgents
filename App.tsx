@@ -682,8 +682,8 @@ const App: React.FC = () => {
 
       {/* Main Content */}
       <div className="flex-1 flex overflow-hidden">
-        {/* Left Sidebar */}
-        <div className="w-80 bg-black/40 backdrop-blur-sm border-r border-white/10 flex flex-col overflow-hidden">
+        {/* Left Sidebar - responsive width */}
+        <div className="w-full sm:w-80 md:w-96 lg:w-96 bg-black/40 backdrop-blur-sm border-r border-white/10 flex flex-col overflow-hidden shrink-0">
           {/* Mode Control */}
           <div className="p-4 border-b border-white/10">
             <CaptainControlPanel
@@ -959,14 +959,14 @@ const App: React.FC = () => {
         theme="dark"
       />
 
-      {/* Video Preview Modal */}
+      {/* Video Preview Modal - responsive */}
       {showVideoPreview && previewScenario && (
         <div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-sm"
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-sm p-2 sm:p-4"
           onClick={() => setShowVideoPreview(false)}
         >
           <div
-            className="w-full max-w-4xl mx-4"
+            className="w-full max-w-4xl"
             onClick={(e) => e.stopPropagation()}
           >
             <ScenarioVideoPlayer

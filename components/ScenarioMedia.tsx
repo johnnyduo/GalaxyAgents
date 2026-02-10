@@ -66,12 +66,12 @@ export const ScenarioMedia: React.FC<ScenarioMediaProps> = ({
 
   return (
     <div
-      className={`scenario-media-container ${showImage && imageLoaded ? 'visible' : 'hidden'}`}
+      className={`scenario-media-container ${showImage && imageLoaded ? 'visible' : 'hidden'} hidden sm:block`}
       style={{
         position: 'absolute',
         bottom: '120px',
         right: '20px',
-        width: '320px',
+        width: 'min(320px, calc(100vw - 40px))',
         maxHeight: '240px',
         borderRadius: '12px',
         overflow: 'hidden',
